@@ -1,6 +1,6 @@
 {
-  "name": "hairmoony-user-v2",
-  "version": "0.1.0",
+  "name": ".best-v1-user",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -15,6 +15,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropdown": "^1.11.0",
+    "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
     "react-swipeable": "^7.0.2",
     "typescript": "^4.9.5",

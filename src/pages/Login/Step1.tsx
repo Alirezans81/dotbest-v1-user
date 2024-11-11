@@ -2,13 +2,15 @@ import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
-import ReactDropdown from "react-dropdown";
 import Dropdown from "../../components/Dropdown";
+import { useLoggedInSetState } from "../../providers/LoggedInProvider";
 
 interface Props {
   nextStep: () => void;
 }
 export default function Step1({ nextStep }: Props) {
+  const setLoggedIn = useLoggedInSetState();
+
   const [newUser, setNewUser] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [melliCodeError, setMelliCodeError] = useState("");
@@ -140,7 +142,7 @@ export default function Step1({ nextStep }: Props) {
                 values.birthday_day
               )
             ) {
-              nextStep();
+              setLoggedIn(true);
             }
           }
         }}
@@ -171,7 +173,7 @@ export default function Step1({ nextStep }: Props) {
                   }}
                 />
                 <span
-                  className={`text-error transition-all duration-250 ${
+                  className={`text-error transition-all duration-100 ${
                     phoneError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
                   }`}
                 >
@@ -194,7 +196,7 @@ export default function Step1({ nextStep }: Props) {
                   }}
                 />
                 <span
-                  className={`text-error transition-all duration-250 ${
+                  className={`text-error transition-all duration-100 ${
                     melliCodeError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
                   }`}
                 >
@@ -202,7 +204,7 @@ export default function Step1({ nextStep }: Props) {
                 </span>
 
                 <div
-                  className={`flex flex-col gap-y-[2dvw] mt-[2dvw] ${
+                  className={`flex flex-col gap-y-[2dvw] duration-100 mt-[2dvw] ${
                     newUser ? "opacity-100 z-0" : "opacity-0 z-[-10]"
                   }`}
                 >
@@ -245,7 +247,7 @@ export default function Step1({ nextStep }: Props) {
                   </div>
                 </div>
                 <span
-                  className={`text-error transition-all duration-250 ${
+                  className={`text-error transition-all duration-100 ${
                     birthdayError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
                   }`}
                 >
@@ -253,7 +255,17 @@ export default function Step1({ nextStep }: Props) {
                 </span>
               </div>
             </div>
-            <Button label="تایید" type="submit" onClick={handleSubmit} />
+            <div className="flex flex-col gap-y-[3dvw]">
+              <Button
+                label="ورود دوباره شماره موبایل"
+                type="button"
+                onClick={() => setNewUser(false)}
+                className={`transition-all duration-100 ${
+                  newUser ? "opacity-100 z-0" : "opacity-0 z-[-10]"
+                }`}
+              />
+              <Button label="تایید" type="submit" onClick={handleSubmit} />
+            </div>
           </>
         )}
       </Formik>

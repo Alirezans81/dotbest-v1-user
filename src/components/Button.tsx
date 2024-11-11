@@ -16,7 +16,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`transition-all rounded-full py-[2.5dvw] border border-gray_001 dark:border-gray_004 ${className}`}
+      className={`transition-all duration-200 rounded-full py-[2.5dvw] border border-gray_001 dark:border-gray_004 ${className}`}
       onClick={onClick}
       disabled={disabled}
     >

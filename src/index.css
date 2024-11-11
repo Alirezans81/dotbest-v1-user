@@ -14,7 +14,7 @@ body {
   height: 100dvh;
   direction: rtl !important;
   font-family: Yekan !important;
-  background-color: white;
+  background-color: white !important;
   color: black;
   font-size: 4.75dvw;
 }
@@ -34,7 +34,7 @@ input::placeholder {
   padding: 3.5dvw !important;
   text-align: center !important;
   transition: all;
-  transition-duration: 250ms;
+  transition-duration: 100ms;
 }
 .Dropdown-option.is-selected {
   background-color: #e09148 !important;
@@ -55,7 +55,7 @@ input::placeholder {
     padding: 3.5dvw !important;
     text-align: center !important;
     transition: all;
-    transition-duration: 250ms;
+    transition-duration: 100ms;
   }
   .Dropdown-option.is-selected {
     background-color: #e09148 !important;

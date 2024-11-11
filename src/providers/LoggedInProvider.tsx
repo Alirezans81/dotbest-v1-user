@@ -10,7 +10,7 @@ interface Props {
   children: React.ReactNode;
 }
 const LoggedInProvider = ({ children }: Props) => {
-  const [LoggedIn, setLoggedIn] = useState(false);
+  const [LoggedIn, setLoggedIn] = useState(true);
 
   return (
     <LoggedInState.Provider value={LoggedIn}>
