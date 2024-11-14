@@ -2,6 +2,8 @@ import Input from "../components/Input";
 
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
+import MapLight from "../images/common/map-light.svg";
+import MapDark from "../images/common/map-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import SearchCard from "../components/SearchCard";
 import { useModalDataSetState } from "../providers/ModalProvider";
@@ -20,7 +22,19 @@ export default function Search() {
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
-      <div className="flex items-center gap-[5dvw]">
+      <div className="flex items-center gap-[4dvw]">
+        <button onClick={openSearchFilterModal}>
+          <img
+            alt="نقشه"
+            className="w-[7dvw] h-[7dvw] block dark:hidden"
+            src={MapDark}
+          />
+          <img
+            alt="نقشه"
+            className="w-[7dvw] h-[7dvw] hidden dark:block"
+            src={MapLight}
+          />
+        </button>
         <div className="flex-1 relative">
           <Input
             className="w-full"
@@ -37,6 +51,7 @@ export default function Search() {
             />
           </button>
         </div>
+
         <button onClick={openSearchFilterModal}>
           <img
             alt="فیلتر"

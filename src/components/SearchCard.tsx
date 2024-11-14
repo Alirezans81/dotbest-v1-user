@@ -18,7 +18,7 @@ export default function SearchCard() {
         <div className="w-full flex justify-between items-start">
           <div className="flex flex-col">
             <span className="text-[8dvw] drop-shadow-2xl shadow-black">
-              ماهتیسا درویشی
+              سالن ماهتیسا
             </span>
             <div className="flex items-center gap-[1dvw] -mt-[1.5dvw]">
               <img

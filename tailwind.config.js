@@ -16,6 +16,7 @@ module.exports = {
         gray_006: "#1F1F1F",
         primary: "#E09148",
         error: "#E04848",
+        success: "#5AE048",
         second_001: "#FFD9E4",
         second_002: "#F39AB3",
         bg_blur_white: "rgba(255,255,255,0.4)",

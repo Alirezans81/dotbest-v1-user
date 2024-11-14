@@ -10,6 +10,9 @@ import Profile from "./pages/Profile";
 import { useState } from "react";
 import SplashScreen from "./pages/SplashScreen";
 import Salon from "./pages/Salon";
+import Barbers from "./pages/Barbers";
+import Reserve from "./pages/Reserve";
+import Barber from "./pages/Barber";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -28,7 +31,18 @@ function App() {
               <Route path="reports" element={<Reports />} />
               <Route path="profile" element={<Profile />} />
             </Route>
-            <Route path="/salon/:slug" element={<Salon />} />
+            <Route path="/salon">
+              <Route index path=":salon_slug" element={<Salon />} />
+              <Route path=":salon_slug/barbers" element={<Barbers />} />
+              <Route
+                path=":salon_slug/barbers/:barber_slug"
+                element={<Barber />}
+              />
+              <Route
+                path=":salon_slug/barbers/:barber_slug/reserve"
+                element={<Reserve />}
+              />
+            </Route>
             <Route path="*" element={<NoPage />} />
           </Routes>
         </BrowserRouter>

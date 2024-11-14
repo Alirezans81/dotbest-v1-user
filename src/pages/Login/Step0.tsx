@@ -17,10 +17,8 @@ const Element = ({ key, image, title1, title2, desc }: ElementProps) => {
       <img alt={key} className="rounded-[6dvw] w-full" src={image} />
       <div className="w-full flex flex-col gap-y-[1dvw]">
         <div className="w-full flex flex-col">
-          <h3 className="text-[10dvw] leading-10 font-black text-primary">
-            {title1}
-          </h3>
-          <span className="text-[10dvw] leading-10 font-black">{title2}</span>
+          <h3 className="text-[10dvw] leading-10 text-primary">{title1}</h3>
+          <span className="text-[10dvw] leading-10">{title2}</span>
         </div>
         <span>{desc}</span>
       </div>
