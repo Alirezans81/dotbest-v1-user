@@ -18,9 +18,9 @@ export default function Dropdown({
       options={options}
       onChange={onChange}
       placeholder={placeholder}
-      controlClassName="!bg-transparent !rounded-full !pl-[6dvw] !pr-[10dvw] !h-full !py-[3dvw] !border-gray_001 dark:!border-gray_004"
+      controlClassName="!bg-white dark:!bg-black !rounded-full !pl-[6dvw] !pr-[10dvw] !h-full !py-[3dvw] !border-gray_001 dark:!border-gray_004"
       arrowClassName="!top-[45%] !right-[17%]"
-      menuClassName="!min-w-fit !mt-[3dvw] !rounded-[5dvw] !bg-white dark:!bg-black !border-gray_001 dark:!border-gray_004 !max-h-[35.5dvh]"
+      menuClassName="!min-w-fit !mt-[3dvw] !rounded-[5dvw] !bg-white dark:!bg-black !border-gray_001 dark:!border-gray_004 !max-h-[34dvh]"
       placeholderClassName="!text-gray_002"
     />
   );

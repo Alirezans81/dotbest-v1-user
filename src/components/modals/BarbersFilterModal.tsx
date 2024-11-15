@@ -1,3 +1,3 @@
 export default function BarbersFilterModal() {
-  return <div>BarbersFilterModal</div>;
+  return <div className="w-full">BarbersFilterModal</div>;
 }

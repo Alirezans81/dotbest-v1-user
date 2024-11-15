@@ -3,34 +3,37 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
 import Dropdown from "../../components/Dropdown";
-import { useLoggedInSetState } from "../../providers/LoggedInProvider";
 
 interface Props {
   nextStep: () => void;
 }
 export default function Step1({ nextStep }: Props) {
-  const setLoggedIn = useLoggedInSetState();
-
   const [newUser, setNewUser] = useState(false);
-  const [phoneError, setPhoneError] = useState("");
-  const [melliCodeError, setMelliCodeError] = useState("");
-  const [birthdayError, setBirthdayError] = useState("");
 
-  const validatePhone = (value: string) => {
+  const validatePhone = (value: string, setError: (value: string) => void) => {
     if (!value) {
-      setPhoneError("شماره موبایل خود را وارد کنید!");
+      setError("شماره موبایل خود را وارد کنید!");
       return false;
     }
     return true;
   };
-  const validateMelliCode = (value: string) => {
+  const validateName = (value: string, setError: (value: string) => void) => {
     if (!value) {
-      setMelliCodeError("کد ملی خود را وارد کنید!");
+      setError("نام و نام خانوادگی خود را وارد کنید!");
       return false;
     }
     return true;
   };
-
+  const validateMelliCode = (
+    value: string,
+    setError: (value: string) => void
+  ) => {
+    if (!value) {
+      setError("کد ملی خود را وارد کنید!");
+      return false;
+    }
+    return true;
+  };
   function isJalaliLeapYear(year: number): boolean {
     return year % 4 === 0;
   }
@@ -78,21 +81,28 @@ export default function Step1({ nextStep }: Props) {
     ];
 
     if (day < 1 || day > daysInMonth[month]) {
-      console.log("day: ", day);
-      console.log("month: ", month);
-      console.log("daysInMonth[month]: ", daysInMonth[month]);
       return false;
     } else {
       return true;
     }
   }
-
-  const validateBirthday = (year: string, month: string, day: string) => {
+  const validateBirthday = (
+    {
+      year,
+      month,
+      day,
+    }: {
+      year: string;
+      month: string;
+      day: string;
+    },
+    setError: (value: string) => void
+  ) => {
     if (!year || !month || !day) {
-      setBirthdayError("تاریخ تولد خود را وارد کنید!");
+      setError("تاریخ تولد خود را وارد کنید!");
       return false;
     } else if (!validateJalaliDay(month, +day, +year)) {
-      setBirthdayError("تاریخ تولد خود را صحیح وارد کنید!");
+      setError("تاریخ تولد خود را صحیح وارد کنید!");
       return false;
     }
     return true;
@@ -118,31 +128,39 @@ export default function Step1({ nextStep }: Props) {
       <Formik
         initialValues={{
           phone: "",
+          name: "",
           melli_code: "",
           birthday_year: "",
           birthday_month: "",
           birthday_day: "",
         }}
-        onSubmit={(values) => {
-          setPhoneError("");
-          setMelliCodeError("");
-
+        onSubmit={(values, { setFieldError }) => {
           if (!newUser) {
-            if (validatePhone(values.phone)) {
+            if (
+              validatePhone(values.phone, (value) =>
+                setFieldError("phone", value)
+              )
+            ) {
               setNewUser(true);
-              // nextStep()
             }
           } else {
             if (
-              validatePhone(values.phone) &&
-              validateMelliCode(values.melli_code) &&
+              validateName(values.name, (value) =>
+                setFieldError("name", value)
+              ) &&
+              validateMelliCode(values.melli_code, (value) =>
+                setFieldError("melli_code", value)
+              ) &&
               validateBirthday(
-                values.birthday_year,
-                values.birthday_month,
-                values.birthday_day
+                {
+                  year: values.birthday_year,
+                  month: values.birthday_month,
+                  day: values.birthday_day,
+                },
+                (value) => setFieldError("birthday_year", value)
               )
             ) {
-              setLoggedIn(true);
+              nextStep();
             }
           }
         }}
@@ -153,6 +171,7 @@ export default function Step1({ nextStep }: Props) {
           values,
           handleSubmit,
           setFieldValue,
+          errors,
         }) => (
           <>
             <div className="w-full flex flex-col gap-y-[4dvw]">
@@ -169,15 +188,36 @@ export default function Step1({ nextStep }: Props) {
                     placeholder: "شماره موبایل",
                     inputMode: "decimal",
                     style: { width: "100%" },
-                    disabled: newUser,
                   }}
                 />
                 <span
                   className={`text-error transition-all duration-100 ${
-                    phoneError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
+                    errors.phone ? "opacity-100 z-[-10]" : "opacity-0 z-0"
                   }`}
                 >
-                  {phoneError}
+                  {errors.phone}
+                </span>
+
+                <Input
+                  attributes={{
+                    style: {
+                      opacity: newUser ? 100 : 0,
+                      zIndex: newUser ? 0 : -10,
+                      width: "100%",
+                    },
+                    name: "name",
+                    onBlur: handleBlur,
+                    onChange: handleChange,
+                    value: values.name,
+                    placeholder: "نام و نام خانوادگی",
+                  }}
+                />
+                <span
+                  className={`text-error transition-all duration-100 ${
+                    errors.name ? "opacity-100 z-[-10]" : "opacity-0 z-0"
+                  }`}
+                >
+                  {errors.name}
                 </span>
 
                 <Input
@@ -197,10 +237,10 @@ export default function Step1({ nextStep }: Props) {
                 />
                 <span
                   className={`text-error transition-all duration-100 ${
-                    melliCodeError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
+                    errors.melli_code ? "opacity-100 z-[-10]" : "opacity-0 z-0"
                   }`}
                 >
-                  {melliCodeError}
+                  {errors.melli_code}
                 </span>
 
                 <div
@@ -211,6 +251,7 @@ export default function Step1({ nextStep }: Props) {
                   <span className="text-[5dvw]">تاریخ تولد</span>
                   <div className="flex items-center gap-x-[3dvw]">
                     <Input
+                      className="!flex-1"
                       attributes={{
                         name: "birthday_year",
                         onBlur: handleBlur,
@@ -231,6 +272,7 @@ export default function Step1({ nextStep }: Props) {
                       className="w-[32dvw]"
                     />
                     <Input
+                      className="!flex-1"
                       attributes={{
                         name: "birthday_day",
                         onBlur: handleBlur,
@@ -248,24 +290,16 @@ export default function Step1({ nextStep }: Props) {
                 </div>
                 <span
                   className={`text-error transition-all duration-100 ${
-                    birthdayError ? "opacity-100 z-[-10]" : "opacity-0 z-0"
+                    errors.birthday_year
+                      ? "opacity-100 z-[-10]"
+                      : "opacity-0 z-0"
                   }`}
                 >
-                  {birthdayError}
+                  {errors.birthday_year}
                 </span>
               </div>
             </div>
-            <div className="flex flex-col gap-y-[3dvw]">
-              <Button
-                label="ورود دوباره شماره موبایل"
-                type="button"
-                onClick={() => setNewUser(false)}
-                className={`transition-all duration-100 ${
-                  newUser ? "opacity-100 z-0" : "opacity-0 z-[-10]"
-                }`}
-              />
-              <Button label="تایید" type="submit" onClick={handleSubmit} />
-            </div>
+            <Button label="تایید" type="submit" onClick={handleSubmit} />
           </>
         )}
       </Formik>

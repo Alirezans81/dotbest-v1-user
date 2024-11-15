@@ -1,29 +1,27 @@
 import Input from "../components/Input";
-
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
 import MapLight from "../images/common/map-light.svg";
 import MapDark from "../images/common/map-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import SearchCard from "../components/SearchCard";
-import { useModalDataSetState } from "../providers/ModalProvider";
 import SearchFilterModal from "../components/modals/SearchFilterModal";
+import { useNavigate } from "react-router-dom";
+import { useOpenModal } from "../hooks/Modal";
 
 export default function Search() {
-  const setModalData = useModalDataSetState();
-  const openSearchFilterModal = () => {
-    setModalData({
-      title: "",
-      canClose: true,
-      children: <SearchFilterModal />,
-      isOpen: true,
-    });
+  const openModal = useOpenModal();
+  const openSearchFilterModal = () => openModal(<SearchFilterModal />);
+
+  const navigate = useNavigate();
+  const navigateToMap = () => {
+    navigate("/map");
   };
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
       <div className="flex items-center gap-[4dvw]">
-        <button onClick={openSearchFilterModal}>
+        <button onClick={navigateToMap}>
           <img
             alt="نقشه"
             className="w-[7dvw] h-[7dvw] block dark:hidden"

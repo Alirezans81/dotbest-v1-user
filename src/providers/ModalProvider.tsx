@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { useState } from "react";
 
-type ModalDataType = {
+export type ModalDataType = {
   title: string;
   children: React.ReactNode | null;
   canClose: boolean;
@@ -15,7 +15,7 @@ const ModalDataState = createContext<ModalDataType>({
   isOpen: false,
 });
 
-type ModalDataSetStateType = (value: ModalDataType) => void;
+export type ModalDataSetStateType = (value: ModalDataType) => void;
 const ModalDataSetState = createContext<ModalDataSetStateType>(
   (value: ModalDataType) => {}
 );

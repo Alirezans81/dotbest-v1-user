@@ -11,8 +11,10 @@ import { useState } from "react";
 import SplashScreen from "./pages/SplashScreen";
 import Salon from "./pages/Salon";
 import Barbers from "./pages/Barbers";
-import Reserve from "./pages/Reserve";
 import Barber from "./pages/Barber";
+import Modal from "./components/Modal";
+import Map from "./pages/Map";
+import About from "./pages/About";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -23,29 +25,34 @@ function App() {
   } else {
     if (loggedIn) {
       return (
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="search" element={<Search />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="profile" element={<Profile />} />
-            </Route>
-            <Route path="/salon">
-              <Route index path=":salon_slug" element={<Salon />} />
-              <Route path=":salon_slug/barbers" element={<Barbers />} />
-              <Route
-                path=":salon_slug/barbers/:barber_slug"
-                element={<Barber />}
-              />
-              <Route
-                path=":salon_slug/barbers/:barber_slug/reserve"
-                element={<Reserve />}
-              />
-            </Route>
-            <Route path="*" element={<NoPage />} />
-          </Routes>
-        </BrowserRouter>
+        <>
+          <Modal />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="search" element={<Search />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="profile" element={<Profile />} />
+              </Route>
+              <Route path="/map" element={<Map />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/salon">
+                <Route index path=":salon_slug" element={<Salon />} />
+                <Route path=":salon_slug/barbers" element={<Barbers />} />
+                <Route
+                  path=":salon_slug/barbers/:barber_slug"
+                  element={<Barber />}
+                />
+                {/* <Route
+                  path=":salon_slug/barbers/:barber_slug/reserve"
+                  element={<Reserve />}
+                /> */}
+              </Route>
+              <Route path="*" element={<NoPage />} />
+            </Routes>
+          </BrowserRouter>
+        </>
       );
     } else {
       return (

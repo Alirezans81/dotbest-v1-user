@@ -1,6 +1,9 @@
+import { ReactNode } from "react";
+
 interface Props {
   type: "submit" | "reset" | "button" | undefined;
-  label: string;
+  label?: string;
+  children?: ReactNode;
   onClick: (e?: any) => void;
   className?: string;
   disabled?: boolean;
@@ -9,6 +12,7 @@ interface Props {
 export default function Button({
   type,
   label,
+  children,
   className,
   onClick,
   disabled,
@@ -20,7 +24,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
     >
-      {label}
+      {label || children || ""}
     </button>
   );
 }

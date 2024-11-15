@@ -9,12 +9,17 @@ import Button from "../components/Button";
 import Arrow from "../images/common/arrow.svg";
 import BarberCard from "../components/BarberCard";
 import Comment from "../components/Comment";
+import { useOpenModal } from "../hooks/Modal";
+import ReserveModal from "../components/modals/ReserveModal";
 
 export default function Barber() {
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
   };
+
+  const openModal = useOpenModal();
+  const openReserveModal = () => openModal(<ReserveModal />);
 
   return (
     <div className="w-screen h-[100dvh] overflow-y-auto flex flex-col">
@@ -61,7 +66,7 @@ export default function Barber() {
           <Button
             label="رزرو"
             type="button"
-            onClick={() => {}}
+            onClick={openReserveModal}
             className="w-full !border-primary text-primary hover:bg-primary hover:text-white"
           />
         </div>

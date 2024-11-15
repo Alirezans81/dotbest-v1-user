@@ -6,7 +6,7 @@ import {
 
 export default function Modal() {
   const closeModal = useModalDataClose();
-  const { isOpen, canClose, children, title } = useModalDataState();
+  const { isOpen, canClose, children } = useModalDataState();
 
   const config = {
     delta: 35, // min distance(px) before a swipe starts. *See Notes*

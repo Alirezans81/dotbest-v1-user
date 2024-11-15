@@ -2,20 +2,13 @@ import NavigationLayout from "../components/NavigationLayout";
 
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
-import { useModalDataSetState } from "../providers/ModalProvider";
 import BarbersFilterModal from "../components/modals/BarbersFilterModal";
 import BarberCard from "../components/BarberCard";
+import { useOpenModal } from "../hooks/Modal";
 
 export default function Barbers() {
-  const setModalData = useModalDataSetState();
-  const openBarbersFilterModal = () => {
-    setModalData({
-      title: "",
-      children: <BarbersFilterModal />,
-      canClose: true,
-      isOpen: true,
-    });
-  };
+  const openModal = useOpenModal();
+  const openBarbersFilterModal = () => openModal(<BarbersFilterModal />);
 
   return (
     <NavigationLayout label="">
