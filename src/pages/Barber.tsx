@@ -57,7 +57,7 @@ export default function Barber() {
                   src={Star}
                 />
               </div>
-              <div className="w-[1px] h-full py-[1dvw] -mt-[1dvw]">
+              <div className="w-[1.5px] h-full py-[1dvw] -mt-[1dvw]">
                 <div className="w-full h-full bg-gray_001 dark:bg-white"></div>
               </div>
               <span className="text-gray_002">1,343 نظر</span>

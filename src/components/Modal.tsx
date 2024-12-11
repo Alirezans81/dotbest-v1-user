@@ -23,26 +23,33 @@ export default function Modal() {
   });
 
   return (
-    <button
-      className={`absolute left-0 top-0 w-screen h-[100dvh] bg-black/50 transition-all duration-200 flex flex-col justify-end ${
+    <div
+      className={`absolute left-0 top-0 w-screen h-[100dvh] bg-black/50 transition-all duration-200 ${
         isOpen ? "z-40 opacity-100" : "z-[-10] opacity-0"
       }`}
-      onClick={closeModal}
     >
-      <div
-        className={`w-full z-50 bg-white dark:bg-black ${
-          canClose ? "pt-[3dvw]" : "pt-[5dvw]"
-        }  pb-[6.5dvw] px-[5dvw] border-x border-t border-gray_001 dark:border-gray_004 rounded-t-[7dvw] transition-all duration-300 ${
-          isOpen ? "translate-y-0 h-auto" : "translate-y-[100%] !p-0"
-        }`}
-      >
-        {canClose && (
-          <div {...handlers} className="w-full flex justify-center pb-[3dvw]">
-            <div className="w-[45%] h-[1.25dvw] bg-gray_001 dark:bg-gray_004 rounded-full" />
+      <div className="w-full h-full flex flex-col justify-end relative">
+        <button
+          className="absolute top-0 left-0 w-full h-full z-[41]"
+          onClick={closeModal}
+        />
+        <div
+          className={`w-full z-50 bg-white dark:bg-black ${
+            canClose ? "pt-[3dvw]" : "pt-[5dvw]"
+          } z-50 pb-[6.5dvw] px-[5dvw] border-x border-t border-gray_001 dark:border-gray_004 rounded-t-[7dvw] transition-all duration-300 ${
+            isOpen ? "translate-y-0 h-auto" : "translate-y-[100%] !p-0"
+          }`}
+        >
+          {canClose && (
+            <div {...handlers} className="w-full flex justify-center pb-[3dvw]">
+              <div className="w-[45%] h-[1.25dvw] bg-gray_001 dark:bg-gray_004 rounded-full" />
+            </div>
+          )}
+          <div className="w-full max-h-[75dvh] overflow-y-auto -scroll-mr-[4dvw]">
+            {children}
           </div>
-        )}
-        {children}
+        </div>
       </div>
-    </button>
+    </div>
   );
 }

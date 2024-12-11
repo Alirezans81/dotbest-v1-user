@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
 import Dropdown from "../../components/Dropdown";
+import { useSendCode } from "../../api/auth/hooks";
+import { UserInitParams } from "../../lib/user";
 
 interface Props {
   nextStep: () => void;
+  setTempCode: (value: string) => void;
+  setUserInitParams: Dispatch<React.SetStateAction<UserInitParams | null>>;
 }
-export default function Step1({ nextStep }: Props) {
+export default function Step1({
+  nextStep,
+  setTempCode,
+  setUserInitParams,
+}: Props) {
   const [newUser, setNewUser] = useState(false);
 
   const validatePhone = (value: string, setError: (value: string) => void) => {
@@ -123,6 +131,8 @@ export default function Step1({ nextStep }: Props) {
     "اسفند",
   ];
 
+  const sendCode = useSendCode();
+
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
       <Formik
@@ -141,7 +151,18 @@ export default function Step1({ nextStep }: Props) {
                 setFieldError("phone", value)
               )
             ) {
-              setNewUser(true);
+              sendCode({
+                phone: values.phone,
+                customFunction: (data) => {
+                  process.env.REACT_APP_MODE === "DEVELOPMENT" &&
+                    setTempCode(data.code);
+                  if (data.new_user) {
+                    setNewUser(true);
+                  } else {
+                    nextStep();
+                  }
+                },
+              });
             }
           } else {
             if (
@@ -160,6 +181,7 @@ export default function Step1({ nextStep }: Props) {
                 (value) => setFieldError("birthday_year", value)
               )
             ) {
+              setUserInitParams({ ...values });
               nextStep();
             }
           }
@@ -187,6 +209,7 @@ export default function Step1({ nextStep }: Props) {
                     value: values.phone,
                     placeholder: "شماره موبایل",
                     inputMode: "decimal",
+                    maxLength: 11,
                     style: { width: "100%" },
                   }}
                 />
@@ -231,6 +254,7 @@ export default function Step1({ nextStep }: Props) {
                     onBlur: handleBlur,
                     onChange: handleChange,
                     value: values.melli_code,
+                    maxLength: 10,
                     placeholder: "کد ملی",
                     inputMode: "decimal",
                   }}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import Step0 from "./Login/Step0";
 import Step1 from "./Login/Step1";
 import Step2 from "./Login/Step2";
+import { UserInitParams } from "../lib/user";
 
 export default function Login() {
   const [step, setStep] = useState(1);
@@ -12,12 +13,29 @@ export default function Login() {
     setStep((prev) => prev - 1);
   };
 
+  const [tempCode, setTempCode] = useState("");
+  const [userInitParams, setUserInitParams] = useState<UserInitParams | null>(
+    null
+  );
+
   if (step === 0) {
     return <Step0 nextStep={nextStep} />;
   } else if (step === 1) {
-    return <Step1 nextStep={nextStep} />;
+    return (
+      <Step1
+        nextStep={nextStep}
+        setTempCode={setTempCode}
+        setUserInitParams={setUserInitParams}
+      />
+    );
   } else if (step === 2) {
-    return <Step2 prevStep={prevStep} />;
+    return (
+      <Step2
+        prevStep={prevStep}
+        tempCode={tempCode}
+        userInitParams={userInitParams}
+      />
+    );
   } else {
     return <></>;
   }

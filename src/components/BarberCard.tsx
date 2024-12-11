@@ -83,7 +83,7 @@ export default function BarberCard({
                   src={Star}
                 />
               </div>
-              <div className="w-[2px] rounded-full h-[5dvw] bg-gray_001 dark:bg-gray_004 mb-[1dvw]" />
+              <div className="w-[1.5px] rounded-full h-[5dvw] bg-gray_001 dark:bg-gray_004 mb-[1dvw]" />
               <span className="text-gray_002">1,343 نظر</span>
             </div>
             <span className="text-black dark:text-white">سوگول احمدی</span>

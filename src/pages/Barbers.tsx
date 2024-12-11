@@ -11,23 +11,8 @@ export default function Barbers() {
   const openBarbersFilterModal = () => openModal(<BarbersFilterModal />);
 
   return (
-    <NavigationLayout label="">
+    <NavigationLayout label="آرایشگران مو">
       <div className="flex flex-col gap-[2dvh]">
-        <div className="w-full flex justify-between items-center">
-          <span className="text-[7dvw]">آرایشگران مو</span>
-          <button className="ml-[0.5dvw]" onClick={openBarbersFilterModal}>
-            <img
-              alt="فیلتر"
-              className="w-[6dvw] h-[6dvw] block dark:hidden"
-              src={FilterLight}
-            />
-            <img
-              alt="فیلتر"
-              className="w-[6dvw] h-[6dvw] hidden dark:block"
-              src={FilterDark}
-            />
-          </button>
-        </div>
         <div className="w-full grid grid-cols-2 gap-[4dvw]">
           <div className="col-span-1">
             <BarberCard />

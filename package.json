@@ -10,16 +10,20 @@
     "@types/node": "^16.18.119",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "axios": "^1.7.9",
     "formik": "^2.4.6",
     "motion": "^11.11.17",
+    "query-string": "^9.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropdown": "^1.11.0",
     "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.15.0",
     "react-swipeable": "^7.0.2",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zaman": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

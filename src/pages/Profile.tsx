@@ -9,11 +9,13 @@ import { useOpenModal } from "../hooks/Modal";
 import EditInfoModal from "../components/modals/EditInfoModal";
 import SupportModal from "../components/modals/SupportModal";
 import { useNavigate } from "react-router-dom";
+import LogoutModal from "../components/modals/LogoutModal";
 
 export default function Profile() {
   const openModal = useOpenModal();
   const openEditInfoModal = () => openModal(<EditInfoModal />);
   const openSupportModal = () => openModal(<SupportModal />);
+  const openLogoutModal = () => openModal(<LogoutModal />);
 
   const share = () => {
     if (navigator.share) {
@@ -133,7 +135,7 @@ export default function Profile() {
         type="button"
         label="خروج از حساب کاربری"
         className="text-error !border-error py-[3dvw]"
-        onClick={() => {}}
+        onClick={openLogoutModal}
       />
     </div>
   );

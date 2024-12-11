@@ -20,7 +20,7 @@ export default function Reports() {
           />
           <button
             type="submit"
-            className="absolute left-[6%] top-0 h-full flex items-center"
+            className="absolute left-[4.5dvw] top-0 h-full flex items-center"
           >
             <img
               alt="جست و جو"

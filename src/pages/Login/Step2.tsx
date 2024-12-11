@@ -2,11 +2,19 @@ import { Formik } from "formik";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { useLoggedInSetState } from "../../providers/LoggedInProvider";
+import { useVerifyCode } from "../../api/auth/hooks";
+import { UserInitParams } from "../../lib/user";
+import { useCustomSetUser } from "../../hooks/auth";
+import { useUpdatePersonalInfo } from "../../api/user/hooks";
+import { CommonUser, defaultUser } from "../../lib/common";
 
 interface Props {
   prevStep: () => void;
+  tempCode: string;
+  userInitParams: UserInitParams | null;
 }
-export default function Step2({ prevStep }: Props) {
+export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
+  const setUser = useCustomSetUser();
   const setLoggedIn = useLoggedInSetState();
 
   const validateCode = (code: string, setError: (value: string) => void) => {
@@ -17,17 +25,38 @@ export default function Step2({ prevStep }: Props) {
     return true;
   };
 
+  const verifyCode = useVerifyCode();
+  const updatePersonalInfo = useUpdatePersonalInfo();
+
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
       <Formik
         initialValues={{
-          code: "",
+          code: process.env.REACT_APP_MODE === "DEVELOPMENT" ? tempCode : "",
         }}
         onSubmit={(values, { setFieldError }) => {
           if (
             validateCode(values.code, (value) => setFieldError("code", value))
           ) {
-            setLoggedIn(true);
+            verifyCode({
+              code: values.code,
+              setUser,
+              customFunction(data) {
+                if (userInitParams) {
+                  let params: CommonUser = defaultUser;
+                  params.first_name = userInitParams.name.split(" ")[0];
+                  params.last_name = userInitParams.name.split(" ")[1];
+                  updatePersonalInfo({
+                    user_url: data.user.url,
+                    setUser,
+                    params,
+                    customFunction: () => setLoggedIn(true),
+                  });
+                } else {
+                  setLoggedIn(true);
+                }
+              },
+            });
           }
         }}
       >

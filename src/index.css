@@ -7,6 +7,9 @@
   src: url("../public/font/Yekan.ttf");
 }
 
+* {
+  font-family: Yekan !important;
+}
 body {
   margin: 0;
   padding: 0;
@@ -68,5 +71,75 @@ input::placeholder {
   }
   .Dropdown-placeholder.is-selected {
     color: white !important;
+  }
+}
+
+.css-137m4ck {
+  background-color: transparent !important;
+  border: 0px !important;
+}
+.zm-Header {
+  width: 100% !important;
+  padding-inline: 0px !important;
+  border-color: #d7d7d7;
+}
+.zm-MonthYearButton:hover {
+  background-color: transparent !important;
+}
+.css-7qlbje {
+  width: 100% !important;
+  right: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin-right: 2dvw !important;
+}
+.zm-IconPrevButton:hover {
+  background-color: transparent !important;
+}
+.zm-IconNextButton:hover {
+  background-color: transparent !important;
+}
+.css-qmbtae {
+  color: #e09148 !important;
+}
+.zm-DaysButton {
+  color: #737373 !important;
+  border-radius: 100% !important;
+}
+.zm-DaysButton[data-selected="true"] {
+  background-color: #e09148 !important;
+  color: white !important;
+}
+.zm-YearPickerButton {
+  border-radius: 3.5dvw !important;
+}
+.zm-MonthPickerButton {
+  border-radius: 3.5dvw !important;
+}
+@media (prefers-color-scheme: dark) {
+  .zm-MonthYearButton {
+    color: white !important;
+  }
+  .zm-MonthYearButton:hover {
+    background-color: transparent !important;
+  }
+  .css-7qlbje {
+    width: 100% !important;
+    right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-right: 2dvw !important;
+  }
+  .zm-IconPrevButton {
+    color: white !important;
+  }
+  .zm-IconNextButton {
+    color: white !important;
+  }
+  .zm-Header {
+    background-color: #e09148 !important;
+    width: 100% !important;
+    padding-inline: 0px !important;
+    border: none !important;
   }
 }
