@@ -7,6 +7,7 @@ import { UserInitParams } from "../../lib/user";
 import { useCustomSetUser } from "../../hooks/auth";
 import { useUpdatePersonalInfo } from "../../api/user/hooks";
 import { CommonUser, defaultUser } from "../../lib/common";
+import { useOpenToast } from "../../hooks/popups";
 
 interface Props {
   prevStep: () => void;
@@ -24,6 +25,8 @@ export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
     }
     return true;
   };
+
+  const openToast = useOpenToast();
 
   const verifyCode = useVerifyCode();
   const updatePersonalInfo = useUpdatePersonalInfo();
@@ -51,10 +54,16 @@ export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
                     setUser,
                     params,
                     customFunction: () => setLoggedIn(true),
+                    onError(error) {
+                      openToast(error.message);
+                    },
                   });
                 } else {
                   setLoggedIn(true);
                 }
+              },
+              onError(error) {
+                openToast(error.message);
               },
             });
           }

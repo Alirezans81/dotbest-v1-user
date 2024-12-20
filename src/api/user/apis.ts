@@ -16,13 +16,21 @@ const updatePersonlInfo = (user_url: string, params: CommonUser) => {
   return axios.patch(user_url, formData);
 };
 
-const getCategories = () => {
+const getReports = (username: string) => {
   const urlWithQueries = queryString.stringifyUrl({
-    url: api["category"],
-    query: { is_active: true, is_deleted: false },
+    url: api["order"],
+    query: { is_deleted: false, user: username },
   });
 
   return axios.get(urlWithQueries);
 };
 
-export { updatePersonlInfo, getCategories };
+const updateAvatar = (user_url: string, file: File) => {
+  const formData = new FormData();
+
+  formData.append("avatar", file);
+
+  return axios.patch(user_url, formData);
+};
+
+export { updatePersonlInfo, getReports, updateAvatar };

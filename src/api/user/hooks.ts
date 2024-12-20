@@ -1,5 +1,7 @@
-import { getCategories, updatePersonlInfo } from "./apis";
-import { Category, CommonUser } from "../../lib/common";
+import { getReports, updateAvatar, updatePersonlInfo } from "./apis";
+import { CommonUser, Reservation } from "../../lib/common";
+import { useUserSetState, useUserState } from "../../providers/UserProvider";
+import { useState } from "react";
 
 const useUpdatePersonalInfo = () => {
   const fetch = async ({
@@ -15,7 +17,7 @@ const useUpdatePersonalInfo = () => {
     customFunction?: (data: CommonUser) => void;
     onError?: (error: any, data: CommonUser) => void;
   }) => {
-    updatePersonlInfo(user_url, params)
+    await updatePersonlInfo(user_url, params)
       .then((res: any) => {
         setUser && setUser(res.data.results);
         customFunction && customFunction(res.data.results);
@@ -29,19 +31,21 @@ const useUpdatePersonalInfo = () => {
   return fetch;
 };
 
-const useGetCategories = () => {
+const useGetReports = () => {
+  const user = useUserState();
+
   const fetch = async ({
-    setCategories,
+    setReports,
     customFunction,
     onError,
   }: {
-    setCategories: (value: Category[]) => void;
-    customFunction?: (data: Category[]) => void;
+    setReports: (value: Reservation[]) => void;
+    customFunction?: (data: Reservation[]) => void;
     onError?: (error: any) => void;
   }) => {
-    getCategories()
+    getReports(user.username)
       .then((res: any) => {
-        setCategories(res.data.results);
+        setReports(res.data.results);
         customFunction && customFunction(res.data.results);
       })
       .catch((error: any) => {
@@ -53,4 +57,35 @@ const useGetCategories = () => {
   return fetch;
 };
 
-export { useUpdatePersonalInfo, useGetCategories };
+const useUpdateAvatar = () => {
+  const user = useUserState();
+  const setUser = useUserSetState();
+
+  const [loading, setLoading] = useState(false);
+  const fetch = async ({
+    file,
+    customFunction,
+    onError,
+  }: {
+    file: File;
+    customFunction?: (data: CommonUser) => void;
+    onError?: (error: any, data: File) => void;
+  }) => {
+    setLoading(true);
+    await updateAvatar(user.url, file)
+      .then((res: any) => {
+        setUser && setUser(res.data.results);
+        customFunction && customFunction(res.data.results);
+        setLoading(false);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error, file);
+        setLoading(false);
+      });
+  };
+
+  return { updateAvatar: fetch, loading };
+};
+
+export { useUpdatePersonalInfo, useGetReports, useUpdateAvatar };

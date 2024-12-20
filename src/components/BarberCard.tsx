@@ -1,19 +1,21 @@
-import Temp from "../images/Login/image2.png";
-
-import Button from "./Button";
+import { Barber } from "../lib/salon";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
+import Temp from "../images/Login/image2.png";
 import Star from "../images/common/star.svg";
 import Heart from "../images/common/heart.svg";
 import HeartAtive from "../images/common/heart-active.svg";
-import { useState } from "react";
 
 interface Props {
+  data: Barber;
   orientation?: "col" | "row";
   className?: string;
   type?: "normal" | "comment";
 }
 export default function BarberCard({
+  data,
   orientation = "col",
   className,
   type = "normal",
@@ -34,7 +36,9 @@ export default function BarberCard({
       } overflow-hidden ${className}`}
     >
       <div
-        className={`relative ${orientation === "row" && "w-[35dvw] h-[35dvw]"}`}
+        className={`relative ${
+          orientation === "row" && "w-[35dvw] h-[42.5dvw]"
+        }`}
       >
         <img alt="" className={`w-full h-full object-cover`} src={Temp} />
         {orientation === "col" && (
@@ -72,6 +76,9 @@ export default function BarberCard({
       >
         <div className="w-full flex flex-col items-center gap-[1dvh]">
           <div className="w-full flex flex-col items-center">
+            <span className="text-[6dvw] text-black dark:text-white">
+              آرایشگاه سوگل
+            </span>
             <div
               className={`w-full flex justify-between items-center px-[1.5dvw]`}
             >

@@ -14,6 +14,7 @@ body {
   margin: 0;
   padding: 0;
   width: 100dvw;
+  max-width: 500px;
   height: 100dvh;
   direction: rtl !important;
   font-family: Yekan !important;
@@ -26,6 +27,16 @@ body {
     background-color: black !important;
     color: white !important;
   }
+}
+
+*::-webkit-scrollbar:horizontal {
+  height: 0;
+  width: 0;
+  display: none;
+}
+
+*::-webkit-scrollbar-thumb:horizontal {
+  display: none;
 }
 
 input::placeholder {

@@ -7,7 +7,7 @@ export default function LogoutModal() {
   const closeModal = useModalDataClose();
 
   return (
-    <div className="w-full flex flex-col gap-[4dvw] py-[2dvw]">
+    <div className="w-full flex flex-col gap-[4dvw]">
       <span>آیا از خروج از حساب کاربری خود مطمعن هستید؟!</span>
       <Button
         type="button"

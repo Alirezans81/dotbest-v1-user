@@ -56,6 +56,7 @@ const useToastDataClose = () => {
   return useContext(ToastDataClose);
 };
 
+export type { ToastDataSetStateType };
 export {
   ToastProvider,
   useToastDataState,

@@ -1,7 +1,7 @@
 import { CommonUser } from "../../lib/common";
 import { CreateParams } from "../../lib/interfaces";
 import { Salon } from "../../lib/salon";
-import { create, sendCode, verifyCode } from "./apis";
+import { create, getUserData, sendCode, verifyCode } from "./apis";
 
 const useSendCode = () => {
   const fetch = async ({
@@ -13,7 +13,7 @@ const useSendCode = () => {
     customFunction?: (data: any) => void;
     onError?: (error: any, data: string) => void;
   }) => {
-    sendCode(phone)
+    await sendCode(phone)
       .then((res: any) => {
         customFunction && customFunction(res.data);
       })
@@ -38,7 +38,7 @@ const useVerifyCode = () => {
     customFunction?: ({ user }: { user: CommonUser }) => void;
     onError?: (error: any, data: string) => void;
   }) => {
-    verifyCode(code)
+    await verifyCode(code)
       .then((res: any) => {
         setUser(res.data.results.user);
         customFunction && customFunction(res.data.results);
@@ -66,7 +66,7 @@ const useCreate = () => {
     customFunction?: (data: any) => void;
     onError?: (error: any, data: CreateParams) => void;
   }) => {
-    create(params)
+    await create(params)
       .then((res: any) => {
         setUser(res.data.results.user);
         setSalon(res.data.results.salon);
@@ -81,4 +81,30 @@ const useCreate = () => {
   return fetch;
 };
 
-export { useSendCode, useVerifyCode, useCreate };
+const useGetUserData = () => {
+  const fetch = async ({
+    user_url,
+    setUser,
+    customFunction,
+    onError,
+  }: {
+    user_url: string;
+    setUser: (data: CommonUser) => void;
+    customFunction?: (data: any) => void;
+    onError?: (error: any, data: string) => void;
+  }) => {
+    await getUserData(user_url)
+      .then((res: any) => {
+        setUser(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error, user_url);
+      });
+  };
+
+  return fetch;
+};
+
+export { useSendCode, useVerifyCode, useCreate, useGetUserData };

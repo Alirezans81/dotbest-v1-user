@@ -1,14 +1,36 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Input from "../components/Input";
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import ReportCard from "../components/ReportCard";
 import ReportFilterModal from "../components/modals/ReportFilterModal";
-import { useOpenModal } from "../hooks/Modal";
+import { useOpenModal, useOpenToast } from "../hooks/popups";
+import { useEffect, useState } from "react";
+import { Reservation } from "../lib/common";
+import { useGetReports } from "../api/user/hooks";
+import Skeleton from "../components/Skeleton";
+import EmptyListMessage from "../components/EmptyListMessage";
 
 export default function Reports() {
   const openModal = useOpenModal();
   const openReportFilterModal = () => openModal(<ReportFilterModal />);
+
+  const [reports, setReports] = useState<Reservation[]>([]);
+  const [reportsIsEmpty, setReportsIsEmpty] = useState(false);
+  const getReports = useGetReports();
+
+  const openToast = useOpenToast();
+
+  useEffect(() => {
+    getReports({
+      setReports,
+      customFunction: (data) => !data.length && setReportsIsEmpty(true),
+      onError(error) {
+        openToast(error.message);
+      },
+    });
+  }, []);
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
@@ -43,9 +65,18 @@ export default function Reports() {
         </button>
       </div>
       <div className="flex flex-col gap-[2dvh]">
-        <ReportCard />
-        <ReportCard />
-        <ReportCard />
+        {!reportsIsEmpty ? (
+          reports.length ? (
+            reports.map((report, i) => <ReportCard key={i} />)
+          ) : (
+            <>
+              <Skeleton className="w-full h-[72.75dvw]" />
+              <Skeleton className="w-full h-[72.75dvw]" />
+            </>
+          )
+        ) : (
+          <EmptyListMessage className="h-[73dvh]" />
+        )}
       </div>
     </div>
   );

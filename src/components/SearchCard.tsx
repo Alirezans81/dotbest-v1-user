@@ -4,6 +4,7 @@ import BarberCard from "./BarberCard";
 import Pin from "../images/common/pin.svg";
 import Arrow from "../images/common/arrow.svg";
 import { useNavigate } from "react-router-dom";
+import { defaultBarber } from "../lib/salon";
 
 export default function SearchCard() {
   const navigate = useNavigate();
@@ -12,9 +13,11 @@ export default function SearchCard() {
   };
 
   return (
-    <div className="w-full h-fit relative rounded-[6dvw] overflow-hidden">
-      <img alt="" className="w-full h-full object-cover" src={Temp} />
-      <div className="absolute left-0 top-0 w-full h-full backdrop-blur-sm bg-gray_003/70 dark:bg-black/70 py-[3dvw] px-[6dvw] text-white flex flex-col gap-[2dvw]">
+    <div
+      className="w-full rounded-[6dvw] overflow-hidden"
+      style={{ backgroundImage: `url(${Temp})`, backgroundSize: "cover" }}
+    >
+      <div className="backdrop-blur-sm bg-gray_003/70 dark:bg-black/70 pt-[3dvw] pb-[6dvw] px-[6dvw] text-white flex flex-col gap-[3dvw]">
         <div className="w-full flex justify-between items-start">
           <div className="flex flex-col">
             <span className="text-[8dvw] drop-shadow-2xl shadow-black">
@@ -33,7 +36,11 @@ export default function SearchCard() {
             <img alt="فلش" className="w-[6dvw] h-[6dvw]" src={Arrow} />
           </button>
         </div>
-        <BarberCard orientation="row" className="shadow-2xl shadow-black" />
+        <BarberCard
+          data={defaultBarber}
+          orientation="row"
+          className="shadow-2xl shadow-black"
+        />
       </div>
     </div>
   );

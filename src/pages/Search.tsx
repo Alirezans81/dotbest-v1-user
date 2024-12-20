@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Input from "../components/Input";
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
@@ -7,7 +8,12 @@ import SearchIcon from "../images/common/search.svg";
 import SearchCard from "../components/SearchCard";
 import SearchFilterModal from "../components/modals/SearchFilterModal";
 import { useNavigate } from "react-router-dom";
-import { useOpenModal } from "../hooks/Modal";
+import { useOpenModal, useOpenToast } from "../hooks/popups";
+import { useGetSalons } from "../api/salon/hooks";
+import { useEffect, useState } from "react";
+import { Salon } from "../lib/salon";
+import Skeleton from "../components/Skeleton";
+import EmptyListMessage from "../components/EmptyListMessage";
 
 export default function Search() {
   const openModal = useOpenModal();
@@ -17,6 +23,21 @@ export default function Search() {
   const navigateToMap = () => {
     navigate("/map");
   };
+
+  const openToast = useOpenToast();
+
+  const [salons, setSalons] = useState<Salon[]>([]);
+  const [salonsIsEmpty, setSalonsIsEmpty] = useState(false);
+  const getSalons = useGetSalons();
+  useEffect(() => {
+    getSalons({
+      setSalons,
+      customFunction: (data) => !data.length && setSalonsIsEmpty(true),
+      onError(error) {
+        openToast(error.message);
+      },
+    });
+  }, []);
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
@@ -36,7 +57,7 @@ export default function Search() {
         <div className="flex-1 relative">
           <Input
             className="w-full"
-            attributes={{ placeholder: "نام سالن، آرایشگر، خدمت..." }}
+            attributes={{ placeholder: "نام سالن، آرایشگر..." }}
           />
           <button
             type="submit"
@@ -64,9 +85,22 @@ export default function Search() {
         </button>
       </div>
       <div className="flex flex-col gap-[2dvh]">
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
+        {!salonsIsEmpty ? (
+          salons.length ? (
+            salons.map((salon, i) => (
+              <>
+                <SearchCard key={i} />
+              </>
+            ))
+          ) : (
+            <>
+              <Skeleton className="h-[72.25dvw]" />
+              <Skeleton className="h-[72.25dvw]" />
+            </>
+          )
+        ) : (
+          <EmptyListMessage className="h-[73dvh]" />
+        )}
       </div>
     </div>
   );

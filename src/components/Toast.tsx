@@ -20,7 +20,7 @@ export default function Toast() {
       }`}
     >
       <div
-        className={`w-full bg-black shadow-mine flex items-center py-[3.5dvw] pl-[3.5dvw] pr-[4.5dvw] pr rounded-[3dvw]`}
+        className={`w-full bg-black shadow-mine flex items-center py-[3.5dvw] pl-[3.5dvw] pr-[4.5dvw] rounded-full`}
       >
         <span className="flex-1">{ToastData.message || ""}</span>
         <button onClick={closeToast}>

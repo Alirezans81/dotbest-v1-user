@@ -14,5 +14,9 @@ export default function api() {
     "forget-pass": `${url}api/forget-pass/`,
     "social-network": `${url}api/social-network/`,
     "salon-social-media": `${url}api/salon-social-media/`,
+    "best-salons": `${url}api/best/salon/`,
+    order: `${url}api/order/`,
+    "ticket-category": `${url}api/ticket-category/`,
+    ticket: `${url}api/ticket/`,
   };
 }

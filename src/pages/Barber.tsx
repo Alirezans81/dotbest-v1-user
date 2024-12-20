@@ -9,8 +9,9 @@ import Button from "../components/Button";
 import Arrow from "../images/common/arrow.svg";
 import BarberCard from "../components/BarberCard";
 import Comment from "../components/Comment";
-import { useOpenModal } from "../hooks/Modal";
+import { useOpenModal } from "../hooks/popups";
 import ReserveModal from "../components/modals/ReserveModal";
+import { defaultBarber } from "../lib/salon";
 
 export default function Barber() {
   const navigate = useNavigate();
@@ -115,7 +116,11 @@ export default function Barber() {
           <span className="text-[6dvw]">نظرات</span>
           <div className="w-full flex flex-col gap-[2dvh]">
             <div className="w-full flex flex-col">
-              <BarberCard orientation="row" type="comment" />
+              <BarberCard
+                data={defaultBarber}
+                orientation="row"
+                type="comment"
+              />
               <Comment className="border-t-0 rounded-t-none" />
             </div>
             <Button label="بیشتر" type="button" onClick={() => {}} />

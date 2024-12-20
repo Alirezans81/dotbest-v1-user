@@ -1,6 +1,9 @@
+import { Dispatch, useState } from "react";
+import { useGetUserData } from "../api/auth/hooks";
 import { CommonUser, defaultUser } from "../lib/common";
 import { useLoggedInSetState } from "../providers/LoggedInProvider";
 import { useUserSetState } from "../providers/UserProvider";
+import { useOpenToast } from "./popups";
 
 //----------------------------------- Token
 const saveToken = (token: string) => {
@@ -26,22 +29,52 @@ const useRemoveToken = () => {
 
 const checkLoggedIn = (
   setLoggedIn: (value: boolean) => void,
-  setUser: (value: CommonUser) => void
+  getUserData: ({
+    user_url,
+    setUser,
+    customFunction,
+    onError,
+  }: {
+    user_url: string;
+    setUser: (data: CommonUser) => void;
+    customFunction?: (data: any) => void;
+    onError?: (error: any, data: string) => void;
+  }) => void,
+  setUser: (value: CommonUser) => void,
+  setLoaded: Dispatch<React.SetStateAction<boolean>>,
+  openToast: (message: string) => void
 ) => {
   const user = window.localStorage.getItem("user");
 
   if (user) {
-    setLoggedIn(true);
-    setUser(JSON.parse(user));
+    const parsedUser: CommonUser = JSON.parse(user);
+    getUserData({
+      user_url: parsedUser.url,
+      setUser,
+      customFunction() {
+        setLoaded(true);
+        setLoggedIn(true);
+      },
+      onError(error) {
+        openToast(error.message);
+      },
+    });
     return true;
   }
   return false;
 };
 const useCheckLoggedIn = () => {
+  const [loaded, setLoaded] = useState(false);
   const setLoggedIn = useLoggedInSetState();
+  const getUserData = useGetUserData();
   const setUser = useUserSetState();
+  const openToast = useOpenToast();
 
-  return () => checkLoggedIn(setLoggedIn, setUser);
+  return {
+    checkLoggedIn: () =>
+      checkLoggedIn(setLoggedIn, getUserData, setUser, setLoaded, openToast),
+    loaded,
+  };
 };
 
 const logout = (

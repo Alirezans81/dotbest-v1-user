@@ -107,5 +107,67 @@ const defaultReservation: Reservation = {
   cancel_description: "",
 };
 
-export type { CommonUser, Category, Reservation };
-export { defaultUser, defaultCategory, defaultReservation };
+type TicketCategory = {
+  url: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  title: string;
+};
+const defaultTicketCategory: TicketCategory = {
+  url: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  title: "",
+};
+
+type Ticket = {
+  url: string;
+  user: string;
+  category: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  title: string;
+  status: string;
+};
+const defaultTicket: Ticket = {
+  url: "",
+  user: "",
+  category: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  title: "",
+  status: "",
+};
+
+export type { CommonUser, Category, Reservation, TicketCategory, Ticket };
+export {
+  defaultUser,
+  defaultCategory,
+  defaultReservation,
+  defaultTicketCategory,
+  defaultTicket,
+};

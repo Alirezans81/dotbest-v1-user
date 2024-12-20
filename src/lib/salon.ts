@@ -1,6 +1,8 @@
 type Salon = {
   url: string;
   manager: string;
+  categories: string[];
+  rate: number;
   poster_url: string;
   rental_contract_url: string;
   business_license_url: string;
@@ -24,6 +26,8 @@ type Salon = {
 const defaultSalon: Salon = {
   url: "",
   manager: "",
+  categories: [],
+  rate: 0,
   poster_url: "",
   rental_contract_url: "",
   business_license_url: "",
@@ -34,12 +38,12 @@ const defaultSalon: Salon = {
   description: "",
   slug: "",
   datetime_create: "",
-  is_active: true,
-  show_order: 1,
+  is_active: false,
+  show_order: 0,
   name: "",
   phone: "",
   national_card_code: "",
-  is_verified: true,
+  is_verified: false,
   datetime_verify: "",
   summery: "",
   address: "",
@@ -121,5 +125,5 @@ const defaultBarber: Barber = {
   working_time_end: "",
 };
 
-export type { Salon,  Service, Barber, WeekDay };
+export type { Salon, Service, Barber, WeekDay };
 export { defaultSalon, defaultService, defaultBarber };

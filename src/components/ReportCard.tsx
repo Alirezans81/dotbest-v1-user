@@ -2,7 +2,8 @@ import BarberCard from "./BarberCard";
 
 import Comment from "../images/Reports/comment.svg";
 import CommentModal from "./modals/CommentModal";
-import { useOpenModal } from "../hooks/Modal";
+import { useOpenModal } from "../hooks/popups";
+import { defaultBarber } from "../lib/salon";
 
 export default function ReportCard() {
   const openModal = useOpenModal();
@@ -10,7 +11,7 @@ export default function ReportCard() {
 
   return (
     <div className="flex flex-col">
-      <BarberCard orientation="row" type="comment" />
+      <BarberCard data={defaultBarber} orientation="row" type="comment" />
       <div
         className={`w-full border-x border-b border-gray_001 dark:border-gray_003 rounded-b-[6dvw] px-[5dvw] pt-[3.5dvw] pb-[4.5dvw] flex flex-col gap-[5dvw]`}
       >

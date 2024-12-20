@@ -1,75 +1,152 @@
-import { useNavigate } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { defaultBarber, Salon } from "../lib/salon";
+import { useLocation, useNavigate } from "react-router-dom";
 import BarberCard from "../components/BarberCard";
 import Button from "../components/Button";
-import Carousel from "../components/Carousel";
 import Comment from "../components/Comment";
 import NavigationLayout from "../components/NavigationLayout";
 import Service from "../components/Service";
 
-import Temp1 from "../images/Login/image1.png";
-import Temp2 from "../images/Login/image2.png";
-import Temp3 from "../images/Login/image3.png";
+import Pin from "../images/common/pin.svg";
+import { useEffect, useState } from "react";
+import Skeleton from "../components/Skeleton";
+import { useGetSalonData } from "../api/salon/hooks";
+import { Category } from "../lib/common";
+import { useGetCategoriesByUrlArray } from "../hooks/filters";
+import { useOpenToast } from "../hooks/popups";
 
-export default function Salon() {
+export default function SalonPage() {
+  const { pathname } = useLocation();
+
+  const [salon, setSalon] = useState<Salon | null>(null);
+  const [salonCategories, setSalonCategories] = useState<Category[]>([]);
+
+  const openToast = useOpenToast();
+
+  const getSalonData = useGetSalonData();
+  const getCategoriesByUrlArray = useGetCategoriesByUrlArray();
+  useEffect(() => {
+    const url_array = pathname.split("/");
+    const salon_slug = url_array[url_array.length - 1];
+    getSalonData({
+      salon_slug,
+      setSalon,
+      customFunction(data) {
+        setSalonCategories(getCategoriesByUrlArray(data.categories));
+      },
+      onError(error) {
+        openToast(error.message);
+      },
+    });
+  }, []);
+
   const navigate = useNavigate();
-  const navigateToBarbers = () => {
-    navigate("/salon/1/barbers");
-  };
+  const navigateToBarbers = (category_slug: string) =>
+    navigate(`barbers/?category=${category_slug}`);
+
+  const [posterLoaded, setPosterLoaded] = useState(false);
 
   return (
-    <NavigationLayout label="سالن ماهتیسا درویشی">
+    <NavigationLayout label={salon ? "سالن " + salon.name : "در حال بارگزاری"}>
       <div className="w-full h-full flex flex-col gap-[4dvh]">
-        <Carousel>
-          <div className="w-full relative rounded-[6dvw] overflow-hidden">
-            <img alt="" className="w-full" src={Temp1} />
-            <div className="absolute w-full h-full"></div>
+        {salon ? (
+          salon.poster_url && (
+            <>
+              <div className="w-full relative rounded-[6dvw] overflow-hidden">
+                <img
+                  alt="پوستر آرایشگاه"
+                  onLoad={() => setPosterLoaded(true)}
+                  className={`w-full h-[60dvw] object-cover ${
+                    posterLoaded ? "block" : "hidden"
+                  }`}
+                  src={salon.poster_url}
+                />
+              </div>
+              <Skeleton
+                className={`w-full h-[53dvw] ${
+                  posterLoaded ? "hidden" : "block"
+                }`}
+              />
+            </>
+          )
+        ) : (
+          <Skeleton className={`w-full h-[53dvw]`} />
+        )}
+        <div className="w-full flex flex-col gap-[2dvw] -mb-[1dvh]">
+          <div className="flex flex-col">
+            {salon ? (
+              <>
+                <h2 className="text-[8dvw]">خوش اومدید!</h2>
+                <span className="text-gray_002">{salon.summery}</span>
+              </>
+            ) : (
+              <div className="flex flex-col gap-[4dvw]">
+                <Skeleton className="w-[50dvw] h-[10dvw]" />
+                <div className="flex flex-col gap-[3dvw]">
+                  <Skeleton className="w-full h-[5dvw]" />
+                  <Skeleton className="w-full h-[5dvw]" />
+                  <Skeleton className="w-full h-[5dvw]" />
+                  <Skeleton className="w-full h-[5dvw]" />
+                </div>
+              </div>
+            )}
           </div>
-          <div className="w-full relative rounded-[6dvw] overflow-hidden">
-            <img alt="" className="w-full" src={Temp2} />
-            <div className="absolute w-full h-full"></div>
+          <div>
+            {salon ? (
+              <>
+                <img
+                  alt="لوکیشن"
+                  className="w-[6dvw] h-[6dvw] -mt-[1dvw] inline ml-[1dvw]"
+                  src={Pin}
+                />
+                <span className="text-[5dvw]">{salon.address}</span>
+              </>
+            ) : (
+              <Skeleton />
+            )}
           </div>
-          <div className="w-full relative rounded-[6dvw] overflow-hidden">
-            <img alt="" className="w-full" src={Temp3} />
-            <div className="absolute w-full h-full"></div>
-          </div>
-        </Carousel>
-        <div className="w-full flex flex-col -mb-[1dvh]">
-          <h2 className="text-[8dvw]">خوش اومدید!</h2>
-          <span className="text-gray_002">
-            به شادترین سالن دنیا خوش آمدید. امیدواریم برداشت شما از سالن ما عالی
-            باشد.
-          </span>
         </div>
         <div className="w-full flex flex-col gap-[3dvw]">
           <span className="text-[6dvw]">خدمات</span>
           <div className="flex flex-col gap-[1.5dvh]">
-            <Service
-              label="مو"
-              onClick={navigateToBarbers}
-              desc={{
-                value: "تخفیف",
-                theme: "primary",
-              }}
-            />
-            <Service label="فیشیال" onClick={navigateToBarbers} />
-            <Service
-              label="ناخن"
-              onClick={navigateToBarbers}
-              desc={{
-                value: "جدید",
-                theme: "gray",
-              }}
-            />
+            {salon ? (
+              salonCategories.map((category, i) => (
+                <Service
+                  key={i}
+                  label={category.title}
+                  onClick={() => navigateToBarbers(category.slug)}
+                />
+              ))
+            ) : (
+              <>
+                <Skeleton className="w-full h-[14.5dvw] !rounded-[5dvw]" />
+                <Skeleton className="w-full h-[14.5dvw] !rounded-[5dvw]" />
+                <Skeleton className="w-full h-[14.5dvw] !rounded-[5dvw]" />
+              </>
+            )}
           </div>
         </div>
         <div className="w-full flex flex-col gap-[3dvw]">
           <span className="text-[6dvw]">نظرات</span>
           <div className="w-full flex flex-col gap-[2dvh]">
-            <div className="w-full flex flex-col">
-              <BarberCard orientation="row" type="comment" />
-              <Comment className="border-t-0 rounded-t-none" />
-            </div>
-            <Button label="بیشتر" type="button" onClick={() => {}} />
+            {salon ? (
+              <>
+                <div className="w-full flex flex-col">
+                  <BarberCard
+                    data={defaultBarber}
+                    orientation="row"
+                    type="comment"
+                  />
+                  <Comment className="border-t-0 rounded-t-none" />
+                </div>
+                <Button label="بیشتر" type="button" onClick={() => {}} />
+              </>
+            ) : (
+              <>
+                <Skeleton className="w-full h-[98dvw]" />
+                <Skeleton className="w-full h-[14dvw] !rounded-full" />
+              </>
+            )}
           </div>
         </div>
       </div>

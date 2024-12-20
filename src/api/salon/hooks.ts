@@ -1,24 +1,74 @@
-import { Category, Ticket, TicketCategory } from "../../lib/common";
-import { useUserState } from "../../providers/UserProvider";
 import {
-  createTicket,
-  deleteItem,
-  getCategories,
-  getTicketCatgories,
+  getBestSalons,
+  getSalonBarbers,
+  getSalonData,
+  getSalons,
 } from "./apis";
+import { Barber, Salon } from "../../lib/salon";
 
-const useDeleteItem = () => {
+const useGetSalons = () => {
   const fetch = async ({
-    url,
+    setSalons,
     customFunction,
     onError,
   }: {
-    url: string;
-    customFunction?: (data: any) => void;
+    setSalons: (value: Salon[]) => void;
+    customFunction?: (data: Salon[]) => void;
     onError?: (error: any) => void;
   }) => {
-    deleteItem(url)
+    getSalons()
       .then((res: any) => {
+        setSalons(res.data.results);
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error);
+      });
+  };
+
+  return fetch;
+};
+
+const useGetBestSalons = () => {
+  const fetch = async ({
+    setBestSalons,
+    customFunction,
+    onError,
+  }: {
+    setBestSalons: (value: Salon[]) => void;
+    customFunction?: (data: Salon[]) => void;
+    onError?: (error: any) => void;
+  }) => {
+    await getBestSalons()
+      .then((res: any) => {
+        setBestSalons(res.data.results);
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error);
+      });
+  };
+
+  return fetch;
+};
+
+const useGetSalonData = () => {
+  const fetch = async ({
+    salon_slug,
+    setSalon,
+    customFunction,
+    onError,
+  }: {
+    salon_slug: string;
+    setSalon: (value: Salon) => void;
+    customFunction?: (data: Salon) => void;
+    onError?: (error: any) => void;
+  }) => {
+    await getSalonData(salon_slug)
+      .then((res: any) => {
+        setSalon(res.data);
         customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
@@ -30,19 +80,21 @@ const useDeleteItem = () => {
   return fetch;
 };
 
-const useGetCategories = () => {
+const useGetSalonBarbers = () => {
   const fetch = async ({
-    setCategories,
+    salon_slug,
+    setBarbers,
     customFunction,
     onError,
   }: {
-    setCategories: (value: Category[]) => void;
-    customFunction?: (data: Category[]) => void;
+    salon_slug: string;
+    setBarbers: (value: Barber[]) => void;
+    customFunction?: (data: Barber[]) => void;
     onError?: (error: any) => void;
   }) => {
-    getCategories()
+    await getSalonBarbers(salon_slug)
       .then((res: any) => {
-        setCategories(res.data.results);
+        setBarbers(res.data.results);
         customFunction && customFunction(res.data.results);
       })
       .catch((error: any) => {
@@ -54,58 +106,4 @@ const useGetCategories = () => {
   return fetch;
 };
 
-const useGetTicketCategories = () => {
-  const fetch = async ({
-    setTicketCategories,
-    customFunction,
-    onError,
-  }: {
-    setTicketCategories: (value: TicketCategory[]) => void;
-    customFunction?: (data: TicketCategory[]) => void;
-    onError?: (error: any) => void;
-  }) => {
-    getTicketCatgories()
-      .then((res: any) => {
-        setTicketCategories(res.data.results);
-        customFunction && customFunction(res.data.results);
-      })
-      .catch((error: any) => {
-        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        onError && onError(error);
-      });
-  };
-
-  return fetch;
-};
-
-const useCreateTicket = () => {
-  const user = useUserState();
-
-  const fetch = async ({
-    params,
-    customFunction,
-    onError,
-  }: {
-    params: Ticket;
-    customFunction?: (data: Ticket) => void;
-    onError?: (error: any) => void;
-  }) => {
-    createTicket(user.url, params)
-      .then((res: any) => {
-        customFunction && customFunction(res.data.results);
-      })
-      .catch((error: any) => {
-        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        onError && onError(error);
-      });
-  };
-
-  return fetch;
-};
-
-export {
-  useDeleteItem,
-  useGetCategories,
-  useGetTicketCategories,
-  useCreateTicket,
-};
+export { useGetSalons, useGetBestSalons, useGetSalonData, useGetSalonBarbers };

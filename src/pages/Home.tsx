@@ -1,14 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { Salon } from "../lib/salon";
 import Carousel from "../components/Carousel";
 import BarberCard from "../components/BarberCard";
 import CategoryComponent from "../components/Category";
 import { useCategoriesState } from "../providers/CategoriesProvider";
+import Skeleton from "../components/Skeleton";
 
 import Temp from "../images/Home/temp.png";
 
 import Pin from "../images/common/pin.svg";
+import { useGetBestSalons } from "../api/salon/hooks";
+import SalonCard from "../components/SalonCard";
+import { useOpenToast } from "../hooks/popups";
 
 export default function Home() {
   const categories = useCategoriesState();
+
+  const [bestSalons, setBestSalons] = useState<Salon[]>([]);
+  const getBestSalons = useGetBestSalons();
+
+  const [nearestSalons, setNearestSalon] = useState<Salon[]>([]);
+  const [cheapestSalons, setCheapestSalon] = useState<Salon[]>([]);
+
+  const openToast = useOpenToast();
+
+  useEffect(() => {
+    getBestSalons({
+      setBestSalons,
+      onError(error) {
+        openToast(error.message);
+      },
+    });
+  }, []);
 
   return (
     <div className="w-full h-full overflow-y-auto flex flex-col gap-[2dvw] px-[5dvw] py-[4dvw]">
@@ -40,22 +64,26 @@ export default function Home() {
         </button>
         <div className="w-full flex flex-col gap-[2dvw]">
           <span className="text-[8dvw]">حرفه ای ترین ها</span>
-          <div className="flex gap-[4dvw] overflow-x-auto">
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
+          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
+            {bestSalons.length ? (
+              bestSalons.map((salon, i) => (
+                <div key={i} className="w-[70dvw]">
+                  <SalonCard data={salon} className="w-[70dvw]" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+              </>
+            )}
           </div>
         </div>
-        <div className="w-full flex flex-col gap-[2dvw]">
+        <div className="w-full flex flex-col gap-[2dvw] -mt-[3dvw]">
           <div className="w-full flex justify-between items-center">
             <span className="text-[8dvw]">نزدیک ترین ها</span>
             <button className="flex items-center gap-[1dvw]">
@@ -63,36 +91,44 @@ export default function Home() {
               <span className="text-primary">مشهد، هاشمیه</span>
             </button>
           </div>
-          <div className="flex gap-[4dvw] overflow-x-auto">
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
+          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
+            {bestSalons.length ? (
+              bestSalons.map((salon, i) => (
+                <div key={i} className="w-[70dvw]">
+                  <SalonCard data={salon} className="w-[70dvw]" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+              </>
+            )}
           </div>
         </div>
-        <div className="flex flex-col gap-[2dvw]">
+        <div className="w-full flex flex-col gap-[2dvw] -mt-[3dvw]">
           <span className="text-[8dvw]">منصف ترین ها</span>
-          <div className="flex gap-[4dvw] overflow-x-auto">
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
-            <div className="!w-[45dvw]">
-              <BarberCard className="!w-[45dvw]" />
-            </div>
+          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
+            {bestSalons.length ? (
+              bestSalons.map((salon, i) => (
+                <div key={i} className="w-[70dvw]">
+                  <SalonCard data={salon} className="w-[70dvw]" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+                <div>
+                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

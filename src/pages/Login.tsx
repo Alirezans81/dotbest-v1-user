@@ -5,7 +5,7 @@ import Step2 from "./Login/Step2";
 import { UserInitParams } from "../lib/user";
 
 export default function Login() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const nextStep = () => {
     setStep((prev) => prev + 1);
   };

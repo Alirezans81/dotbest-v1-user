@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import Dropdown from "../../components/Dropdown";
 import { useSendCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
+import { useOpenToast } from "../../hooks/popups";
 
 interface Props {
   nextStep: () => void;
@@ -131,6 +132,8 @@ export default function Step1({
     "اسفند",
   ];
 
+  const openToast = useOpenToast();
+
   const sendCode = useSendCode();
 
   return (
@@ -161,6 +164,9 @@ export default function Step1({
                   } else {
                     nextStep();
                   }
+                },
+                onError(error) {
+                  openToast(error.message);
                 },
               });
             }

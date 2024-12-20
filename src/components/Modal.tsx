@@ -36,7 +36,7 @@ export default function Modal() {
         <div
           className={`w-full z-50 bg-white dark:bg-black ${
             canClose ? "pt-[3dvw]" : "pt-[5dvw]"
-          } z-50 pb-[6.5dvw] px-[5dvw] border-x border-t border-gray_001 dark:border-gray_004 rounded-t-[7dvw] transition-all duration-300 ${
+          } z-50 pb-[7dvw] px-[4dvw] border-x border-t border-gray_001 dark:border-gray_004 rounded-t-[7dvw] transition-all duration-300 ${
             isOpen ? "translate-y-0 h-auto" : "translate-y-[100%] !p-0"
           }`}
         >
@@ -45,9 +45,7 @@ export default function Modal() {
               <div className="w-[45%] h-[1.25dvw] bg-gray_001 dark:bg-gray_004 rounded-full" />
             </div>
           )}
-          <div className="w-full max-h-[75dvh] overflow-y-auto -scroll-mr-[4dvw]">
-            {children}
-          </div>
+          <div className="w-full max-h-[75dvh] overflow-y-auto px-[1dvw]">{children}</div>
         </div>
       </div>
     </div>

@@ -33,4 +33,8 @@ const create = ({ phone, first_name, last_name, salon_name }: CreateParams) => {
   return axios.post(api["create"], formData);
 };
 
-export { sendCode, verifyCode, create };
+const getUserData = (user_url: string) => {
+  return axios.get(user_url);
+};
+
+export { sendCode, verifyCode, create, getUserData };

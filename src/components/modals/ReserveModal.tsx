@@ -3,6 +3,7 @@ import BarberCard from "../BarberCard";
 import { Formik } from "formik";
 import Button from "../Button";
 import { useState } from "react";
+import { defaultBarber } from "../../lib/salon";
 
 interface TimeElementProps {
   onClick: () => void;
@@ -35,6 +36,7 @@ export default function ReserveModal() {
         <div className="w-full flex flex-col gap-[6dvw]">
           <div className="w-full flex flex-col gap-[4dvw]">
             <BarberCard
+              data={defaultBarber}
               orientation="row"
               className="border border-gray_001 dark:border-gray_004"
             />

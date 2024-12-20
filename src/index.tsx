@@ -8,6 +8,7 @@ import { CategoriesProvider } from "./providers/CategoriesProvider";
 import { ToastProvider } from "./providers/ToastProvider";
 import { UserProvider } from "./providers/UserProvider";
 import { ShowSplashScreenProvider } from "./providers/ShowSplashScreen";
+import { LoadingProvider } from "./providers/LoadingProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -15,15 +16,17 @@ const root = ReactDOM.createRoot(
 root.render(
   <ShowSplashScreenProvider>
     <LoggedInProvider>
-      <ModalProvider>
-        <ToastProvider>
-          <UserProvider>
-            <CategoriesProvider>
-              <App />
-            </CategoriesProvider>
-          </UserProvider>
-        </ToastProvider>
-      </ModalProvider>
+      <LoadingProvider>
+        <ModalProvider>
+          <ToastProvider>
+            <UserProvider>
+              <CategoriesProvider>
+                <App />
+              </CategoriesProvider>
+            </UserProvider>
+          </ToastProvider>
+        </ModalProvider>
+      </LoadingProvider>
     </LoggedInProvider>
   </ShowSplashScreenProvider>
 );

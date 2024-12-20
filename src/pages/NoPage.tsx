@@ -1,3 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 export default function NoPage() {
-  return <div>NoPage</div>;
+  const navigate = useNavigate();
+  const navigateToHome = () => navigate("/");
+  useEffect(() => navigateToHome(), []);
+
+  return <></>;
 }

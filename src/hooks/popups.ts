@@ -4,6 +4,10 @@ import {
   ModalDataType,
   useModalDataSetState,
 } from "../providers/ModalProvider";
+import {
+  ToastDataSetStateType,
+  useToastDataSetState,
+} from "../providers/ToastProvider";
 
 const openModal = ({
   setModalData,
@@ -37,4 +41,16 @@ const useOpenModal = () => {
     openModal({ setModalData, modal, options });
 };
 
-export { useOpenModal };
+const openToast = (setToastData: ToastDataSetStateType, message: string) => {
+  setToastData({
+    isOpen: true,
+    message,
+  });
+};
+const useOpenToast = () => {
+  const setToastData = useToastDataSetState();
+
+  return (message: string) => openToast(setToastData, message);
+};
+
+export { useOpenModal, useOpenToast };
