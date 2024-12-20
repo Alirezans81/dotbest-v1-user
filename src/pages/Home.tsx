@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Salon } from "../lib/salon";
 import Carousel from "../components/Carousel";
-import BarberCard from "../components/BarberCard";
 import CategoryComponent from "../components/Category";
 import { useCategoriesState } from "../providers/CategoriesProvider";
 import Skeleton from "../components/Skeleton";
