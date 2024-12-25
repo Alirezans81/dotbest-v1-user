@@ -28,13 +28,47 @@ const getSalonData = (salon_slug: string) => {
   return axios.get(api["salon"] + salon_slug + "/");
 };
 
-const getSalonBarbers = (salon_slug: string) => {
+const getSalonBarbersByCategory = (
+  salon_slug: string,
+  category_slug: string
+) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["barber"],
-    query: { is_active: true, is_deleted: false, salon: salon_slug },
+    query: {
+      is_active: true,
+      is_deleted: false,
+      salon: salon_slug,
+      skill_category: category_slug,
+    },
   });
 
   return axios.get(urlWithQueries);
 };
 
-export { getSalons, getBestSalons, getSalonData, getSalonBarbers };
+const getBarberData = (barber_slug: string) => {
+  return axios.get(api["barber"] + barber_slug + "/");
+};
+
+const getBarberGallery = (barber_slug: string) => {
+  const urlWithQueries = queryString.stringifyUrl({
+    url: api["barber-gallery"],
+    query: {
+      is_active: true,
+      is_deleted: false,
+      barber: barber_slug,
+    },
+  });
+
+  return axios.get(urlWithQueries, {
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export {
+  getSalons,
+  getBestSalons,
+  getSalonData,
+  getSalonBarbersByCategory,
+  getBarberData,
+  getBarberGallery,
+};

@@ -24,6 +24,15 @@ export default function Home() {
 
   const openToast = useOpenToast();
 
+  const getUserLocation = async () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+      },
+      (err) => console.log(err)
+    );
+  };
+
   useEffect(() => {
     getBestSalons({
       setBestSalons,
@@ -31,6 +40,8 @@ export default function Home() {
         openToast(error.message);
       },
     });
+
+    getUserLocation();
   }, []);
 
   return (
@@ -110,7 +121,7 @@ export default function Home() {
           </div>
         </div>
         <div className="w-full flex flex-col gap-[2dvw] -mt-[3dvw]">
-          <span className="text-[8dvw]">منصف ترین ها</span>
+          <span className="text-[8dvw]">به صرفه ترین ها</span>
           <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
             {bestSalons.length ? (
               bestSalons.map((salon, i) => (

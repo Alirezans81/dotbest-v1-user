@@ -22,7 +22,7 @@ export default function BarberCard({
 }: Props) {
   const navigate = useNavigate();
   const navigateToReserve = () => {
-    navigate("/salon/1/barbers/1");
+    navigate(data.slug + "/");
   };
 
   const [isFavorited, setIsFavorite] = useState(false);
@@ -77,13 +77,13 @@ export default function BarberCard({
         <div className="w-full flex flex-col items-center gap-[1dvh]">
           <div className="w-full flex flex-col items-center">
             <span className="text-[6dvw] text-black dark:text-white">
-              آرایشگاه سوگل
+              {data.salon_name}
             </span>
             <div
               className={`w-full flex justify-between items-center px-[1.5dvw]`}
             >
               <div className="flex gap-[0.75dvw] items-center">
-                <span className="text-gray_002">4.2</span>
+                <span className="text-gray_002">{data.rate}</span>
                 <img
                   alt="ستاره"
                   className="w-[4dvw] h-[4dvw] -mt-[1dvw]"
@@ -91,9 +91,9 @@ export default function BarberCard({
                 />
               </div>
               <div className="w-[1.5px] rounded-full h-[5dvw] bg-gray_001 dark:bg-gray_004 mb-[1dvw]" />
-              <span className="text-gray_002">1,343 نظر</span>
+              <span className="text-gray_002">{data.comment_quantity} نظر</span>
             </div>
-            <span className="text-black dark:text-white">سوگول احمدی</span>
+            <span className="text-black dark:text-white">{data.nick_name}</span>
           </div>
           <Button
             label="رزرو"

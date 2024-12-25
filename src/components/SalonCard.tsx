@@ -12,7 +12,7 @@ interface Props {
 }
 export default function SalonCard({ data, className }: Props) {
   const navigate = useNavigate();
-  const navigateToSalon = () => navigate("/salon/" + data.slug);
+  const navigateToSalon = () => navigate("/salon/" + data.slug + "/");
 
   return (
     <div
@@ -46,9 +46,9 @@ export default function SalonCard({ data, className }: Props) {
           />
         </div>
         <div className="w-full flex justify-between items-end">
-          <span className="text-gray_001">1,343 نظر</span>
+          <span className="text-gray_001">{data.comment_quantity} نظر</span>
           <div className="flex gap-[0.75dvw] items-center">
-            <span>4.2</span>
+            <span>{data.rate}</span>
             <img
               alt="ستاره"
               className="w-[4dvw] h-[4dvw] -mt-[1dvw]"

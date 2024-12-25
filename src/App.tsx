@@ -25,6 +25,7 @@ import {
 import { useGetCategories } from "./api/common/hooks";
 import Loading from "./components/Loading";
 import { useOpenToast } from "./hooks/popups";
+import GalleryView from "./components/GalleryView";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -72,13 +73,14 @@ function App() {
     }
   }
 
-  if (showSplashSceen) {
-    return <SplashScreen />;
-  } else {
-    if (detectDeviceIsPhone()) {
+  if (detectDeviceIsPhone()) {
+    if (showSplashSceen) {
+      return <SplashScreen />;
+    } else {
       if (loggedIn) {
         return (
           <>
+            {/* <GalleryView /> */}
             <Loading />
             <BrowserRouter>
               <Routes>
@@ -113,28 +115,28 @@ function App() {
           </div>
         );
       }
-    } else {
-      return (
-        <div className="w-screen h-[100dvh] flex justify-center items-center px-[2rem]">
-          <div className="flex flex-col items-center gap-[.5rem]">
-            <div className="w-full flex flex-row-reverse justify-center items-center gap-[2rem]">
-              <span
-                dir="ltr"
-                className="font-sans text-[3rem] text-primary font-bold"
-              >
-                .Best
-              </span>
-              <div className="w-[1.5px] rounded-full h-[4rem] bg-gray_001 dark:bg-gray_004 -mt-[.75rem]" />
-              <span className="text-[3rem]">بهترین زیبایی ها</span>
-            </div>
-            <span className="text-[1.75rem] text-gray_001 text-center">
-              برای استفاده از این اپلیکیشن می‌بایست تنها از تلفن همراه و یا تبلت
-              خود استفاده کنید!
-            </span>
-          </div>
-        </div>
-      );
     }
+  } else {
+    return (
+      <div className="w-screen h-[100dvh] flex justify-center items-center px-[2rem]">
+        <div className="flex flex-col items-center gap-[.5rem]">
+          <div className="w-full flex flex-row-reverse justify-center items-center gap-[2rem]">
+            <span
+              dir="ltr"
+              className="font-sans text-[3rem] text-primary font-bold"
+            >
+              .Best
+            </span>
+            <div className="w-[1.5px] rounded-full h-[4rem] bg-gray_001 dark:bg-gray_004 -mt-[.75rem]" />
+            <span className="text-[3rem]">بهترین زیبایی ها</span>
+          </div>
+          <span className="text-[1.75rem] text-gray_001 text-center">
+            برای استفاده از این اپلیکیشن می‌بایست تنها از تلفن همراه و یا تبلت
+            خود استفاده کنید!
+          </span>
+        </div>
+      </div>
+    );
   }
 }
 

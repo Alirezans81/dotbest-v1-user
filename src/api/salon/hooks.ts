@@ -1,10 +1,12 @@
 import {
+  getBarberData,
+  getBarberGallery,
   getBestSalons,
-  getSalonBarbers,
+  getSalonBarbersByCategory,
   getSalonData,
   getSalons,
 } from "./apis";
-import { Barber, Salon } from "../../lib/salon";
+import { Barber, Photo, Salon } from "../../lib/salon";
 
 const useGetSalons = () => {
   const fetch = async ({
@@ -80,19 +82,21 @@ const useGetSalonData = () => {
   return fetch;
 };
 
-const useGetSalonBarbers = () => {
+const useGetSalonBarbersByCategory = () => {
   const fetch = async ({
     salon_slug,
+    category_slug,
     setBarbers,
     customFunction,
     onError,
   }: {
     salon_slug: string;
+    category_slug: string;
     setBarbers: (value: Barber[]) => void;
     customFunction?: (data: Barber[]) => void;
     onError?: (error: any) => void;
   }) => {
-    await getSalonBarbers(salon_slug)
+    await getSalonBarbersByCategory(salon_slug, category_slug)
       .then((res: any) => {
         setBarbers(res.data.results);
         customFunction && customFunction(res.data.results);
@@ -106,4 +110,63 @@ const useGetSalonBarbers = () => {
   return fetch;
 };
 
-export { useGetSalons, useGetBestSalons, useGetSalonData, useGetSalonBarbers };
+const useGetBarberData = () => {
+  const fetch = async ({
+    barber_slug,
+    setBarber,
+    customFunction,
+    onError,
+  }: {
+    barber_slug: string;
+    setBarber: (value: Barber) => void;
+    customFunction?: (data: Barber) => void;
+    onError?: (error: any) => void;
+  }) => {
+    await getBarberData(barber_slug)
+      .then((res: any) => {
+        setBarber(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error);
+      });
+  };
+
+  return fetch;
+};
+
+const useGetBarberGallery = () => {
+  const fetch = async ({
+    barber_slug,
+    setGallery,
+    customFunction,
+    onError,
+  }: {
+    barber_slug: string;
+    setGallery: (value: Photo[]) => void;
+    customFunction?: (data: Photo[]) => void;
+    onError?: (error: any, barber_slug: string) => void;
+  }) => {
+    await getBarberGallery(barber_slug)
+      .then((res: any) => {
+        setGallery(res.data.results);
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error, barber_slug);
+      });
+  };
+
+  return fetch;
+};
+
+export {
+  useGetSalons,
+  useGetBestSalons,
+  useGetSalonData,
+  useGetSalonBarbersByCategory,
+  useGetBarberData,
+  useGetBarberGallery,
+};

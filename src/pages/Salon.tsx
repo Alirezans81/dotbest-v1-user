@@ -27,7 +27,7 @@ export default function SalonPage() {
   const getCategoriesByUrlArray = useGetCategoriesByUrlArray();
   useEffect(() => {
     const url_array = pathname.split("/");
-    const salon_slug = url_array[url_array.length - 1];
+    const salon_slug = url_array[url_array.length - 2];
     getSalonData({
       salon_slug,
       setSalon,

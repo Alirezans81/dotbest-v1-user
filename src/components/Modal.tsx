@@ -3,6 +3,7 @@ import {
   useModalDataClose,
   useModalDataState,
 } from "../providers/ModalProvider";
+import { useState } from "react";
 
 export default function Modal() {
   const closeModal = useModalDataClose();
@@ -21,6 +22,8 @@ export default function Modal() {
     onSwipedDown: closeModal,
     ...config,
   });
+
+  const [divHeight, setDivHeight] = useState("77dvh");
 
   return (
     <div
@@ -45,7 +48,17 @@ export default function Modal() {
               <div className="w-[45%] h-[1.25dvw] bg-gray_001 dark:bg-gray_004 rounded-full" />
             </div>
           )}
-          <div className="w-full max-h-[75dvh] overflow-y-auto px-[1dvw]">{children}</div>
+          <div
+            className="w-full transition-all duration-500 overflow-y-auto px-[1dvw]"
+            onScroll={(e) => {
+              e.currentTarget.scrollTop > 15
+                ? setDivHeight("97dvh")
+                : setDivHeight("77dvh");
+            }}
+            style={{ maxHeight: divHeight }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>

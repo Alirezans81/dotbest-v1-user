@@ -3,6 +3,7 @@ type Salon = {
   manager: string;
   categories: string[];
   rate: number;
+  comment_quantity: number;
   poster_url: string;
   rental_contract_url: string;
   business_license_url: string;
@@ -28,6 +29,7 @@ const defaultSalon: Salon = {
   manager: "",
   categories: [],
   rate: 0,
+  comment_quantity: 0,
   poster_url: "",
   rental_contract_url: "",
   business_license_url: "",
@@ -92,6 +94,9 @@ type Barber = {
   url: string;
   user: string;
   salon: string;
+  salon_name: string;
+  rate: number;
+  comment_quantity: number;
   poster_url: string;
   working_days: WeekDay[];
   datetime_update: string;
@@ -110,6 +115,9 @@ const defaultBarber: Barber = {
   url: "",
   user: "",
   salon: "",
+  salon_name: "",
+  rate: 0,
+  comment_quantity: 0,
   poster_url: "",
   working_days: [],
   datetime_update: "",
@@ -125,5 +133,40 @@ const defaultBarber: Barber = {
   working_time_end: "",
 };
 
-export type { Salon, Service, Barber, WeekDay };
-export { defaultSalon, defaultService, defaultBarber };
+type Photo = {
+  url: string;
+  barber: string;
+  order: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  image: string;
+  alt_name: string;
+  like: number;
+  dislike: number;
+};
+const defaultPhoto: Photo = {
+  url: "",
+  barber: "",
+  order: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  image: "",
+  alt_name: "",
+  like: 0,
+  dislike: 0,
+};
+
+export type { Salon, Service, Barber, WeekDay, Photo };
+export { defaultSalon, defaultService, defaultBarber, defaultPhoto };

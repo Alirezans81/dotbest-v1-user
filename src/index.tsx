@@ -9,6 +9,7 @@ import { ToastProvider } from "./providers/ToastProvider";
 import { UserProvider } from "./providers/UserProvider";
 import { ShowSplashScreenProvider } from "./providers/ShowSplashScreen";
 import { LoadingProvider } from "./providers/LoadingProvider";
+import { GalleryViewProvider } from "./providers/GalleryViewData";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,13 +19,15 @@ root.render(
     <LoggedInProvider>
       <LoadingProvider>
         <ModalProvider>
-          <ToastProvider>
-            <UserProvider>
-              <CategoriesProvider>
-                <App />
-              </CategoriesProvider>
-            </UserProvider>
-          </ToastProvider>
+          <GalleryViewProvider>
+            <ToastProvider>
+              <UserProvider>
+                <CategoriesProvider>
+                  <App />
+                </CategoriesProvider>
+              </UserProvider>
+            </ToastProvider>
+          </GalleryViewProvider>
         </ModalProvider>
       </LoadingProvider>
     </LoggedInProvider>

@@ -18,5 +18,6 @@ export default function api() {
     order: `${url}api/order/`,
     "ticket-category": `${url}api/ticket-category/`,
     ticket: `${url}api/ticket/`,
+    "barber-gallery": `${url}api/salon-barber-gallery/`,
   };
 }
