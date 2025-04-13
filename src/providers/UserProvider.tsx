@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { CommonUser, defaultUser } from "../lib/common";
+import { User, defaultUser } from "../lib/common";
 
-const UserState = createContext<CommonUser>(defaultUser);
-type UserSetStateType = (value: CommonUser) => void;
-const UserSetState = createContext<UserSetStateType>((value: CommonUser) => {});
+const UserState = createContext<User>(defaultUser);
+type UserSetStateType = (value: User) => void;
+const UserSetState = createContext<UserSetStateType>((value: User) => {});
 
 interface Props {
   children: React.ReactNode;

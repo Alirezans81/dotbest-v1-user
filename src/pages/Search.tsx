@@ -5,13 +5,13 @@ import FilterDark from "../images/common/filter-dark.svg";
 import MapLight from "../images/common/map-light.svg";
 import MapDark from "../images/common/map-dark.svg";
 import SearchIcon from "../images/common/search.svg";
-import SearchCard from "../components/SearchCard";
+import SearchBarberCard from "../components/SearchBarberCard";
 import SearchFilterModal from "../components/modals/SearchFilterModal";
 import { useNavigate } from "react-router-dom";
-import { useOpenModal, useOpenToast } from "../hooks/popups";
-import { useGetSalons } from "../api/salon/hooks";
+import { useOpenModal } from "../hooks/popups";
+import { useGetBarbers } from "../api/salon/hooks";
 import { useEffect, useState } from "react";
-import { Salon } from "../lib/salon";
+import { Barber } from "../lib/salon";
 import Skeleton from "../components/Skeleton";
 import EmptyListMessage from "../components/EmptyListMessage";
 
@@ -20,24 +20,37 @@ export default function Search() {
   const openSearchFilterModal = () => openModal(<SearchFilterModal />);
 
   const navigate = useNavigate();
-  const navigateToMap = () => {
-    navigate("/map");
-  };
+  const navigateToMap = () => navigate("/map");
 
-  const openToast = useOpenToast();
+  const [loading, setLoading] = useState(true);
 
-  const [salons, setSalons] = useState<Salon[]>([]);
-  const [salonsIsEmpty, setSalonsIsEmpty] = useState(false);
-  const getSalons = useGetSalons();
+  const [searchParam, setSearchParam] = useState("");
+
+  const [barbers, setBarbers] = useState<Barber[]>([]);
+  const getBarbers = useGetBarbers();
+
   useEffect(() => {
-    getSalons({
-      setSalons,
-      customFunction: (data) => !data.length && setSalonsIsEmpty(true),
-      onError(error) {
-        openToast(error.message);
+    setLoading(true);
+    getBarbers({
+      setBarbers,
+      onFinally() {
+        setLoading(false);
       },
     });
   }, []);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(true);
+      getBarbers({
+        setBarbers,
+        onFinally() {
+          setLoading(false);
+        },
+      });
+    }, 100);
+
+    return clearTimeout(timeout);
+  }, [searchParam]);
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
@@ -57,7 +70,13 @@ export default function Search() {
         <div className="flex-1 relative">
           <Input
             className="w-full"
-            attributes={{ placeholder: "نام سالن، آرایشگر..." }}
+            attributes={{
+              placeholder: "نام سالن، آرایشگر...",
+              value: searchParam,
+              onChange: (e) => {
+                setSearchParam(e.target.value);
+              },
+            }}
           />
           <button
             type="submit"
@@ -85,21 +104,22 @@ export default function Search() {
         </button>
       </div>
       <div className="flex flex-col gap-[2dvh]">
-        {!salonsIsEmpty ? (
-          salons.length ? (
-            salons.map((salon, i) => (
+        {!loading ? (
+          barbers.length ? (
+            barbers.map((barber) => (
               <>
-                <SearchCard key={i} />
+                <SearchBarberCard data={barber} key={barber.slug} />
               </>
             ))
           ) : (
-            <>
-              <Skeleton className="h-[72.25dvw]" />
-              <Skeleton className="h-[72.25dvw]" />
-            </>
+            <EmptyListMessage className="h-[73dvh]" />
           )
         ) : (
-          <EmptyListMessage className="h-[73dvh]" />
+          <>
+            <Skeleton className="h-[42.54dvw]" />
+            <Skeleton className="h-[42.54dvw]" />
+            <Skeleton className="h-[42.54dvw]" />
+          </>
         )}
       </div>
     </div>

@@ -6,51 +6,63 @@ import BackDark from "../images/common/back-dark.svg";
 import Star from "../images/common/star.svg";
 import Button from "../components/Button";
 import Arrow from "../images/common/arrow.svg";
-import BarberCard from "../components/BarberCard";
-import Comment from "../components/Comment";
+import CommentComponent from "../components/Comment";
 import { useOpenModal, useOpenToast } from "../hooks/popups";
 import ReserveModal from "../components/modals/ReserveModal";
-import { Barber, defaultBarber, Photo } from "../lib/salon";
-import { useGetBarberData, useGetBarberGallery } from "../api/salon/hooks";
+import { Barber, Comment, defaultBarber, Photo } from "../lib/salon";
+import {
+  useGetBarberComments,
+  useGetBarberData,
+  useGetBarberGallery,
+} from "../api/salon/hooks";
 import { useEffect, useState } from "react";
 import Skeleton from "../components/Skeleton";
-import {
-  defaultGalleryViewType,
-  GalleryViewType,
-  useGalleryViewSetState,
-} from "../providers/GalleryViewData";
-import GalleryView from "../components/GalleryView";
+import { useGalleryViewSetState } from "../providers/GalleryViewData";
 
 export default function BarberPage() {
   const { pathname } = useLocation();
+  const { state } = useLocation();
 
   const navigate = useNavigate();
-  const goBack = () => {
-    navigate(-1);
-  };
+  const goBack = () =>
+    state?.backlink ? navigate(state.backlink) : navigate(-1);
+  const navigateToComments = () => navigate("comments");
 
   const openModal = useOpenModal();
   const openReserveModal = () =>
     openModal(<ReserveModal data={barber || defaultBarber} />);
 
   const [barber, setBarber] = useState<Barber | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   const openToast = useOpenToast();
 
   const getBarberData = useGetBarberData();
+  const getBarberComments = useGetBarberComments();
+
   useEffect(() => {
     const url_array = pathname.split("/");
-    const barber_slug = url_array[url_array.length - 2];
+    const barber_slug = url_array[url_array.length - 1];
     getBarberData({
       barber_slug,
       setBarber,
+      customFunction() {
+        getBarberComments({
+          barber_slug,
+          filters: { limit: 1 },
+          setComments,
+          onError(error) {
+            openToast(error.message);
+          },
+        });
+      },
       onError(error) {
         openToast(error.message);
       },
     });
   }, []);
 
-  const [gallery, setGallery] = useState<any[]>(["1"]);
+  const [gallery, setGallery] = useState<Photo[]>([]);
   const getBarberGallery = useGetBarberGallery();
   useEffect(() => {
     if (barber) {
@@ -64,29 +76,24 @@ export default function BarberPage() {
     }
   }, [barber]);
 
-  const [galleryViewData, setGalleryViewData] = useState<GalleryViewType>(
-    defaultGalleryViewType
-  );
-  const openGalleryView = (activePhotoIndex: number) =>
+  const [activePhotoIndex, setActivePhotoIndex] = useState(-1);
+  const setGalleryViewData = useGalleryViewSetState();
+  const openGalleryView = () => {
     setGalleryViewData({
       data: gallery,
       isOpen: true,
       activePhotoIndex,
     });
-
-  // const [activePhotoIndex, setActivePhotoIndex] = useState(-1);
-  // const setGalleryViewData = useGalleryViewSetState();
-  // useEffect(() => {
-  //   if (activePhotoIndex !== -1) {
-  //     openGalleryView();
-  //   }
-  //   console.log("activePhotoIndex: ", activePhotoIndex);
-  // }, [activePhotoIndex]);
+    setActivePhotoIndex(-1);
+  };
+  useEffect(() => {
+    if (activePhotoIndex !== -1) {
+      openGalleryView();
+    }
+  }, [activePhotoIndex]);
 
   return (
     <div className="w-screen h-[100dvh] overflow-y-auto flex flex-col gap-[3.5dvw]">
-      <GalleryView data={galleryViewData} />
-
       <div className="w-full -mt-[0.1dvh] relative">
         {barber ? (
           <img
@@ -98,19 +105,35 @@ export default function BarberPage() {
           <Skeleton className="h-[63dvw] rounded-none" />
         )}
         <div className="w-full h-full absolute left-0 top-0 z-[1] flex flex-col px-[4dvw] pt-[4dvw] bg-black/30">
-          <div className="w-full flex justify-end items-center">
-            <button onClick={goBack}>
-              <img
-                alt="برشگت"
-                className="w-[7dvw] h-[7dvw] hidden dark:block"
-                src={BackLight}
-              />
-              <img
-                alt="برشگت"
-                className="w-[7dvw] h-[7dvw] block dark:hidden"
-                src={BackDark}
-              />
-            </button>
+          <div className="w-full flex justify-between">
+            <div className="flex justify-end items-center">
+              <button onClick={goBack}>
+                <img
+                  alt="برشگت"
+                  className="w-[7dvw] h-[7dvw] hidden dark:block"
+                  src={BackLight}
+                />
+                <img
+                  alt="برشگت"
+                  className="w-[7dvw] h-[7dvw] block dark:hidden"
+                  src={BackDark}
+                />
+              </button>
+            </div>
+            <div className="flex justify-end items-center">
+              <button onClick={goBack}>
+                <img
+                  alt="برشگت"
+                  className="w-[7dvw] h-[7dvw] hidden dark:block"
+                  src={BackLight}
+                />
+                <img
+                  alt="برشگت"
+                  className="w-[7dvw] h-[7dvw] block dark:hidden"
+                  src={BackDark}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -118,7 +141,9 @@ export default function BarberPage() {
         <div className="flex flex-col gap-[3dvw]">
           <div className="w-full flex justify-between items-center gap-[2.5dvw] px-[1dvw]">
             {barber ? (
-              <span className="text-[8dvw]">{barber?.nick_name}</span>
+              <span className="text-[8dvw]">
+                {barber.user_detail.full_name}
+              </span>
             ) : (
               <Skeleton className="w-[40dvw] h-[10dvw]" />
             )}
@@ -142,7 +167,7 @@ export default function BarberPage() {
               </div>
               {barber ? (
                 <span className="text-gray_002">
-                  {barber.comment_quantity} نظر
+                  {barber.order_comment_quantity} نظر
                 </span>
               ) : (
                 <Skeleton className="w-[16dvw] h-[5dvw]" />
@@ -180,7 +205,7 @@ export default function BarberPage() {
               gallery.slice(0, 8).map((photo, i) => (
                 <button
                   key={i}
-                  onClick={() => openGalleryView(i)}
+                  onClick={() => setActivePhotoIndex(i)}
                   className="col-span-1"
                 >
                   <img
@@ -220,7 +245,7 @@ export default function BarberPage() {
               </>
             )}
             <button
-              onClick={() => openGalleryView(0)}
+              onClick={() => setActivePhotoIndex(0)}
               className="col-span-1 flex justify-center items-center gap-[1.5dvw]"
             >
               <span>بیشتر</span>
@@ -231,17 +256,14 @@ export default function BarberPage() {
         <div className="w-full flex flex-col gap-[3dvw]">
           <span className="text-[6dvw]">نظرات</span>
           <div className="w-full flex flex-col gap-[2dvh]">
-            {barber ? (
+            {comments.length ? (
               <>
-                <div className="w-full flex flex-col">
-                  <BarberCard
-                    data={defaultBarber}
-                    orientation="row"
-                    type="comment"
-                  />
-                  <Comment className="border-t-0 rounded-t-none" />
-                </div>
-                <Button label="بیشتر" type="button" onClick={() => {}} />
+                <CommentComponent data={comments[0]} />
+                <Button
+                  label="بیشتر"
+                  type="button"
+                  onClick={navigateToComments}
+                />
               </>
             ) : (
               <>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Temp from "../images/temp.png";
+import FakeAvatar from "../images/common/fake-avatar.svg";
 
 import Button from "../components/Button";
 
@@ -63,7 +63,7 @@ export default function Profile() {
             <img
               alt="عکس پروفایل شما"
               className="w-full h-full rounded-full object-cover border border-gray_001 dark:border-gray_004"
-              src={user.avatar_url || Temp}
+              src={user.avatar_url || FakeAvatar}
             />
             <input
               ref={inputRef}

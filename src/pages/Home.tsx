@@ -1,28 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Salon } from "../lib/salon";
+import { Barber } from "../lib/salon";
 import Carousel from "../components/Carousel";
 import CategoryComponent from "../components/Category";
 import { useCategoriesState } from "../providers/CategoriesProvider";
 import Skeleton from "../components/Skeleton";
+import { useGetBestBarbers } from "../api/salon/hooks";
+import HomeBarberCard from "../components/HomeBarberCard";
+import { useNavigate } from "react-router-dom";
 
 import Temp from "../images/Home/temp.png";
 
-import Pin from "../images/common/pin.svg";
-import { useGetBestSalons } from "../api/salon/hooks";
-import SalonCard from "../components/SalonCard";
-import { useOpenToast } from "../hooks/popups";
-
 export default function Home() {
   const categories = useCategoriesState();
+  const navigate = useNavigate();
 
-  const [bestSalons, setBestSalons] = useState<Salon[]>([]);
-  const getBestSalons = useGetBestSalons();
+  const [loading, setLoading] = useState(true);
 
-  const [nearestSalons, setNearestSalon] = useState<Salon[]>([]);
-  const [cheapestSalons, setCheapestSalon] = useState<Salon[]>([]);
-
-  const openToast = useOpenToast();
+  const [bestBarbers, setBestBarbers] = useState<Barber[]>([]);
+  const getBestBarbers = useGetBestBarbers();
 
   const getUserLocation = async () => {
     navigator.geolocation.getCurrentPosition(
@@ -34,10 +30,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getBestSalons({
-      setBestSalons,
-      onError(error) {
-        openToast(error.message);
+    setLoading(true);
+    getBestBarbers({
+      setBestBarbers,
+      onFinally() {
+        setLoading(false);
       },
     });
 
@@ -59,14 +56,21 @@ export default function Home() {
       <div className="w-full flex flex-col gap-[2dvh]">
         <Carousel>
           <div className="grid grid-cols-4 gap-y-[3dvw]">
-            {categories.map((category) => (
-              <div
-                key={category.title}
-                className="col-span-1 flex justify-center items-center"
-              >
-                <CategoryComponent onClick={() => {}} data={category} />
-              </div>
-            ))}
+            {categories
+              .filter((e) => e.parent === null)
+              .map((category) => (
+                <div
+                  key={category.title}
+                  className="col-span-1 flex justify-center items-center"
+                >
+                  <CategoryComponent
+                    onClick={() => {
+                      navigate("/services/" + category.slug);
+                    }}
+                    data={category}
+                  />
+                </div>
+              ))}
           </div>
         </Carousel>
         <button className="w-full">
@@ -74,68 +78,30 @@ export default function Home() {
         </button>
         <div className="w-full flex flex-col gap-[2dvw]">
           <span className="text-[8dvw]">حرفه ای ترین ها</span>
-          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
-            {bestSalons.length ? (
-              bestSalons.map((salon, i) => (
-                <div key={i} className="w-[70dvw]">
-                  <SalonCard data={salon} className="w-[70dvw]" />
-                </div>
-              ))
+          <div className="flex gap-[6dvw] pb-[4dvw] overflow-x-auto">
+            {!loading ? (
+              bestBarbers.length ? (
+                bestBarbers.map((salon) => (
+                  <div
+                    key={salon.slug}
+                    className="w-[45dvw] flex justify-center"
+                  >
+                    <HomeBarberCard data={salon} className="w-[45dvw]" />
+                  </div>
+                ))
+              ) : (
+                <span className="text-gray_002">هیچ آرایشگری پیدا نشد</span>
+              )
             ) : (
               <>
                 <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                  <Skeleton className="w-[45dvw] h-[49.7dvw]" />
                 </div>
                 <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="w-full flex flex-col gap-[2dvw] -mt-[3dvw]">
-          <div className="w-full flex justify-between items-center">
-            <span className="text-[8dvw]">نزدیک ترین ها</span>
-            <button className="flex items-center gap-[1dvw]">
-              <img alt="لوکیشن" className="w-[5dvw] h-[5dvw]" src={Pin} />
-              <span className="text-primary">مشهد، هاشمیه</span>
-            </button>
-          </div>
-          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
-            {bestSalons.length ? (
-              bestSalons.map((salon, i) => (
-                <div key={i} className="w-[70dvw]">
-                  <SalonCard data={salon} className="w-[70dvw]" />
-                </div>
-              ))
-            ) : (
-              <>
-                <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                  <Skeleton className="w-[45dvw] h-[49.7dvw]" />
                 </div>
                 <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="w-full flex flex-col gap-[2dvw] -mt-[3dvw]">
-          <span className="text-[8dvw]">به صرفه ترین ها</span>
-          <div className="flex gap-[4dvw] pb-[4dvw] overflow-x-auto">
-            {bestSalons.length ? (
-              bestSalons.map((salon, i) => (
-                <div key={i} className="w-[70dvw]">
-                  <SalonCard data={salon} className="w-[70dvw]" />
-                </div>
-              ))
-            ) : (
-              <>
-                <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
-                </div>
-                <div>
-                  <Skeleton className="w-[70dvw] h-[43.75dvw]" />
+                  <Skeleton className="w-[45dvw] h-[49.7dvw]" />
                 </div>
               </>
             )}

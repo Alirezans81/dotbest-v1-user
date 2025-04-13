@@ -6,11 +6,9 @@ import Arrow from "../images/common/arrow.svg";
 import { useNavigate } from "react-router-dom";
 import { defaultBarber } from "../lib/salon";
 
-export default function SearchCard() {
+export default function SearchSalonCard() {
   const navigate = useNavigate();
-  const navigateToSalon = () => {
-    navigate("/salon/1");
-  };
+  const navigateToSalon = () => navigate("/salon/1");
 
   return (
     <div

@@ -4,13 +4,8 @@ import { Photo } from "../lib/salon";
 
 export type GalleryViewType = {
   activePhotoIndex: number;
-  data: any[];
+  data: Photo[];
   isOpen: boolean;
-};
-const defaultGalleryViewType: GalleryViewType = {
-  activePhotoIndex: -1,
-  data: [],
-  isOpen: false,
 };
 
 const GalleryViewState = createContext<GalleryViewType>({
@@ -71,5 +66,4 @@ export {
   useGalleryViewState,
   useGalleryViewSetState,
   useGalleryViewClose,
-  defaultGalleryViewType,
 };

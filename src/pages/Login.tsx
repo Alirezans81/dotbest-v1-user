@@ -13,6 +13,7 @@ export default function Login() {
     setStep((prev) => prev - 1);
   };
 
+  const [phone, setPhone] = useState("");
   const [tempCode, setTempCode] = useState("");
   const [userInitParams, setUserInitParams] = useState<UserInitParams | null>(
     null
@@ -24,6 +25,7 @@ export default function Login() {
     return (
       <Step1
         nextStep={nextStep}
+        setPhone={setPhone}
         setTempCode={setTempCode}
         setUserInitParams={setUserInitParams}
       />
@@ -32,6 +34,7 @@ export default function Login() {
     return (
       <Step2
         prevStep={prevStep}
+        phone={phone}
         tempCode={tempCode}
         userInitParams={userInitParams}
       />

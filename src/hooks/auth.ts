@@ -1,121 +1,145 @@
-import { Dispatch, useState } from "react";
-import { useGetUserData } from "../api/auth/hooks";
-import { CommonUser, defaultUser } from "../lib/common";
+import { useRefreshAccessToken } from "../api/auth/hooks";
+import { User, defaultUser } from "../lib/common";
 import { useLoggedInSetState } from "../providers/LoggedInProvider";
+import {
+  TokenType,
+  useTokenSetState,
+  useTokenState,
+} from "../providers/TokenProvider";
 import { useUserSetState } from "../providers/UserProvider";
 import { useOpenToast } from "./popups";
 
 //----------------------------------- Token
-const saveToken = (token: string) => {
-  window.localStorage.setItem("token", token);
+const saveToken = (token: TokenType) => {
+  window.localStorage.setItem("token", JSON.stringify(token));
 };
-const useSaveToken = () => {
-  return saveToken;
+const customSetToken = (
+  _token: TokenType,
+  _setToken: (value: TokenType) => void
+) => {
+  saveToken(_token);
+  _setToken(_token);
 };
-
-const getSavedToken = () => {
-  window.localStorage.getItem("token");
-};
-const useGetSavedToken = () => {
-  return getSavedToken;
+export const useCustomSetToken = () => {
+  const setToken = useTokenSetState();
+  return (token: TokenType) => customSetToken(token, setToken);
 };
 
 const removeToken = () => {
   window.localStorage.removeItem("token");
 };
-const useRemoveToken = () => {
+export const useRemoveToken = () => {
   return removeToken;
 };
 
-const checkLoggedIn = (
-  setLoggedIn: (value: boolean) => void,
-  getUserData: ({
-    user_url,
-    setUser,
-    customFunction,
-    onError,
-  }: {
-    user_url: string;
-    setUser: (data: CommonUser) => void;
-    customFunction?: (data: any) => void;
-    onError?: (error: any, data: string) => void;
-  }) => void,
-  setUser: (value: CommonUser) => void,
-  setLoaded: Dispatch<React.SetStateAction<boolean>>,
-  openToast: (message: string) => void
-) => {
-  const user = window.localStorage.getItem("user");
+const checkLoggedIn = () => {
+  const token = window.localStorage.getItem("token");
 
-  if (user) {
-    const parsedUser: CommonUser = JSON.parse(user);
-    getUserData({
-      user_url: parsedUser.url,
-      setUser,
-      customFunction() {
-        setLoaded(true);
-        setLoggedIn(true);
-      },
-      onError(error) {
-        openToast(error.message);
-      },
-    });
-    return true;
+  if (token) {
+    const parsedToken: TokenType = JSON.parse(token);
+    return parsedToken;
   }
-  return false;
+  return null;
 };
-const useCheckLoggedIn = () => {
-  const [loaded, setLoaded] = useState(false);
-  const setLoggedIn = useLoggedInSetState();
-  const getUserData = useGetUserData();
-  const setUser = useUserSetState();
-  const openToast = useOpenToast();
-
-  return {
-    checkLoggedIn: () =>
-      checkLoggedIn(setLoggedIn, getUserData, setUser, setLoaded, openToast),
-    loaded,
-  };
+export const useCheckLoggedIn = () => {
+  return () => checkLoggedIn();
 };
 
 const logout = (
   setLoggedIn: (value: boolean) => void,
-  setUser: (value: CommonUser) => void
+  setToken: (value: TokenType) => void,
+  setUser: (value: User) => void
 ) => {
   window.localStorage.removeItem("user");
+  window.localStorage.removeItem("token");
 
   setLoggedIn(false);
+  setToken({
+    access: "",
+    exp_access: 0,
+    refresh: "",
+    exp_refresh: 0,
+  });
   setUser(defaultUser);
 };
-const useLogout = () => {
+export const useLogout = () => {
   const setLoggedIn = useLoggedInSetState();
+  const setToken = useTokenSetState();
   const setUser = useUserSetState();
+  return () => logout(setLoggedIn, setToken, setUser);
+};
 
-  return () => logout(setLoggedIn, setUser);
+const checkTokenExpired = (
+  token: TokenType | null,
+  logout: () => void,
+  refreshAccessToken: ({
+    received_token,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    received_token?: TokenType;
+    customFunction?: (data: any) => void;
+    onError?: (error: any) => void;
+    onFinally?: () => void;
+  }) => void,
+  openToast: (message: string) => void,
+  givenCustomFunction?: (token: TokenType) => void
+) => {
+  const current = Math.floor(Date.now() / 1000);
+
+  if (token) {
+    if (token.exp_refresh - current <= 0) {
+      logout();
+      return true;
+    } else {
+      if (token.exp_access - current <= 0) {
+        refreshAccessToken({
+          received_token: token,
+          customFunction(data) {
+            let temp = token;
+            temp.access = data.access;
+            temp.exp_access = data.exp_access;
+            givenCustomFunction && givenCustomFunction(temp);
+          },
+          onError(error) {
+            openToast(error.message);
+          },
+        });
+        return true;
+      }
+      return false;
+    }
+  }
+  return true;
+};
+export const useCheckTokenExpired = () => {
+  const token = useTokenState();
+  const logout = useLogout();
+  const refreshAccessToken = useRefreshAccessToken();
+  const openToast = useOpenToast();
+
+  return (_token?: TokenType, customFunction?: (token: TokenType) => void) =>
+    checkTokenExpired(
+      _token || token,
+      logout,
+      refreshAccessToken,
+      openToast,
+      customFunction
+    );
 };
 //-----------------------------------
 
 //----------------------------------- User
-const saveUser = (user: CommonUser) => {
+const saveUser = (user: User) => {
   window.localStorage.setItem("user", JSON.stringify(user));
 };
-const customSetUser = (
-  _user: CommonUser,
-  _setUser: (value: CommonUser) => void
-) => {
+const customSetUser = (_user: User, _setUser: (value: User) => void) => {
   saveUser(_user);
   _setUser(_user);
 };
-const useCustomSetUser = () => {
+export const useCustomSetUser = () => {
   const setUser = useUserSetState();
-  return (_user: CommonUser) => customSetUser(_user, setUser);
+  return (_user: User) => customSetUser(_user, setUser);
 };
 //-----------------------------------
-
-export {
-  useCheckLoggedIn,
-  useSaveToken,
-  useGetSavedToken,
-  useRemoveToken,
-  useCustomSetUser,
-  useLogout,
-};

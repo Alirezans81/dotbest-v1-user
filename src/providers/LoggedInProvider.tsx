@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 const LoggedInState = createContext<boolean>(false);
 type LoggedInSetStateType = (value: boolean) => void;
@@ -10,7 +10,7 @@ interface Props {
   children: React.ReactNode;
 }
 const LoggedInProvider = ({ children }: Props) => {
-  const [LoggedIn, setLoggedIn] = useState(false);
+  const [LoggedIn, setLoggedIn] = useState<boolean>(false);
 
   return (
     <LoggedInState.Provider value={LoggedIn}>

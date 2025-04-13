@@ -35,7 +35,9 @@ export default function Barbers() {
   }, []);
 
   return (
-    <NavigationLayout label="آرایشگران مو">
+    <NavigationLayout
+      label={barbersLoaded ? "آرایشگران مو" : "در حال بارگذاری"}
+    >
       <div className="flex flex-col gap-[2dvh]">
         <div className="w-full grid grid-cols-2 gap-[4dvw]">
           {barbersLoaded ? (
@@ -46,6 +48,12 @@ export default function Barbers() {
             ))
           ) : (
             <>
+              <div className="col-span-1">
+                <Skeleton className="w-full h-[73dvw]" />
+              </div>
+              <div className="col-span-1">
+                <Skeleton className="w-full h-[73dvw]" />
+              </div>
               <div className="col-span-1">
                 <Skeleton className="w-full h-[73dvw]" />
               </div>

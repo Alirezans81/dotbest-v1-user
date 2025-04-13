@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { defaultBarber, Salon } from "../lib/salon";
+import { Comment, defaultBarber, Salon } from "../lib/salon";
 import { useLocation, useNavigate } from "react-router-dom";
 import BarberCard from "../components/BarberCard";
 import Button from "../components/Button";
-import Comment from "../components/Comment";
+import CommentComponent from "../components/Comment";
 import NavigationLayout from "../components/NavigationLayout";
 import Service from "../components/Service";
 
 import Pin from "../images/common/pin.svg";
 import { useEffect, useState } from "react";
 import Skeleton from "../components/Skeleton";
-import { useGetSalonData } from "../api/salon/hooks";
+import { useGetSalonComments, useGetSalonData } from "../api/salon/hooks";
 import { Category } from "../lib/common";
 import { useGetCategoriesByUrlArray } from "../hooks/filters";
 import { useOpenToast } from "../hooks/popups";
@@ -20,11 +20,14 @@ export default function SalonPage() {
 
   const [salon, setSalon] = useState<Salon | null>(null);
   const [salonCategories, setSalonCategories] = useState<Category[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   const openToast = useOpenToast();
 
   const getSalonData = useGetSalonData();
   const getCategoriesByUrlArray = useGetCategoriesByUrlArray();
+  const getSalonComments = useGetSalonComments();
+
   useEffect(() => {
     const url_array = pathname.split("/");
     const salon_slug = url_array[url_array.length - 2];
@@ -33,6 +36,14 @@ export default function SalonPage() {
       setSalon,
       customFunction(data) {
         setSalonCategories(getCategoriesByUrlArray(data.categories));
+        getSalonComments({
+          salon_slug,
+          filters: { limit: 1 },
+          setComments,
+          onError(error) {
+            openToast(error.message);
+          },
+        });
       },
       onError(error) {
         openToast(error.message);
@@ -43,11 +54,12 @@ export default function SalonPage() {
   const navigate = useNavigate();
   const navigateToBarbers = (category_slug: string) =>
     navigate(`barbers/?category=${category_slug}`);
+  const navigateToComments = () => navigate("comments/");
 
   const [posterLoaded, setPosterLoaded] = useState(false);
 
   return (
-    <NavigationLayout label={salon ? "سالن " + salon.name : "در حال بارگزاری"}>
+    <NavigationLayout label={salon ? "سالن " + salon.name : "در حال بارگذاری"}>
       <div className="w-full h-full flex flex-col gap-[4dvh]">
         {salon ? (
           salon.poster_url && (
@@ -110,13 +122,15 @@ export default function SalonPage() {
           <span className="text-[6dvw]">خدمات</span>
           <div className="flex flex-col gap-[1.5dvh]">
             {salon ? (
-              salonCategories.map((category, i) => (
-                <Service
-                  key={i}
-                  label={category.title}
-                  onClick={() => navigateToBarbers(category.slug)}
-                />
-              ))
+              salonCategories
+                .filter((e) => e.parent === null)
+                .map((category, i) => (
+                  <Service
+                    key={i}
+                    label={category.title}
+                    onClick={() => navigateToBarbers(category.slug)}
+                  />
+                ))
             ) : (
               <>
                 <Skeleton className="w-full h-[14.5dvw] !rounded-[5dvw]" />
@@ -129,7 +143,7 @@ export default function SalonPage() {
         <div className="w-full flex flex-col gap-[3dvw]">
           <span className="text-[6dvw]">نظرات</span>
           <div className="w-full flex flex-col gap-[2dvh]">
-            {salon ? (
+            {comments.length ? (
               <>
                 <div className="w-full flex flex-col">
                   <BarberCard
@@ -137,9 +151,16 @@ export default function SalonPage() {
                     orientation="row"
                     type="comment"
                   />
-                  <Comment className="border-t-0 rounded-t-none" />
+                  <CommentComponent
+                    className="border-t-0 rounded-t-none"
+                    data={comments[0]}
+                  />
                 </div>
-                <Button label="بیشتر" type="button" onClick={() => {}} />
+                <Button
+                  label="بیشتر"
+                  type="button"
+                  onClick={navigateToComments}
+                />
               </>
             ) : (
               <>

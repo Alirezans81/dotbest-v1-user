@@ -13,7 +13,7 @@ const CategoryComponent = ({ data, onClick, selected = false }: Props) => {
           selected ? "!border-primary" : ""
         }`}
       >
-        <img alt="عکس" className="w-[10dvw] h-[10dvw]" src={"data.img"} />
+        <img alt="عکس" className="w-[10dvw] h-[10dvw]" src={data.image_url} />
       </div>
       <span className="text-[5.5dvw]">{data.title}</span>
     </button>

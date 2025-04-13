@@ -1,24 +1,49 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Star from "../images/common/star.svg";
 import Like from "../images/Comment/like.svg";
 import LikeActive from "../images/Comment/like-active.svg";
 import Dislike from "../images/Comment/dislike.svg";
 import DislikeActive from "../images/Comment/dislike-active.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Comment } from "../lib/salon";
+import { useConvertDate } from "../hooks/datetime";
+import { useDisikeComment, useLikeComment } from "../api/user/hooks";
 
 interface Props {
+  data: Comment;
   className?: string;
 }
-export default function Comment({ className }: Props) {
+export default function CommentComponent({ className, data }: Props) {
+  const convertDate = useConvertDate();
+
+  const likeComment = useLikeComment();
+  const dislikeComment = useDisikeComment();
+
   const [activeButton, setActiveButton] = useState<"like" | "dislike" | "">("");
+  useEffect(() => {
+    if (activeButton === "like") {
+      likeComment({
+        comment_url: data.url,
+        like_count: data.like + 1,
+      });
+    } else if (activeButton === "dislike") {
+      dislikeComment({
+        comment_url: data.url,
+        dislike_count: data.dislike + 1,
+      });
+    }
+  }, [activeButton]);
 
   return (
     <div
       className={`w-full border border-gray_001 dark:border-gray_003 rounded-[6dvw] px-[5dvw] py-[4.5dvw] flex flex-col gap-[5dvw] ${className}`}
     >
       <div className="w-full flex justify-between items-center -mb-[2dvw]">
-        <span className="text-[7dvw]">فهیمه آزاد</span>
+        <span className="text-[7dvw]">
+          {data.is_anonymous_user ? "کاربر ناشناس" : "فهیمه آزاد"}
+        </span>
         <div className="flex gap-[0.75dvw] items-center">
-          <span className="text-gray_002">4.2</span>
+          <span className="text-gray_002">{data.rate}</span>
           <img
             alt="ستاره"
             className="w-[4dvw] h-[4dvw] -mt-[1dvw]"
@@ -26,12 +51,11 @@ export default function Comment({ className }: Props) {
           />
         </div>
       </div>
-      <span className="text-[5dvw]">
-        من اصلا راضی نبودم چون بسیار منو معطل کردن زیادم حرف میزدن باهام چون من
-        آدم درونگرایی ام دوس ندارم باهام زیاد حرف بزنن
-      </span>
+      <span className="text-[5dvw]">{data.message}</span>
       <div className="w-full flex justify-between items-center">
-        <span className="text-gray_002 text-[4.5dvw]">13 اردیبهشت 1403</span>
+        <span className="text-gray_002 text-[4.5dvw]">
+          {convertDate(data.datetime_create)}
+        </span>
         <div className="flex items-center gap-[2dvw]">
           <div className="flex items-center gap-[0.5dvw]">
             <button
@@ -55,7 +79,7 @@ export default function Comment({ className }: Props) {
                 src={DislikeActive}
               />
             </button>
-            <span className="text-gray_002">24</span>
+            <span className="text-gray_002">{data.dislike}</span>
           </div>
           <div className="flex items-center gap-[0.5dvw]">
             <button
@@ -79,7 +103,7 @@ export default function Comment({ className }: Props) {
                 src={LikeActive}
               />
             </button>
-            <span className="text-gray_002">107</span>
+            <span className="text-gray_002">{data.like}</span>
           </div>
         </div>
       </div>

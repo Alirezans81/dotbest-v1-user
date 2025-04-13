@@ -14,18 +14,20 @@ export default function ReportFilterModal() {
       <div className="flex flex-col gap-[2dvw]">
         <span className="text-[5.5dvw]">خدمات</span>
         <div className="grid grid-cols-4 gap-y-[3dvw]">
-          {categories.map((category, i) => (
-            <div
-              key={category.title}
-              className="col-span-1 flex justify-center items-center"
-            >
-              <CategoryComponent
-                onClick={() => setSelectedCategoryIndex(i)}
-                data={category}
-                selected={selectedCategoryIndex === i}
-              />
-            </div>
-          ))}
+          {categories
+            .filter((e) => e.parent === null)
+            .map((category, i) => (
+              <div
+                key={category.title}
+                className="col-span-1 flex justify-center items-center"
+              >
+                <CategoryComponent
+                  onClick={() => setSelectedCategoryIndex(i)}
+                  data={category}
+                  selected={selectedCategoryIndex === i}
+                />
+              </div>
+            ))}
         </div>
       </div>
       <Button label="تایید" onClick={() => {}} type="button" />

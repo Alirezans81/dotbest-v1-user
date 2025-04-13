@@ -1,17 +1,24 @@
-import { CommonUser } from "../../lib/common";
-import { CreateParams } from "../../lib/interfaces";
-import { Salon } from "../../lib/salon";
-import { create, getUserData, sendCode, verifyCode } from "./apis";
+import { useCustomSetToken, useCustomSetUser } from "../../hooks/auth";
+import { useOpenToast } from "../../hooks/popups";
+import { User, defaultUser } from "../../lib/common";
+import { UserInitParams } from "../../lib/user";
+import { TokenType, useTokenState } from "../../providers/TokenProvider";
+import { getUserData, refreshAccessToken, sendCode, verifyCode } from "./apis";
+import * as jalaali from "jalaali-js";
 
-const useSendCode = () => {
+export const useSendCode = () => {
+  const openToast = useOpenToast();
+
   const fetch = async ({
     phone,
     customFunction,
     onError,
+    onFinally,
   }: {
     phone: string;
     customFunction?: (data: any) => void;
     onError?: (error: any, data: string) => void;
+    onFinally?: () => void;
   }) => {
     await sendCode(phone)
       .then((res: any) => {
@@ -19,92 +26,168 @@ const useSendCode = () => {
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
         onError && onError(error, phone);
+      })
+      .finally(() => {
+        onFinally && onFinally();
       });
   };
 
   return fetch;
 };
 
-const useVerifyCode = () => {
+const monthes = [
+  "فروردین",
+  "اردیبهشت",
+  "خرداد",
+  "تیر",
+  "مرداد",
+  "شهریور",
+  "مهر",
+  "آبان",
+  "آذر",
+  "دی",
+  "بهمن",
+  "اسفند",
+];
+const getMonthNumber = (value: string) => {
+  return monthes.findIndex((e) => e === value) + 1;
+};
+export type VerifyCodeUserParams = {
+  phone: string;
+  name: string;
+  melli_code: string;
+  birthday: string;
+  account_type: User["account_type"];
+};
+export const useVerifyCode = () => {
+  const setToken = useCustomSetToken();
+  const openToast = useOpenToast();
+
   const fetch = async ({
+    phone,
     code,
-    setUser,
+    userParams,
     customFunction,
     onError,
+    onFinally,
   }: {
+    phone: string;
     code: string;
-    setUser: (data: CommonUser) => void;
-    customFunction?: ({ user }: { user: CommonUser }) => void;
+    userParams: UserInitParams | null;
+    customFunction?: (token: TokenType) => void;
     onError?: (error: any, data: string) => void;
+    onFinally?: () => void;
   }) => {
-    await verifyCode(code)
+    let params: User = defaultUser;
+    if (userParams) {
+      const a = jalaali.toGregorian(
+        parseInt(userParams.birthday_year, 10),
+        getMonthNumber(userParams.birthday_month),
+        parseInt(userParams.birthday_day, 10)
+      );
+      const birthday = new Date(a.gy + "/" + a.gm + "/" + a.gd);
+
+      params.first_name = userParams.name.split(" ")[0];
+      params.last_name = userParams.name.split(" ")[1];
+      params.national_code = userParams.melli_code;
+      params.birth_date = birthday.toISOString();
+      params.account_type = userParams.account_type;
+    }
+
+    await verifyCode(phone, code, params)
       .then((res: any) => {
-        setUser(res.data.results.user);
-        customFunction && customFunction(res.data.results);
+        setToken(res.data);
+        customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
         onError && onError(error, code);
+      })
+      .finally(() => {
+        onFinally && onFinally();
       });
   };
 
   return fetch;
 };
 
-const useCreate = () => {
+export const useRefreshAccessToken = () => {
+  const token = useTokenState();
+  const setToken = useCustomSetToken();
+  const openToast = useOpenToast();
+
   const fetch = async ({
-    params,
-    setUser,
-    setSalon,
+    received_token,
     customFunction,
     onError,
+    onFinally,
   }: {
-    params: CreateParams;
-    setUser: (data: CommonUser) => void;
-    setSalon: (data: Salon) => void;
+    received_token?: TokenType;
     customFunction?: (data: any) => void;
-    onError?: (error: any, data: CreateParams) => void;
+    onError?: (error: any) => void;
+    onFinally?: () => void;
   }) => {
-    await create(params)
+    await refreshAccessToken(received_token?.refresh || token.refresh)
       .then((res: any) => {
-        setUser(res.data.results.user);
-        setSalon(res.data.results.salon);
-        customFunction && customFunction(res.data.results);
+        if (received_token) {
+          let temp = received_token;
+          temp.access = res.data.access;
+          temp.exp_access = res.data.exp_access;
+          setToken(temp);
+        } else {
+          let temp = token;
+          temp.access = res.data.access;
+          temp.exp_access = res.data.exp_access;
+          setToken(temp);
+        }
+        customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        onError && onError(error, params);
+        openToast(error.message);
+        onError && onError(error);
+      })
+      .finally(() => {
+        onFinally && onFinally();
       });
   };
 
   return fetch;
 };
 
-const useGetUserData = () => {
+export const useGetUserData = () => {
+  const token = useTokenState();
+  const setUser = useCustomSetUser();
+  const openToast = useOpenToast();
+
   const fetch = async ({
-    user_url,
-    setUser,
+    received_access_token,
     customFunction,
     onError,
+    onFinally,
   }: {
-    user_url: string;
-    setUser: (data: CommonUser) => void;
+    received_access_token?: string;
     customFunction?: (data: any) => void;
-    onError?: (error: any, data: string) => void;
+    onError?: (error: any) => void;
+    onFinally?: () => void;
   }) => {
-    await getUserData(user_url)
+    await getUserData(received_access_token || token.access)
       .then((res: any) => {
         setUser(res.data);
         customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        onError && onError(error, user_url);
+        openToast(error.message);
+        onError && onError(error);
+      })
+      .finally(() => {
+        onFinally && onFinally();
       });
   };
 
   return fetch;
 };
-
-export { useSendCode, useVerifyCode, useCreate, useGetUserData };
