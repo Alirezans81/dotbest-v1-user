@@ -21,9 +21,8 @@ export default function BarberCard({
   type = "normal",
 }: Props) {
   const navigate = useNavigate();
-  const navigateToReserve = () => {
-    navigate(data.slug + "/");
-  };
+  const navigateToBarber = () =>
+    navigate("/barber/" + data.slug, { state: { backlink: "/search" } });
 
   const [isFavorited, setIsFavorite] = useState(false);
 
@@ -77,7 +76,7 @@ export default function BarberCard({
         <div className="w-full flex flex-col items-center gap-[1dvh]">
           <div className="w-full flex flex-col items-center">
             <span className="text-[6dvw] text-black dark:text-white">
-              {data.salon_name}
+              {"سالن شهریار"}
             </span>
             <div
               className={`w-full flex justify-between items-center px-[1.5dvw]`}
@@ -91,14 +90,18 @@ export default function BarberCard({
                 />
               </div>
               <div className="w-[1.5px] rounded-full h-[5dvw] bg-gray_001 dark:bg-gray_004 mb-[1dvw]" />
-              <span className="text-gray_002">{data.comment_quantity} نظر</span>
+              <span className="text-gray_002">
+                {data.order_comment_quantity} نظر
+              </span>
             </div>
-            <span className="text-black dark:text-white">{data.nick_name}</span>
+            <span className="text-black dark:text-white">
+              {data.user_detail.full_name}
+            </span>
           </div>
           <Button
             label="رزرو"
             type="button"
-            onClick={navigateToReserve}
+            onClick={navigateToBarber}
             className="w-full !py-[0.5dvh] !border-primary text-primary hover:bg-primary hover:text-white"
           />
         </div>

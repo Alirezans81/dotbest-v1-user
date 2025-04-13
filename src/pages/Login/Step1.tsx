@@ -1,4 +1,4 @@
-import { Dispatch, useState } from "react";
+import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
@@ -9,11 +9,13 @@ import { useOpenToast } from "../../hooks/popups";
 
 interface Props {
   nextStep: () => void;
+  setPhone: (value: string) => void;
   setTempCode: (value: string) => void;
-  setUserInitParams: Dispatch<React.SetStateAction<UserInitParams | null>>;
+  setUserInitParams: (value: UserInitParams | null) => void;
 }
 export default function Step1({
   nextStep,
+  setPhone,
   setTempCode,
   setUserInitParams,
 }: Props) {
@@ -162,6 +164,7 @@ export default function Step1({
                   if (data.new_user) {
                     setNewUser(true);
                   } else {
+                    setPhone(values.phone);
                     nextStep();
                   }
                 },
@@ -187,7 +190,16 @@ export default function Step1({
                 (value) => setFieldError("birthday_year", value)
               )
             ) {
-              setUserInitParams({ ...values });
+              setPhone(values.phone);
+              setUserInitParams({
+                phone: values.phone,
+                name: values.name,
+                melli_code: values.melli_code,
+                birthday_year: values.birthday_year,
+                birthday_month: values.birthday_month,
+                birthday_day: values.birthday_day,
+                account_type: "customer",
+              });
               nextStep();
             }
           }

@@ -90,15 +90,22 @@ type WeekDay =
   | "wednesday"
   | "thursday"
   | "friday";
+
 type Barber = {
   url: string;
   user: string;
-  salon: string;
-  salon_name: string;
-  rate: number;
-  comment_quantity: number;
+  user_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  rate: string;
+  order_comment_quantity: string;
+  poster: File | null;
   poster_url: string;
-  working_days: WeekDay[];
   datetime_update: string;
   datetime_delete: string;
   is_deleted: boolean;
@@ -107,30 +114,32 @@ type Barber = {
   datetime_create: string;
   is_active: boolean;
   show_order: number;
-  nick_name: string;
-  working_time_start: string;
-  working_time_end: string;
+  nickname: string;
 };
 const defaultBarber: Barber = {
   url: "",
   user: "",
-  salon: "",
-  salon_name: "",
-  rate: 0,
-  comment_quantity: 0,
+  user_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  rate: "",
+  order_comment_quantity: "",
+  poster: null,
   poster_url: "",
-  working_days: [],
   datetime_update: "",
   datetime_delete: "",
   is_deleted: false,
   description: "",
   slug: "",
   datetime_create: "",
-  is_active: true,
-  show_order: 1,
-  nick_name: "",
-  working_time_start: "",
-  working_time_end: "",
+  is_active: false,
+  show_order: 0,
+  nickname: "",
 };
 
 type Photo = {
@@ -168,5 +177,48 @@ const defaultPhoto: Photo = {
   dislike: 0,
 };
 
-export type { Salon, Service, Barber, WeekDay, Photo };
-export { defaultSalon, defaultService, defaultBarber, defaultPhoto };
+type Comment = {
+  url: string;
+  order_detail: string;
+  user: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  rate: number;
+  like: number;
+  dislike: number;
+  message: string;
+  is_anonymous_user: boolean;
+};
+const defaultComment: Comment = {
+  url: "",
+  order_detail: "",
+  user: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  rate: 0,
+  like: 0,
+  dislike: 0,
+  message: "",
+  is_anonymous_user: false,
+};
+
+export type { Salon, Service, Barber, WeekDay, Photo, Comment };
+export {
+  defaultSalon,
+  defaultService,
+  defaultBarber,
+  defaultPhoto,
+  defaultComment,
+};

@@ -1,7 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
-import { useLoggedInState } from "./providers/LoggedInProvider";
+import {
+  useLoggedInSetState,
+  useLoggedInState,
+} from "./providers/LoggedInProvider";
 import Layout from "./pages/Layout";
 import NoPage from "./pages/NoPage";
 import Home from "./pages/Home";
@@ -16,46 +19,69 @@ import Barber from "./pages/Barber";
 import Map from "./pages/Map";
 import About from "./pages/About";
 import NoNavbarLayout from "./pages/NoNavbarLayout";
-import { useCategoriesSetState } from "./providers/CategoriesProvider";
-import { useCheckLoggedIn } from "./hooks/auth";
+import { useCheckLoggedIn, useCheckTokenExpired } from "./hooks/auth";
 import {
   useShowSplashScreenSetState,
   useShowSplashScreenState,
 } from "./providers/ShowSplashScreen";
-import { useGetCategories } from "./api/common/hooks";
 import Loading from "./components/Loading";
-import { useOpenToast } from "./hooks/popups";
 import GalleryView from "./components/GalleryView";
+import Comments from "./pages/Comments";
+import { TokenType, useTokenSetState } from "./providers/TokenProvider";
+import { useGetUserData } from "./api/auth/hooks";
+import { useGetCategories } from "./api/common/hooks";
+import Services from "./pages/Services";
 
 function App() {
   const loggedIn = useLoggedInState();
-  const { checkLoggedIn, loaded: checkLoggedInLoaded } = useCheckLoggedIn();
+  const setLoggedIn = useLoggedInSetState();
+  const checkLoggedIn = useCheckLoggedIn();
+  const checkTokenExpired = useCheckTokenExpired();
   const showSplashSceen = useShowSplashScreenState();
   const setShowSplashScreen = useShowSplashScreenSetState();
+  const setToken = useTokenSetState();
 
   const [appLoaded, setAppLoaded] = useState(false);
 
-  const openToast = useOpenToast();
-
-  const setCategories = useCategoriesSetState();
+  const getUserData = useGetUserData();
   const getCategories = useGetCategories();
-  useEffect(() => {
-    getCategories({
-      setCategories,
+
+  const initApp = (token: TokenType) => {
+    getUserData({
+      received_access_token: token.access,
       customFunction() {
-        setAppLoaded(true);
-        checkLoggedIn();
+        getCategories({
+          received_access_token: token.access,
+          customFunction() {
+            setToken(token);
+            setLoggedIn(true);
+          },
+          onFinally() {
+            setAppLoaded(true);
+            setShowSplashScreen(false);
+          },
+        });
       },
-      onError(error) {
-        openToast(error.message);
+      onError() {
+        setAppLoaded(true);
+        setShowSplashScreen(false);
       },
     });
+  };
+  useEffect(() => {
+    const token = checkLoggedIn();
+    if (token) {
+      const tokenExpired = checkTokenExpired(token, (givenToken) =>
+        initApp(givenToken)
+      );
+      if (!tokenExpired) initApp(token);
+    } else {
+      setAppLoaded(true);
+      setShowSplashScreen(false);
+    }
   }, []);
 
-  useEffect(
-    () => setShowSplashScreen(!appLoaded || !checkLoggedInLoaded),
-    [appLoaded, checkLoggedInLoaded]
-  );
+  useEffect(() => setShowSplashScreen(!appLoaded), [appLoaded]);
 
   function detectDeviceIsPhone(): boolean {
     if (
@@ -73,14 +99,14 @@ function App() {
     }
   }
 
-  if (detectDeviceIsPhone()) {
-    if (showSplashSceen) {
+  if (detectDeviceIsPhone() || true) {
+    if (showSplashSceen || loggedIn === null) {
       return <SplashScreen />;
     } else {
       if (loggedIn) {
         return (
           <>
-            {/* <GalleryView /> */}
+            <GalleryView />
             <Loading />
             <BrowserRouter>
               <Routes>
@@ -93,14 +119,27 @@ function App() {
                 <Route path="/" element={<NoNavbarLayout />}>
                   <Route path="/map" element={<Map />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/salon">
-                    <Route index path=":salon_slug" element={<Salon />} />
-                    <Route path=":salon_slug/barbers" element={<Barbers />} />
+                  <Route path="/barber">
+                    <Route path=":barber_slug" element={<Barber />} />
                     <Route
-                      path=":salon_slug/barbers/:barber_slug"
-                      element={<Barber />}
+                      index
+                      path=":barber_slug/comments"
+                      element={<Comments />}
                     />
                     <Route path="*" element={<NoPage />} />
+                  </Route>
+                  <Route path="/salon">
+                    <Route index path=":salon_slug" element={<Salon />} />
+                    <Route
+                      index
+                      path=":salon_slug/comments/"
+                      element={<Comments />}
+                    />
+                    <Route path=":salon_slug/barbers" element={<Barbers />} />
+                    <Route path="*" element={<NoPage />} />
+                  </Route>
+                  <Route path="/services">
+                    <Route path="*" element={<Services backlink="/" />} />
                   </Route>
                 </Route>
                 <Route path="*" element={<NoPage />} />

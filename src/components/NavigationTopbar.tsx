@@ -5,12 +5,11 @@ import BackDark from "../images/common/back-dark.svg";
 
 interface Props {
   label: string;
+  backlink?: string;
 }
-export default function NavigationTopbar({ label }: Props) {
+export default function NavigationTopbar({ label, backlink }: Props) {
   const navigate = useNavigate();
-  const goBack = () => {
-    navigate(-1);
-  };
+  const goBack = () => (backlink ? navigate(backlink) : navigate(-1));
 
   return (
     <div className="w-full flex justify-between items-center">

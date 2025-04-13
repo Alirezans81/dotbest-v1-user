@@ -2,20 +2,25 @@ import { Formik } from "formik";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { useLoggedInSetState } from "../../providers/LoggedInProvider";
-import { useVerifyCode } from "../../api/auth/hooks";
+import { useGetUserData, useVerifyCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
-import { useCustomSetUser } from "../../hooks/auth";
-import { useUpdatePersonalInfo } from "../../api/user/hooks";
-import { CommonUser, defaultUser } from "../../lib/common";
-import { useOpenToast } from "../../hooks/popups";
+import { TokenType } from "../../providers/TokenProvider";
+import { useGetCategories } from "../../api/common/hooks";
+import { useShowSplashScreenSetState } from "../../providers/ShowSplashScreen";
 
 interface Props {
   prevStep: () => void;
+  phone: string;
   tempCode: string;
   userInitParams: UserInitParams | null;
 }
-export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
-  const setUser = useCustomSetUser();
+export default function Step2({
+  prevStep,
+  phone,
+  tempCode,
+  userInitParams,
+}: Props) {
+  const setShowSplashScreen = useShowSplashScreenSetState();
   const setLoggedIn = useLoggedInSetState();
 
   const validateCode = (code: string, setError: (value: string) => void) => {
@@ -26,10 +31,31 @@ export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
     return true;
   };
 
-  const openToast = useOpenToast();
-
   const verifyCode = useVerifyCode();
-  const updatePersonalInfo = useUpdatePersonalInfo();
+  const getUserData = useGetUserData();
+  const getCategories = useGetCategories();
+
+  const initApp = (token: TokenType) => {
+    getUserData({
+      received_access_token: token.access,
+      customFunction() {
+        getCategories({
+          received_access_token: token.access,
+          customFunction() {
+            setLoggedIn(true);
+          },
+          onFinally() {
+            setShowSplashScreen(false);
+          },
+        });
+      },
+      onError() {
+        setShowSplashScreen(false);
+      },
+    });
+  };
+
+  console.log("userInitParams", userInitParams);
 
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
@@ -41,29 +67,16 @@ export default function Step2({ prevStep, tempCode, userInitParams }: Props) {
           if (
             validateCode(values.code, (value) => setFieldError("code", value))
           ) {
+            setShowSplashScreen(true);
             verifyCode({
+              phone: phone,
               code: values.code,
-              setUser,
+              userParams: userInitParams,
               customFunction(data) {
-                if (userInitParams) {
-                  let params: CommonUser = defaultUser;
-                  params.first_name = userInitParams.name.split(" ")[0];
-                  params.last_name = userInitParams.name.split(" ")[1];
-                  updatePersonalInfo({
-                    user_url: data.user.url,
-                    setUser,
-                    params,
-                    customFunction: () => setLoggedIn(true),
-                    onError(error) {
-                      openToast(error.message);
-                    },
-                  });
-                } else {
-                  setLoggedIn(true);
-                }
+                initApp(data);
               },
-              onError(error) {
-                openToast(error.message);
+              onError() {
+                setShowSplashScreen(false);
               },
             });
           }

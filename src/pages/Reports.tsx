@@ -5,9 +5,9 @@ import FilterDark from "../images/common/filter-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import ReportCard from "../components/ReportCard";
 import ReportFilterModal from "../components/modals/ReportFilterModal";
-import { useOpenModal, useOpenToast } from "../hooks/popups";
+import { useOpenModal } from "../hooks/popups";
 import { useEffect, useState } from "react";
-import { Reservation } from "../lib/common";
+import { Order } from "../lib/common";
 import { useGetReports } from "../api/user/hooks";
 import Skeleton from "../components/Skeleton";
 import EmptyListMessage from "../components/EmptyListMessage";
@@ -16,18 +16,17 @@ export default function Reports() {
   const openModal = useOpenModal();
   const openReportFilterModal = () => openModal(<ReportFilterModal />);
 
-  const [reports, setReports] = useState<Reservation[]>([]);
-  const [reportsIsEmpty, setReportsIsEmpty] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [reports, setReports] = useState<Order[]>([]);
   const getReports = useGetReports();
 
-  const openToast = useOpenToast();
-
   useEffect(() => {
+    setLoading(true);
     getReports({
       setReports,
-      customFunction: (data) => !data.length && setReportsIsEmpty(true),
-      onError(error) {
-        openToast(error.message);
+      onFinnally() {
+        setLoading(false);
       },
     });
   }, []);
@@ -65,7 +64,7 @@ export default function Reports() {
         </button>
       </div>
       <div className="flex flex-col gap-[2dvh]">
-        {!reportsIsEmpty ? (
+        {loading ? (
           reports.length ? (
             reports.map((report, i) => <ReportCard key={i} />)
           ) : (

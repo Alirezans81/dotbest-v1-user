@@ -2,11 +2,11 @@ import axios from "axios";
 
 import dev from "../api-dev";
 import prod from "../api-prod";
-import { CreateParams } from "../../lib/interfaces";
+import { User } from "../../lib/common";
 
 const api = process.env.REACT_APP_MODE === "DEVELOPMENT" ? dev() : prod();
 
-const sendCode = (phone: string) => {
+export const sendCode = (phone: string) => {
   const formData = new FormData();
 
   formData.append("phone", phone);
@@ -14,27 +14,34 @@ const sendCode = (phone: string) => {
   return axios.post(api["send-code"], formData);
 };
 
-const verifyCode = (code: string) => {
+export const verifyCode = (phone: string, code: string, userParams?: User) => {
   const formData = new FormData();
 
+  formData.append("phone", phone);
   formData.append("code", code);
+
+  if (userParams) {
+    formData.append("account_type", userParams.account_type);
+    formData.append("first_name", userParams.first_name);
+    formData.append("last_name", userParams.last_name);
+    formData.append("birthday", userParams.birth_date);
+    formData.append("national_code", userParams.national_code);
+  }
 
   return axios.post(api["verify-code"], formData);
 };
 
-const create = ({ phone, first_name, last_name, salon_name }: CreateParams) => {
+export const refreshAccessToken = (refresh_token: string) => {
   const formData = new FormData();
 
-  formData.append("phone", phone);
-  formData.append("first_name", first_name);
-  formData.append("last_name", last_name);
-  formData.append("salon_name", salon_name);
+  formData.append("refresh", refresh_token);
 
-  return axios.post(api["create"], formData);
+  return axios.post(api["refresh"], formData);
 };
 
-const getUserData = (user_url: string) => {
-  return axios.get(user_url);
+export const getUserData = (token: string) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(api["user"], { headers });
 };
-
-export { sendCode, verifyCode, create, getUserData };

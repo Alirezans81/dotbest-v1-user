@@ -1,3 +1,5 @@
+import { User } from "./common";
+
 type UserInitParams = {
   phone: string;
   name: string;
@@ -5,6 +7,7 @@ type UserInitParams = {
   birthday_year: string;
   birthday_month: string;
   birthday_day: string;
+  account_type: User["account_type"];
 };
 const defaultUserInitParams: UserInitParams = {
   phone: "",
@@ -13,6 +16,7 @@ const defaultUserInitParams: UserInitParams = {
   birthday_year: "",
   birthday_month: "",
   birthday_day: "",
+  account_type: "not_selected",
 };
 
 export type { UserInitParams };
