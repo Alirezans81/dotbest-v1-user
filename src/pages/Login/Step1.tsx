@@ -19,6 +19,7 @@ export default function Step1({
   setTempCode,
   setUserInitParams,
 }: Props) {
+  const [loading, setLoading] = useState(false);
   const [newUser, setNewUser] = useState(false);
 
   const validatePhone = (value: string, setError: (value: string) => void) => {
@@ -28,9 +29,22 @@ export default function Step1({
     }
     return true;
   };
-  const validateName = (value: string, setError: (value: string) => void) => {
+  const validateFirstName = (
+    value: string,
+    setError: (value: string) => void
+  ) => {
     if (!value) {
-      setError("نام و نام خانوادگی خود را وارد کنید!");
+      setError("نام خود را وارد کنید!");
+      return false;
+    }
+    return true;
+  };
+  const validateLastName = (
+    value: string,
+    setError: (value: string) => void
+  ) => {
+    if (!value) {
+      setError("نام خانوادگی خود را وارد کنید!");
       return false;
     }
     return true;
@@ -143,7 +157,8 @@ export default function Step1({
       <Formik
         initialValues={{
           phone: "",
-          name: "",
+          first_name: "",
+          last_name: "",
           melli_code: "",
           birthday_year: "",
           birthday_month: "",
@@ -156,6 +171,7 @@ export default function Step1({
                 setFieldError("phone", value)
               )
             ) {
+              setLoading(true);
               sendCode({
                 phone: values.phone,
                 customFunction: (data) => {
@@ -171,12 +187,18 @@ export default function Step1({
                 onError(error) {
                   openToast(error.message);
                 },
+                onFinally() {
+                  setLoading(false);
+                },
               });
             }
           } else {
             if (
-              validateName(values.name, (value) =>
-                setFieldError("name", value)
+              validateFirstName(values.first_name, (value) =>
+                setFieldError("first_name", value)
+              ) &&
+              validateLastName(values.last_name, (value) =>
+                setFieldError("last_name", value)
               ) &&
               validateMelliCode(values.melli_code, (value) =>
                 setFieldError("melli_code", value)
@@ -193,7 +215,8 @@ export default function Step1({
               setPhone(values.phone);
               setUserInitParams({
                 phone: values.phone,
-                name: values.name,
+                first_name: values.first_name,
+                last_name: values.last_name,
                 melli_code: values.melli_code,
                 birthday_year: values.birthday_year,
                 birthday_month: values.birthday_month,
@@ -239,27 +262,48 @@ export default function Step1({
                   {errors.phone}
                 </span>
 
-                <Input
-                  attributes={{
-                    style: {
-                      opacity: newUser ? 100 : 0,
-                      zIndex: newUser ? 0 : -10,
-                      width: "100%",
-                    },
-                    name: "name",
-                    onBlur: handleBlur,
-                    onChange: handleChange,
-                    value: values.name,
-                    placeholder: "نام و نام خانوادگی",
+                <div
+                  style={{
+                    opacity: newUser ? 100 : 0,
+                    zIndex: newUser ? 0 : -10,
+                    width: "100%",
                   }}
-                />
-                <span
-                  className={`text-error transition-all duration-100 ${
-                    errors.name ? "opacity-100 z-[-10]" : "opacity-0 z-0"
-                  }`}
+                  className="w-full grid grid-cols-2 gap-[2dvw]"
                 >
-                  {errors.name}
-                </span>
+                  <div className="col-span-1">
+                    <Input
+                      className="w-full"
+                      attributes={{
+                        name: "first_name",
+                        onBlur: handleBlur,
+                        onChange: handleChange,
+                        value: values.first_name,
+                        placeholder: "نام",
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <Input
+                      className="w-full"
+                      attributes={{
+                        name: "last_name",
+                        onBlur: handleBlur,
+                        onChange: handleChange,
+                        value: values.last_name,
+                        placeholder: "نام خانوادگی",
+                      }}
+                    />
+                  </div>
+                  <span
+                    className={`text-error col-span-2 transition-all duration-100 ${
+                      errors.first_name || errors.last_name
+                        ? "opacity-100 z-[-10]"
+                        : "opacity-0 z-0"
+                    }`}
+                  >
+                    {errors.first_name || errors.last_name}
+                  </span>
+                </div>
 
                 <Input
                   attributes={{
@@ -295,16 +339,16 @@ export default function Step1({
                     <Input
                       className="!flex-1"
                       attributes={{
-                        name: "birthday_year",
+                        name: "birthday_day",
                         onBlur: handleBlur,
                         onChange: handleChange,
-                        value: values.birthday_year,
+                        value: values.birthday_day,
                         inputMode: "decimal",
-                        placeholder: "سال",
+                        placeholder: "روز",
                         style: {
                           flex: "1 1 0%",
                         },
-                        maxLength: 4,
+                        maxLength: 2,
                       }}
                     />
                     <Dropdown
@@ -316,16 +360,16 @@ export default function Step1({
                     <Input
                       className="!flex-1"
                       attributes={{
-                        name: "birthday_day",
+                        name: "birthday_year",
                         onBlur: handleBlur,
                         onChange: handleChange,
-                        value: values.birthday_day,
+                        value: values.birthday_year,
                         inputMode: "decimal",
-                        placeholder: "روز",
+                        placeholder: "سال",
                         style: {
                           flex: "1 1 0%",
                         },
-                        maxLength: 2,
+                        maxLength: 4,
                       }}
                     />
                   </div>
@@ -341,7 +385,12 @@ export default function Step1({
                 </span>
               </div>
             </div>
-            <Button label="تایید" type="submit" onClick={handleSubmit} />
+            <Button
+              disabled={loading}
+              label={loading ? "در حال تایید..." : "تایید"}
+              type="submit"
+              onClick={handleSubmit}
+            />
           </>
         )}
       </Formik>

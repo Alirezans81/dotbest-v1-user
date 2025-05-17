@@ -7,15 +7,17 @@ import MapDark from "../images/common/map-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import SearchBarberCard from "../components/SearchBarberCard";
 import SearchFilterModal from "../components/modals/SearchFilterModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOpenModal } from "../hooks/popups";
 import { useGetBarbers } from "../api/salon/hooks";
 import { useEffect, useState } from "react";
-import { Barber } from "../lib/salon";
+import { Barber } from "../lib/barber";
 import Skeleton from "../components/Skeleton";
 import EmptyListMessage from "../components/EmptyListMessage";
 
 export default function Search() {
+  const [searchParams] = useSearchParams();
+
   const openModal = useOpenModal();
   const openSearchFilterModal = () => openModal(<SearchFilterModal />);
 
@@ -24,7 +26,7 @@ export default function Search() {
 
   const [loading, setLoading] = useState(true);
 
-  const [searchParam, setSearchParam] = useState("");
+  const [search, setSearch] = useState("");
 
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const getBarbers = useGetBarbers();
@@ -32,6 +34,10 @@ export default function Search() {
   useEffect(() => {
     setLoading(true);
     getBarbers({
+      filtersObject: {
+        category: searchParams.get("category"),
+        search,
+      },
       setBarbers,
       onFinally() {
         setLoading(false);
@@ -42,15 +48,19 @@ export default function Search() {
     const timeout = setTimeout(() => {
       setLoading(true);
       getBarbers({
+        filtersObject: {
+          category: searchParams.get("category"),
+          search,
+        },
         setBarbers,
         onFinally() {
           setLoading(false);
         },
       });
-    }, 100);
+    }, 500);
 
-    return clearTimeout(timeout);
-  }, [searchParam]);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
@@ -72,9 +82,9 @@ export default function Search() {
             className="w-full"
             attributes={{
               placeholder: "نام سالن، آرایشگر...",
-              value: searchParam,
+              value: search,
               onChange: (e) => {
-                setSearchParam(e.target.value);
+                setSearch(e.target.value);
               },
             }}
           />
@@ -108,11 +118,17 @@ export default function Search() {
           barbers.length ? (
             barbers.map((barber) => (
               <>
-                <SearchBarberCard data={barber} key={barber.slug} />
+                <SearchBarberCard
+                  key={barber.slug}
+                  data={barber}
+                  category={searchParams.get("category") || ""}
+                />
               </>
             ))
-          ) : (
+          ) : searchParams.get("category") ? (
             <EmptyListMessage className="h-[73dvh]" />
+          ) : (
+            <EmptyListMessage className="h-[73dvh]" message="چیزی یافت نشد!" />
           )
         ) : (
           <>

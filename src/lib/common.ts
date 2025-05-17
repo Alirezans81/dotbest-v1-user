@@ -241,17 +241,21 @@ export const defaultNewsDetail: NewsDetail = {
 
 export type Order = {
   url: string;
-  user: string;
-  skill_detail: string;
-  user_username: string;
-  user_full_name: string;
-  skill_detail_title: string;
+  customer: string;
+  service: string;
+  customer_username: string;
+  customer_full_name: string;
+  service_title: string;
+  image: File | null;
+  image_url: string;
   slug: string;
+  date: string;
+  time: string;
   duration: string;
   discount: number;
   status:
     | "request"
-    | "accept"
+    | "reserved"
     | "awaiting_payment"
     | "is_paid"
     | "cancel"
@@ -267,12 +271,16 @@ export type Order = {
 };
 export const defaultOrder: Order = {
   url: "",
-  user: "",
-  skill_detail: "",
-  user_username: "",
-  user_full_name: "",
-  skill_detail_title: "",
+  customer: "",
+  service: "",
+  customer_username: "",
+  customer_full_name: "",
+  service_title: "",
+  image: null,
+  image_url: "",
   slug: "",
+  date: "",
+  time: "",
   duration: "",
   discount: 0,
   status: "request",

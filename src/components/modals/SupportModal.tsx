@@ -24,6 +24,7 @@ export default function SupportModal() {
   const [ticketCategories, setTicketCategories] = useState<TicketCategory[]>(
     []
   );
+  const [loading, setLoading] = useState(false);
   const getTicketCategories = useGetTicketCategories();
   useEffect(() => {
     getTicketCategories({
@@ -48,7 +49,6 @@ export default function SupportModal() {
       <Formik
         initialValues={{ subject: "", message: "" }}
         onSubmit={(values) => {
-          console.log(values);
           if (validateForm(values)) {
             let params: Ticket = defaultTicket;
             params.title =
@@ -57,11 +57,15 @@ export default function SupportModal() {
             params.category = values.subject;
             params.description = values.message;
 
+            setLoading(true);
             createTicket({
               params,
               customFunction() {
                 closeModal();
                 openSuccessToast();
+              },
+              onFinally() {
+                setLoading(false);
               },
             });
           }
@@ -78,7 +82,7 @@ export default function SupportModal() {
             <div className="flex flex-col gap-[2dvw]">
               <span className="text-[5.5dvw]">مشکل خود را در زیر بنویسید</span>
               <div className="w-full flex flex-col gap-[3.5dvw]">
-                {ticketCategories.length ? (
+                {!loading ? (
                   <>
                     <Dropdown
                       options={ticketCategories.map((e) => e.title)}

@@ -6,7 +6,7 @@ import Dislike from "../images/Comment/dislike.svg";
 import DislikeActive from "../images/Comment/dislike-active.svg";
 import { useEffect, useState } from "react";
 import { Comment } from "../lib/salon";
-import { useConvertDate } from "../hooks/datetime";
+import { useConvertToPersianDateTime } from "../hooks/datetime";
 import { useDisikeComment, useLikeComment } from "../api/user/hooks";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   className?: string;
 }
 export default function CommentComponent({ className, data }: Props) {
-  const convertDate = useConvertDate();
+  const convertToPersianDateTime = useConvertToPersianDateTime();
 
   const likeComment = useLikeComment();
   const dislikeComment = useDisikeComment();
@@ -54,7 +54,7 @@ export default function CommentComponent({ className, data }: Props) {
       <span className="text-[5dvw]">{data.message}</span>
       <div className="w-full flex justify-between items-center">
         <span className="text-gray_002 text-[4.5dvw]">
-          {convertDate(data.datetime_create)}
+          {convertToPersianDateTime("", "")}
         </span>
         <div className="flex items-center gap-[2dvw]">
           <div className="flex items-center gap-[0.5dvw]">

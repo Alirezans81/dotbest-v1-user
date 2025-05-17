@@ -1,13 +1,16 @@
-type Salon = {
+import { WeekDay } from "./datetime";
+
+export type Salon = {
   url: string;
   manager: string;
-  categories: string[];
   rate: number;
-  comment_quantity: number;
+  order_comment_quantity: number;
+  poster: File | null;
   poster_url: string;
+  rental_contract: File | null;
   rental_contract_url: string;
+  business_license: File | null;
   business_license_url: string;
-  national_card_url: string;
   datetime_update: string;
   datetime_delete: string;
   is_deleted: boolean;
@@ -18,22 +21,22 @@ type Salon = {
   show_order: number;
   name: string;
   phone: string;
-  national_card_code: string;
   is_verified: boolean;
   datetime_verify: string;
   summery: string;
   address: string;
 };
-const defaultSalon: Salon = {
+export const defaultSalon: Salon = {
   url: "",
   manager: "",
-  categories: [],
   rate: 0,
-  comment_quantity: 0,
+  order_comment_quantity: 0,
+  poster: null,
   poster_url: "",
+  business_license: null,
   rental_contract_url: "",
+  rental_contract: null,
   business_license_url: "",
-  national_card_url: "",
   datetime_update: "",
   datetime_delete: "",
   is_deleted: false,
@@ -44,17 +47,174 @@ const defaultSalon: Salon = {
   show_order: 0,
   name: "",
   phone: "",
-  national_card_code: "",
   is_verified: false,
   datetime_verify: "",
   summery: "",
   address: "",
 };
 
-type Service = {
+export type SalonBarber = {
+  url: string;
+  barber_detail: {
+    nickname: string;
+    order_comment_quantity: number;
+    poster_url: string;
+    rate: number;
+    slug: string;
+    url: string;
+  };
+  salon_detail: {
+    name: string;
+    order_comment_quantity: number;
+    poster_url: string;
+    rate: number;
+    url: string;
+  };
+  salon: string;
+  barber: string;
+  rate: number;
+  order_comment_quantity: string;
+  working_days: WeekDay[];
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  working_time_start: string;
+  working_time_end: string;
+};
+export const defaultSalonBarber: SalonBarber = {
+  url: "",
+  barber_detail: {
+    nickname: "",
+    order_comment_quantity: 0,
+    poster_url: "",
+    rate: 0,
+    slug: "",
+    url: "",
+  },
+  salon_detail: {
+    name: "",
+    order_comment_quantity: 0,
+    poster_url: "",
+    rate: 0,
+    url: "",
+  },
+  salon: "",
+  barber: "",
+  rate: 0,
+  order_comment_quantity: "",
+  working_days: [],
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: true,
+  show_order: 1,
+  working_time_start: "",
+  working_time_end: "",
+};
+
+export type SalonPlan = {
   url: string;
   salon: string;
-  category: string;
+  salon_name: string;
+  poster_url: string;
+  rate: string;
+  plan_comment_quantity: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  title: string;
+  summery: string;
+};
+export const defaultSalonPlan: SalonPlan = {
+  url: "",
+  salon: "",
+  salon_name: "",
+  poster_url: "",
+  rate: "",
+  plan_comment_quantity: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  title: "",
+  summery: "",
+};
+
+export type SalonPlanComment = {
+  url: string;
+  parent: string;
+  plan: string;
+  user: string;
+  like: string;
+  dislike: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  rate: number;
+  message: string;
+  is_pin: boolean;
+};
+export const defaultSalonPlanComment: SalonPlanComment = {
+  url: "",
+  parent: "",
+  plan: "",
+  user: "",
+  like: "",
+  dislike: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  rate: 0,
+  message: "",
+  is_pin: false,
+};
+
+export type SalonPlanCommentVote = {
+  url: string;
+  comment_plan: string;
+  user: string;
+  slug: string;
+  value: boolean;
+};
+export const defaultSalonPlanCommentVote: SalonPlanCommentVote = {
+  url: "",
+  comment_plan: "",
+  user: "",
+  slug: "",
+  value: false,
+};
+
+export type SalonPlanDetail = {
+  url: string;
+  plan: string;
+  skill: string;
   poster_url: string;
   datetime_update: string;
   datetime_delete: string;
@@ -65,72 +225,51 @@ type Service = {
   is_active: boolean;
   show_order: number;
   title: string;
+  duration: string;
+  price: string;
+  summery: string;
 };
-const defaultService: Service = {
+export const defaultSalonPlanDetail: SalonPlanDetail = {
+  url: "",
+  plan: "",
+  skill: "",
+  poster_url: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  title: "",
+  duration: "",
+  price: "",
+  summery: "",
+};
+
+export type SalonSocialMedia = {
+  url: string;
+  salon: string;
+  social_network: string;
+  social_link: string;
+  social_network_logo_url: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  username: string;
+};
+export const defaultSalonSocialMedia: SalonSocialMedia = {
   url: "",
   salon: "",
-  category: "",
-  poster_url: "",
-  datetime_update: "",
-  datetime_delete: "",
-  is_deleted: false,
-  description: "",
-  slug: "",
-  datetime_create: "",
-  is_active: true,
-  show_order: 1,
-  title: "",
-};
-
-type WeekDay =
-  | "saturday"
-  | "sunday"
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday";
-
-type Barber = {
-  url: string;
-  user: string;
-  user_detail: {
-    url: string;
-    first_name: string;
-    last_name: string;
-    phone: string;
-    full_name: string;
-    avatar_url: string;
-  };
-  rate: string;
-  order_comment_quantity: string;
-  poster: File | null;
-  poster_url: string;
-  datetime_update: string;
-  datetime_delete: string;
-  is_deleted: boolean;
-  description: string;
-  slug: string;
-  datetime_create: string;
-  is_active: boolean;
-  show_order: number;
-  nickname: string;
-};
-const defaultBarber: Barber = {
-  url: "",
-  user: "",
-  user_detail: {
-    url: "",
-    first_name: "",
-    last_name: "",
-    phone: "",
-    full_name: "",
-    avatar_url: "",
-  },
-  rate: "",
-  order_comment_quantity: "",
-  poster: null,
-  poster_url: "",
+  social_network: "",
+  social_link: "",
+  social_network_logo_url: "",
   datetime_update: "",
   datetime_delete: "",
   is_deleted: false,
@@ -139,45 +278,10 @@ const defaultBarber: Barber = {
   datetime_create: "",
   is_active: false,
   show_order: 0,
-  nickname: "",
+  username: "",
 };
 
-type Photo = {
-  url: string;
-  barber: string;
-  order: string;
-  datetime_update: string;
-  datetime_delete: string;
-  is_deleted: boolean;
-  description: string;
-  slug: string;
-  datetime_create: string;
-  is_active: boolean;
-  show_order: number;
-  image: string;
-  alt_name: string;
-  like: number;
-  dislike: number;
-};
-const defaultPhoto: Photo = {
-  url: "",
-  barber: "",
-  order: "",
-  datetime_update: "",
-  datetime_delete: "",
-  is_deleted: false,
-  description: "",
-  slug: "",
-  datetime_create: "",
-  is_active: false,
-  show_order: 0,
-  image: "",
-  alt_name: "",
-  like: 0,
-  dislike: 0,
-};
-
-type Comment = {
+export type Comment = {
   url: string;
   order_detail: string;
   user: string;
@@ -195,7 +299,7 @@ type Comment = {
   message: string;
   is_anonymous_user: boolean;
 };
-const defaultComment: Comment = {
+export const defaultComment: Comment = {
   url: "",
   order_detail: "",
   user: "",
@@ -212,13 +316,4 @@ const defaultComment: Comment = {
   dislike: 0,
   message: "",
   is_anonymous_user: false,
-};
-
-export type { Salon, Service, Barber, WeekDay, Photo, Comment };
-export {
-  defaultSalon,
-  defaultService,
-  defaultBarber,
-  defaultPhoto,
-  defaultComment,
 };

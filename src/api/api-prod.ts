@@ -10,7 +10,7 @@ export default function api() {
     "salon-barber": `${url}api/salon-barber/`,
     barber: `${url}api/barber/`,
     category: `${url}api/category/`,
-    service: `${url}api/salon-skill/`,
+    "barber-service": `${url}api/barber-service/`,
     reservation: `${url}api/order/`,
     user: `${url}api/user/`,
     "forget-pass": `${url}api/forget-pass/`,
@@ -21,7 +21,7 @@ export default function api() {
     order: `${url}api/order/`,
     "ticket-category": `${url}api/ticket-category/`,
     ticket: `${url}api/ticket/`,
-    "barber-gallery": `${url}api/salon-barber-gallery/`,
+    "barber-category-gallery": `${url}api/barber-category-gallery/`,
     comment: `${url}api/order-comment/`,
     wallet: `${url}api/wallet/`,
   };

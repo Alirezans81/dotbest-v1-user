@@ -1,18 +1,47 @@
 import { Formik } from "formik";
 import Button from "../Button";
 import { useState } from "react";
+import BarberCard from "../BarberCard";
+import { Barber } from "../../lib/barber";
 
 import Star from "../../images/common/star.svg";
 import StarOutline from "../../images/common/star-outline.svg";
-import BarberCard from "../BarberCard";
-import { defaultBarber } from "../../lib/salon";
+import { useCreateOrderComment } from "../../api/user/hooks";
+import { defaultOrderComment, OrderComment } from "../../lib/common";
+import { useModalDataClose } from "../../providers/ModalProvider";
+import { useOpenToast } from "../../hooks/popups";
 
-export default function CommentModal() {
-  const [starCount, setStarCount] = useState<number>(0);
+interface Props {
+  barber_data: Barber;
+  order_url: string;
+}
+export default function CommentModal({ barber_data, order_url }: Props) {
+  const openToast = useOpenToast();
+  const closeModal = useModalDataClose();
+
+  const [starCount, setStarCount] = useState<number>(-1);
+
+  const createOrderComment = useCreateOrderComment();
+  const handleSubmit = (values: { comment: string }) => {
+    let data: OrderComment = defaultOrderComment;
+
+    data.barber = barber_data.url;
+    data.order = order_url;
+    data.message = values.comment;
+    data.rate = starCount;
+
+    createOrderComment({
+      data,
+      customFunction() {
+        closeModal();
+        openToast("نظر شما با موفقیت ثبت شد");
+      },
+    });
+  };
 
   return (
     <div className="w-full flex flex-col gap-[4dvw]">
-      <Formik initialValues={{ commnet: "" }} onSubmit={() => {}}>
+      <Formik initialValues={{ comment: "" }} onSubmit={handleSubmit}>
         {({ handleBlur, handleChange, values, handleSubmit }) => (
           <>
             <div className="flex flex-col gap-[2dvw]">
@@ -20,7 +49,7 @@ export default function CommentModal() {
               <div className="w-full flex flex-col gap-[3.5dvw] relative">
                 <div className="w-full flex flex-col">
                   <BarberCard
-                    data={defaultBarber}
+                    data={barber_data}
                     orientation="row"
                     type="comment"
                   />

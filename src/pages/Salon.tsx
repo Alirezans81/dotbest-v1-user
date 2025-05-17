@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Comment, defaultBarber, Salon } from "../lib/salon";
+import { Comment, Salon } from "../lib/salon";
 import { useLocation, useNavigate } from "react-router-dom";
 import BarberCard from "../components/BarberCard";
 import Button from "../components/Button";
@@ -12,8 +12,8 @@ import { useEffect, useState } from "react";
 import Skeleton from "../components/Skeleton";
 import { useGetSalonComments, useGetSalonData } from "../api/salon/hooks";
 import { Category } from "../lib/common";
-import { useGetCategoriesByUrlArray } from "../hooks/filters";
 import { useOpenToast } from "../hooks/popups";
+import { defaultBarber } from "../lib/barber";
 
 export default function SalonPage() {
   const { pathname } = useLocation();
@@ -25,7 +25,6 @@ export default function SalonPage() {
   const openToast = useOpenToast();
 
   const getSalonData = useGetSalonData();
-  const getCategoriesByUrlArray = useGetCategoriesByUrlArray();
   const getSalonComments = useGetSalonComments();
 
   useEffect(() => {
@@ -35,7 +34,6 @@ export default function SalonPage() {
       salon_slug,
       setSalon,
       customFunction(data) {
-        setSalonCategories(getCategoriesByUrlArray(data.categories));
         getSalonComments({
           salon_slug,
           filters: { limit: 1 },

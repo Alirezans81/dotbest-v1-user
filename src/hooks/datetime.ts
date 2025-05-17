@@ -1,44 +1,73 @@
-const convertDate = (_date: string) => {
-  const date = new Date(_date);
-  const now = new Date();
+import dayjs from "dayjs";
+import jalaliday from "jalaliday";
 
-  const hour = date.getHours();
-  let hour_str;
-  if (hour < 10) {
-    hour_str = "0" + hour;
-  } else {
-    hour_str = "" + hour;
+function isJalaliLeapYear(year: number): boolean {
+  return year % 4 === 0;
+}
+function validateJalaliDay(
+  monthName: string,
+  day: number,
+  year: number
+): boolean {
+  const monthNames: { [key: string]: number } = {
+    فروردین: 1,
+    اردیبهشت: 2,
+    خرداد: 3,
+    تیر: 4,
+    مرداد: 5,
+    شهریور: 6,
+    مهر: 7,
+    آبان: 8,
+    آذر: 9,
+    دی: 10,
+    بهمن: 11,
+    اسفند: 12,
+  };
+
+  const month = monthNames[monthName];
+
+  if (!month) {
+    return false;
   }
 
-  const minute = date.getMinutes();
-  let minute_str;
-  if (minute < 10) {
-    minute_str = "0" + minute;
-  } else {
-    minute_str = "" + minute;
-  }
+  const daysInMonth: number[] = [
+    0,
+    31,
+    31,
+    31,
+    31,
+    31,
+    31,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    isJalaliLeapYear(year) ? 30 : 29,
+  ];
 
-  const dayDiffrance = now.getDay() - date.getDay();
-  if (dayDiffrance === 0) {
-    return "امروز، " + hour_str + ":" + minute_str;
-  } else if (dayDiffrance === 1) {
-    return "دیروز، " + hour_str + ":" + minute_str;
+  if (day < 1 || day > daysInMonth[month]) {
+    return false;
   } else {
-    return (
-      date.toLocaleDateString("fa-u-ca-persian", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }) +
-      "، " +
-      hour_str +
-      ":" +
-      minute_str
-    );
+    return true;
   }
+}
+export const useValidateJalaliDay = () => {
+  return validateJalaliDay;
 };
-const useConvertDate = () => {
-  return convertDate;
-};
 
-export { useConvertDate };
+dayjs.extend(jalaliday);
+const convertToPersianDateTime = (dateString: string, timeString: string) => {
+  const combined = dayjs(`${dateString}T${timeString}`).startOf("minute");
+  let tempArray = combined
+    .calendar("jalali")
+    .locale("fa")
+    .format("D MMMM YYYY، HH:mm")
+    .split(" ");
+  tempArray[0] = +tempArray[0] - 1 + "";
+  return tempArray.join(" ");
+};
+export const useConvertToPersianDateTime = () => {
+  return convertToPersianDateTime;
+};

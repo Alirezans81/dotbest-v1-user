@@ -21,7 +21,7 @@ export default function Reports() {
   const [reports, setReports] = useState<Order[]>([]);
   const getReports = useGetReports();
 
-  useEffect(() => {
+  const refreshReports = () => {
     setLoading(true);
     getReports({
       setReports,
@@ -29,6 +29,10 @@ export default function Reports() {
         setLoading(false);
       },
     });
+  };
+
+  useEffect(() => {
+    refreshReports();
   }, []);
 
   return (
@@ -64,17 +68,23 @@ export default function Reports() {
         </button>
       </div>
       <div className="flex flex-col gap-[2dvh]">
-        {loading ? (
+        {!loading ? (
           reports.length ? (
-            reports.map((report, i) => <ReportCard key={i} />)
+            reports.map((report) => (
+              <ReportCard
+                key={report.slug}
+                data={report}
+                refreshReports={refreshReports}
+              />
+            ))
           ) : (
-            <>
-              <Skeleton className="w-full h-[72.75dvw]" />
-              <Skeleton className="w-full h-[72.75dvw]" />
-            </>
+            <EmptyListMessage className="h-[73dvh]" />
           )
         ) : (
-          <EmptyListMessage className="h-[73dvh]" />
+          <>
+            <Skeleton className="w-full h-[72.75dvw]" />
+            <Skeleton className="w-full h-[72.75dvw]" />
+          </>
         )}
       </div>
     </div>

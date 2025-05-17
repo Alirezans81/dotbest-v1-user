@@ -7,17 +7,20 @@ import Button from "../components/Button";
 
 import BackLight from "../images/common/back-light.svg";
 import BackDark from "../images/common/back-dark.svg";
+import { useState } from "react";
 
 interface Props {
   backlink?: string;
 }
-export default function Services({ backlink }: Props) {
+export default function Category({ backlink }: Props) {
   const navigate = useNavigate();
 
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [goToRoute, _setGoToRoute] = useState(state);
   const pathnameArray = pathname.split("/");
   const servicesArray = pathnameArray.slice(
-    pathnameArray.findIndex((e) => e === "services") + 1,
+    pathnameArray.findIndex((e) => e === "category") + 1,
     pathnameArray.length
   );
 
@@ -38,12 +41,12 @@ export default function Services({ backlink }: Props) {
         servicesArray.length
           ? categories.find(
               (e) => e.slug === servicesArray[servicesArray.length - 1]
-            )?.title || "خدمات"
-          : "خدمات"
+            )?.title || "دسته بندی ها"
+          : "دسته بندی ها"
       }
       backlink={
         servicesArray.length !== 1
-          ? "/services/" +
+          ? "/category/" +
             servicesArray.slice(0, servicesArray.length - 1).join("/")
           : backlink
       }
@@ -56,7 +59,9 @@ export default function Services({ backlink }: Props) {
             onClick={() =>
               category.has_children
                 ? navigate(pathname + "/" + category.slug)
-                : navigate(`/search?category=${category.slug}`)
+                : navigate(
+                    "/" + (goToRoute || "") + `?category=${category.slug}`
+                  )
             }
             className="text-start pr-[6dvw] pl-[4dvw] py-[3dvw] text-[5dvw]"
           >

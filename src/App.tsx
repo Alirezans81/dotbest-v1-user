@@ -12,7 +12,7 @@ import Search from "./pages/Search";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import { useEffect, useState } from "react";
-import SplashScreen from "./pages/SplashScreen";
+import SplashScreen from "./components/SplashScreen";
 import Salon from "./pages/Salon";
 import Barbers from "./pages/Barbers";
 import Barber from "./pages/Barber";
@@ -30,7 +30,8 @@ import Comments from "./pages/Comments";
 import { TokenType, useTokenSetState } from "./providers/TokenProvider";
 import { useGetUserData } from "./api/auth/hooks";
 import { useGetCategories } from "./api/common/hooks";
-import Services from "./pages/Services";
+import Category from "./pages/Category";
+import BarberCategory from "./pages/BarberCategory";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -138,8 +139,11 @@ function App() {
                     <Route path=":salon_slug/barbers" element={<Barbers />} />
                     <Route path="*" element={<NoPage />} />
                   </Route>
-                  <Route path="/services">
-                    <Route path="*" element={<Services backlink="/" />} />
+                  <Route path="/category">
+                    <Route path="*" element={<Category backlink="/" />} />
+                  </Route>
+                  <Route path="/barber-category">
+                    <Route path="*" element={<BarberCategory backlink="/" />} />
                   </Route>
                 </Route>
                 <Route path="*" element={<NoPage />} />

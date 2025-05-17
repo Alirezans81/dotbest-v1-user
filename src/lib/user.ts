@@ -2,7 +2,8 @@ import { User } from "./common";
 
 type UserInitParams = {
   phone: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   melli_code: string;
   birthday_year: string;
   birthday_month: string;
@@ -11,7 +12,8 @@ type UserInitParams = {
 };
 const defaultUserInitParams: UserInitParams = {
   phone: "",
-  name: "",
+  first_name: "",
+  last_name: "",
   melli_code: "",
   birthday_year: "",
   birthday_month: "",

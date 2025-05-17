@@ -1,4 +1,4 @@
-import { Barber } from "../lib/salon";
+import { Barber } from "../lib/barber";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 
@@ -21,7 +21,7 @@ export default function HomeBarberCard({ data, className }: Props) {
       <div className="w-full flex flex-col items-center gap-[3dvw]">
         <img
           alt="آواتار"
-          className="w-[14dvw] h-[14dvw] rounded-full"
+          className="w-[14dvw] h-[14dvw] rounded-full object-cover"
           src={data.user_detail.avatar_url || FakeAvatar}
         />
         <span className="text-[6dvw]">{data.user_detail.full_name}</span>

@@ -1,7 +1,6 @@
 import {
   getBarberComments,
   getBarberData,
-  getBarberGallery,
   getBarbers,
   getBestBarbers,
   getBestSalons,
@@ -10,26 +9,29 @@ import {
   getSalonData,
   getSalons,
 } from "./apis";
-import { Barber, Comment, Photo, Salon } from "../../lib/salon";
+import { Comment, Salon } from "../../lib/salon";
 import { useTokenState } from "../../providers/TokenProvider";
 import { useOpenToast } from "../../hooks/popups";
+import { Barber } from "../../lib/barber";
 
-const useGetBarbers = () => {
+export const useGetBarbers = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
   const fetch = async ({
+    filtersObject,
     setBarbers,
     customFunction,
     onError,
     onFinally,
   }: {
+    filtersObject?: any;
     setBarbers: (value: Barber[]) => void;
     customFunction?: (data: Barber[]) => void;
     onError?: (error: any) => void;
     onFinally?: () => void;
   }) => {
-    getBarbers(token.access)
+    getBarbers(token.access, filtersObject)
       .then((res: any) => {
         setBarbers(res.data.results);
         customFunction && customFunction(res.data.results);
@@ -47,7 +49,7 @@ const useGetBarbers = () => {
   return fetch;
 };
 
-const useGetBestBarbers = () => {
+export const useGetBestBarbers = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
@@ -80,7 +82,7 @@ const useGetBestBarbers = () => {
   return fetch;
 };
 
-const useGetSalons = () => {
+export const useGetSalons = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
@@ -113,7 +115,7 @@ const useGetSalons = () => {
   return fetch;
 };
 
-const useGetBestSalons = () => {
+export const useGetBestSalons = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
@@ -146,7 +148,7 @@ const useGetBestSalons = () => {
   return fetch;
 };
 
-const useGetSalonData = () => {
+export const useGetSalonData = () => {
   const fetch = async ({
     salon_slug,
     setSalon,
@@ -172,7 +174,7 @@ const useGetSalonData = () => {
   return fetch;
 };
 
-const useGetSalonBarbersByCategory = () => {
+export const useGetSalonBarbersByCategory = () => {
   const fetch = async ({
     salon_slug,
     category_slug,
@@ -200,7 +202,7 @@ const useGetSalonBarbersByCategory = () => {
   return fetch;
 };
 
-const useGetBarberData = () => {
+export const useGetBarberData = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
@@ -235,33 +237,7 @@ const useGetBarberData = () => {
   return fetch;
 };
 
-const useGetBarberGallery = () => {
-  const fetch = async ({
-    barber_slug,
-    setGallery,
-    customFunction,
-    onError,
-  }: {
-    barber_slug: string;
-    setGallery: (value: Photo[]) => void;
-    customFunction?: (data: Photo[]) => void;
-    onError?: (error: any, barber_slug: string) => void;
-  }) => {
-    await getBarberGallery(barber_slug)
-      .then((res: any) => {
-        setGallery(res.data.results);
-        customFunction && customFunction(res.data.results);
-      })
-      .catch((error: any) => {
-        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        onError && onError(error, barber_slug);
-      });
-  };
-
-  return fetch;
-};
-
-const useGetSalonComments = () => {
+export const useGetSalonComments = () => {
   const fetch = async ({
     salon_slug,
     filters,
@@ -289,43 +265,39 @@ const useGetSalonComments = () => {
   return fetch;
 };
 
-const useGetBarberComments = () => {
+export const useGetBarberComments = () => {
+  const token = useTokenState();
+  const openToast = useOpenToast();
+
   const fetch = async ({
     barber_slug,
     filters,
     setComments,
     customFunction,
     onError,
+    onFinally,
   }: {
     barber_slug: string;
     filters?: any;
     setComments: (value: Comment[]) => void;
     customFunction?: (data: Comment[]) => void;
     onError?: (error: any, barber_slug: string) => void;
+    onFinally?: () => void;
   }) => {
-    await getBarberComments(barber_slug, filters)
+    await getBarberComments(token.access, barber_slug, filters)
       .then((res: any) => {
         setComments(res.data.results);
         customFunction && customFunction(res.data.results);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
         onError && onError(error, barber_slug);
+      })
+      .finally(() => {
+        onFinally && onFinally();
       });
   };
 
   return fetch;
-};
-
-export {
-  useGetBarbers,
-  useGetBestBarbers,
-  useGetSalons,
-  useGetBestSalons,
-  useGetSalonData,
-  useGetSalonBarbersByCategory,
-  useGetBarberData,
-  useGetBarberGallery,
-  useGetSalonComments,
-  useGetBarberComments,
 };

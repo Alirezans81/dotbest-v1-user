@@ -46,7 +46,7 @@ export default function SalonCard({ data, className }: Props) {
           />
         </div>
         <div className="w-full flex justify-between items-end">
-          <span className="text-gray_001">{data.comment_quantity} نظر</span>
+          <span className="text-gray_001">{data.order_comment_quantity} نظر</span>
           <div className="flex gap-[0.75dvw] items-center">
             <span>{data.rate}</span>
             <img

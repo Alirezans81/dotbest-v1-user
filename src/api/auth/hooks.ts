@@ -89,8 +89,8 @@ export const useVerifyCode = () => {
       );
       const birthday = new Date(a.gy + "/" + a.gm + "/" + a.gd);
 
-      params.first_name = userParams.name.split(" ")[0];
-      params.last_name = userParams.name.split(" ")[1];
+      params.first_name = userParams.first_name;
+      params.last_name = userParams.last_name;
       params.national_code = userParams.melli_code;
       params.birth_date = birthday.toISOString();
       params.account_type = userParams.account_type;

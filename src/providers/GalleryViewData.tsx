@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
 import { useState } from "react";
-import { Photo } from "../lib/salon";
+import { BarberCategoryGallery } from "../lib/barber";
 
 export type GalleryViewType = {
   activePhotoIndex: number;
-  data: Photo[];
+  data: BarberCategoryGallery[];
   isOpen: boolean;
 };
 
