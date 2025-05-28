@@ -9,7 +9,7 @@ import { useGetBestBarbers } from "../api/salon/hooks";
 import HomeBarberCard from "../components/HomeBarberCard";
 import { useNavigate } from "react-router-dom";
 
-import Temp from "../images/Home/temp.png";
+import Banner from "../images/Home/banner.png";
 
 export default function Home() {
   const categories = useCategoriesState();
@@ -72,7 +72,7 @@ export default function Home() {
           </div>
         </Carousel>
         <button className="w-full">
-          <img alt="" className="w-full rounded-[5dvw]" src={Temp} />
+          <img alt="" className="w-full rounded-[5dvw]" src={Banner} />
         </button>
         <div className="w-full flex flex-col gap-[2dvw]">
           <span className="text-[8dvw]">برترین های این هفته</span>
