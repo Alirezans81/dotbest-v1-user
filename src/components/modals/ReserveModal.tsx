@@ -206,11 +206,11 @@ export default function ReserveModal({
   return (
     <div className="w-full flex flex-col gap-[6dvw]">
       <div className="w-full flex flex-col gap-[4dvw]">
-        <BarberCard
+        {/* <BarberCard
           data={data}
           orientation="row"
           className="border border-gray_001 dark:border-gray_004"
-        />
+        /> */}
         <div className="flex flex-col gap-[2dvw]">
           <span className="text-[5.5dvw]">تاریخ رزرو خود را انتخاب کنید</span>
           <div className="overflow-hidden rounded-[4dvw] border border-gray_001 dark:border-gray_004">
