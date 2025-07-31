@@ -9,6 +9,12 @@ function validateJalaliDay(
   day: number,
   year: number
 ): boolean {
+  const startYear = 1300;
+
+  if (year < startYear) {
+    return false;
+  }
+
   const monthNames: { [key: string]: number } = {
     فروردین: 1,
     اردیبهشت: 2,

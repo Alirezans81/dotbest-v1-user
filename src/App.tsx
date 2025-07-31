@@ -100,7 +100,7 @@ function App() {
     }
   }
 
-  if (detectDeviceIsPhone() || true) {
+  if (detectDeviceIsPhone() || process.env.REACT_APP_MODE === "DEVELOPMENT") {
     if (showSplashSceen || loggedIn === null) {
       return <SplashScreen />;
     } else {

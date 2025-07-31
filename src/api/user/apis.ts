@@ -92,10 +92,26 @@ export const getBarberSerivce = (token: string, service_url: string) => {
   return axios.get(service_url, { headers });
 };
 
+export const getOrderUserComments = (
+  token: string,
+  order_slug: string,
+  username: string
+) => {
+  const urlWithQueries = queryString.stringifyUrl({
+    url: api["comment"],
+    query: { is_deleted: false, user: username, order: order_slug },
+  });
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(urlWithQueries, { headers });
+};
+
 export const createOrderComment = (token: string, data: OrderComment) => {
   const formData = new FormData();
 
-  formData.append("barber", data.barber);
+  formData.append("user", data.user);
   formData.append("order", data.order);
   formData.append("message", data.message);
   formData.append("rate", data.rate + "");

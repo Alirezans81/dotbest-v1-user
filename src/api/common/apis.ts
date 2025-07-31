@@ -17,7 +17,7 @@ export const deleteItem = (token: string, url: string) => {
 export const getCategories = (token: string) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["category"],
-    query: { is_active: true, is_deleted: false },
+    query: { is_active: true, is_deleted: false, limit: 500 },
   });
 
   const headers = {

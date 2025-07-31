@@ -83,12 +83,12 @@ export default function Profile() {
             <span className="text-[7dvw] leading-8">
               {user.first_name + " " + user.last_name}
             </span>
-            <span className="text-gray_002">{"0" + user.phone}</span>
+            <span className="text-gray_002">{user.phone}</span>
           </div>
         </div>
       </div>
       <div className="w-full flex flex-col gap-[3dvw]">
-        <Button
+        {/* <Button
           type="button"
           onClick={openEditInfoModal}
           className="text-start pr-[6dvw] pl-[4dvw] py-[3dvw] text-[5dvw]"
@@ -106,7 +106,7 @@ export default function Profile() {
               src={BackLight}
             />
           </div>
-        </Button>
+        </Button> */}
         <Button
           type="button"
           onClick={openSupportModal}
@@ -168,7 +168,7 @@ export default function Profile() {
       <Button
         type="button"
         label="خروج از حساب کاربری"
-        className="text-error !border-error py-[3dvw]"
+        className="!bg-transparent !text-error !border-error hover:!bg-error hover:!border-error hover:!text-white py-[3dvw]"
         onClick={openLogoutModal}
       />
     </div>

@@ -60,7 +60,6 @@ export default function ReserveModal({
   service_category,
   reserved_orders,
 }: Props) {
-  console.log(reserved_orders);
   const closeModal = useModalDataClose();
   const user = useUserState();
   const navigate = useNavigate();
@@ -336,6 +335,7 @@ export default function ReserveModal({
         /> */}
         <Button
           type="button"
+          className="!border-primary text-primary hover:bg-primary hover:text-white"
           disabled={loading}
           label={loading ? "در حال بارگذاری..." : "تایید"}
           onClick={handleSubmit}

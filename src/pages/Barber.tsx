@@ -126,6 +126,12 @@ export default function BarberPage() {
     }
   }, [activePhotoIndex]);
 
+  useEffect(() => {
+    if (category_slug && barber) {
+      openReserveModal();
+    }
+  }, [category_slug, barber]);
+
   return (
     <div className="w-screen h-[100dvh] overflow-y-auto flex flex-col gap-[3.5dvw]">
       <div className="w-full -mt-[0.1dvh] relative">

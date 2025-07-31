@@ -103,7 +103,9 @@ export const useVerifyCode = () => {
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        openToast(error.message);
+        error.message === "Request failed with status code 406"
+          ? openToast("کد وارد شده صحیح نمی‌باشد")
+          : openToast(error.message);
         onError && onError(error, code);
       })
       .finally(() => {

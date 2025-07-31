@@ -47,7 +47,7 @@ export default function Home() {
           best
         </span>
         <div className="w-[1.5px] rounded-full h-[8dvw] bg-gray_001 dark:bg-gray_004 -mt-[2dvw]" />
-        <span className="text-[5.5dvw]">بهترینی وجود ندارد...</span>
+        <span className="text-[5.5dvw]">بهترینی وجود نداره!</span>
       </div>
       <div className="w-full flex flex-col gap-[2dvh]">
         <Carousel>
@@ -57,7 +57,7 @@ export default function Home() {
               .map((category) => (
                 <div
                   key={category.title}
-                  className="col-span-1 flex justify-center items-center"
+                  className="col-span-1 flex justify-center items-start"
                 >
                   <CategoryComponent
                     onClick={() => {

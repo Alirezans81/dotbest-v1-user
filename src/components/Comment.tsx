@@ -54,7 +54,7 @@ export default function CommentComponent({ className, data }: Props) {
       <span className="text-[5dvw]">{data.message}</span>
       <div className="w-full flex justify-between items-center">
         <span className="text-gray_002 text-[4.5dvw]">
-          {convertToPersianDateTime("", "")}
+          {convertToPersianDateTime(data.datetime_create, "00:00:00")}
         </span>
         <div className="flex items-center gap-[2dvw]">
           <div className="flex items-center gap-[0.5dvw]">

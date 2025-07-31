@@ -33,9 +33,9 @@ export default function BarberCategory({ backlink }: Props) {
   const subCategories = categories.filter(
     (e) =>
       e.parent ===
-      (process.env.REACT_APP_MODE === "PRODUCTION"
-        ? apiProd()["category"]
-        : apiDev()["category"]) +
+      (process.env.REACT_APP_MODE === "DEVELOPMENT"
+        ? apiDev()["category"]
+        : apiProd()["category"]) +
         servicesArray[servicesArray.length - 1] +
         "/"
   );

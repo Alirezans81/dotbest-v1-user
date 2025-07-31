@@ -1,6 +1,6 @@
-import Image1 from "../../images/Login/image1.png";
-import Image2 from "../../images/Login/image2.png";
-import Image3 from "../../images/Login/image3.png";
+import Image1 from "../../images/Login/image1.webp";
+import Image2 from "../../images/Login/image2.webp";
+import Image3 from "../../images/Login/image3.webp";
 import Button from "../../components/Button";
 import Carousel from "../../components/Carousel";
 
@@ -18,9 +18,9 @@ const Element = ({ img_alt, image, title1, title2, title3, desc }: ElementProps)
       <img alt={img_alt} className="w-full" src={image} />
       <div className="w-full flex flex-col gap-y-[2dvw] px-[6dvw]">
         <div className="w-full flex flex-wrap gap-[1.75dvw]">
-          <h3 className="text-[9dvw] leading-10">{title1}</h3>
-          <h3 className="text-[9dvw] leading-10 text-primary">{title2}</h3>
-          <h3 className="text-[9dvw] leading-10">{title3}</h3>
+          <h3 className="text-[9dvw] leading-8">{title1}</h3>
+          <h3 className="text-[9dvw] leading-8 text-primary">{title2}</h3>
+          <h3 className="text-[9dvw] leading-8">{title3}</h3>
         </div>
         <span className="text-gray_004 dark:text-gray_001">{desc}</span>
       </div>
@@ -32,16 +32,16 @@ const elements = [
     img_alt={"image3"}
     desc="دات‌بست با شناخت سلیقه، نیاز و تجربه‌ات، آرایشگرهایی رو بهت پیشنهاد می‌ده که دقیقاً مناسب تو هستن؛ بدون گشتن و سردرگمی."
     image={Image3}
-    title1=""
-    title2="ما می‌دونیم"
-    title3="چی بهت میاد"
+    title1="ما می‌دونیم"
+    title2="چی بهت میاد!"
+    title3=""
   />,
   <Element
     img_alt={"image2"}
     desc="از بین آرایشگرهای مختلف، اونایی رو انتخاب کن که بیشترین رضایت رو داشتن. ما نظرات کاربران رو شفاف و دسته‌بندی‌شده بهت نشون می‌دیم."
     image={Image2}
     title1="نظرات واقعی،"
-    title2="تجربه واقعی"
+    title2="تجربه واقعی!"
     title3=""
   />,
   <Element
@@ -50,7 +50,7 @@ const elements = [
     image={Image1}
     title1="با"
     title2="چند کلیک"
-    title3="وقت بگیر"
+    title3="وقت بگیر."
   />,
 ];
 

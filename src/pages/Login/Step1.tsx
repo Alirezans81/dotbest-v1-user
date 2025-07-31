@@ -6,6 +6,7 @@ import Dropdown from "../../components/Dropdown";
 import { useSendCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
 import { useOpenToast } from "../../hooks/popups";
+import { useValidateJalaliDay } from "../../hooks/datetime";
 
 interface Props {
   nextStep: () => void;
@@ -21,6 +22,8 @@ export default function Step1({
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [newUser, setNewUser] = useState(false);
+
+  const validateJalaliDay = useValidateJalaliDay();
 
   const validatePhone = (value: string, setError: (value: string) => void) => {
     if (!value) {
@@ -59,58 +62,6 @@ export default function Step1({
     }
     return true;
   };
-  function isJalaliLeapYear(year: number): boolean {
-    return year % 4 === 0;
-  }
-  function validateJalaliDay(
-    monthName: string,
-    day: number,
-    year: number
-  ): boolean {
-    const monthNames: { [key: string]: number } = {
-      فروردین: 1,
-      اردیبهشت: 2,
-      خرداد: 3,
-      تیر: 4,
-      مرداد: 5,
-      شهریور: 6,
-      مهر: 7,
-      آبان: 8,
-      آذر: 9,
-      دی: 10,
-      بهمن: 11,
-      اسفند: 12,
-    };
-
-    const month = monthNames[monthName];
-
-    if (!month) {
-      return false;
-    }
-
-    const daysInMonth: number[] = [
-      0,
-      31,
-      31,
-      31,
-      31,
-      31,
-      31,
-      30,
-      30,
-      30,
-      30,
-      30,
-      30,
-      isJalaliLeapYear(year) ? 30 : 29,
-    ];
-
-    if (day < 1 || day > daysInMonth[month]) {
-      return false;
-    } else {
-      return true;
-    }
-  }
   const validateBirthday = (
     {
       year,
@@ -175,8 +126,7 @@ export default function Step1({
               sendCode({
                 phone: values.phone,
                 customFunction: (data) => {
-                  process.env.REACT_APP_MODE === "DEVELOPMENT" &&
-                    setTempCode(data.code);
+                  setTempCode(data.code);
                   if (data.new_user) {
                     setNewUser(true);
                   } else {
@@ -335,7 +285,7 @@ export default function Step1({
                   }`}
                 >
                   <span className="text-[5dvw]">تاریخ تولد</span>
-                  <div className="flex items-center gap-x-[3dvw]">
+                  <div className="flex items-start gap-x-[3dvw]">
                     <Input
                       className="!flex-1"
                       attributes={{
@@ -355,23 +305,26 @@ export default function Step1({
                       options={monthes}
                       onChange={(e) => setFieldValue("birthday_month", e.value)}
                       placeholder="ماه"
-                      className="w-[32dvw]"
+                      className="w-[32dvw] h-[12.5dvw]"
                     />
-                    <Input
-                      className="!flex-1"
-                      attributes={{
-                        name: "birthday_year",
-                        onBlur: handleBlur,
-                        onChange: handleChange,
-                        value: values.birthday_year,
-                        inputMode: "decimal",
-                        placeholder: "سال",
-                        style: {
-                          flex: "1 1 0%",
-                        },
-                        maxLength: 4,
-                      }}
-                    />
+                    <div className="!flex-1 flex flex-col gap-[2dvw]">
+                      <Input
+                        className="!flex-1"
+                        attributes={{
+                          name: "birthday_year",
+                          onBlur: handleBlur,
+                          onChange: handleChange,
+                          value: values.birthday_year,
+                          inputMode: "decimal",
+                          placeholder: "سال",
+                          style: {
+                            flex: "1 1 0%",
+                          },
+                          maxLength: 4,
+                        }}
+                      />
+                      <span className="text-gray_002">مثال: 1385</span>
+                    </div>
                   </div>
                 </div>
                 <span

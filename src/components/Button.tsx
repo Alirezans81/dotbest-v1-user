@@ -20,7 +20,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`transition-all duration-200 rounded-full py-[2.5dvw] border border-gray_001 dark:border-gray_004 hover:bg-primary hover:border-primary hover:text-white ${className}`}
+      className={`transition-all duration-200 rounded-full py-[2.5dvw] border border-primary/10 bg-primary/5 hover:bg-primary/15 hover:border-primary dark:border-gray_004 ${className}`}
       onClick={onClick}
       disabled={disabled}
     >

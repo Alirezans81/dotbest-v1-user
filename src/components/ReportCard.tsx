@@ -22,7 +22,7 @@ interface Props {
 export default function ReportCard({ data, refreshReports }: Props) {
   const openModal = useOpenModal();
   const openCommnetModal = () =>
-    openModal(<CommentModal barber_data={barber} order_url={data.url} />);
+    openModal(<CommentModal barber_data={barber} order_url={data.url} order_slug={data.slug} />);
   const openReservationModal = () =>
     openModal(<ReservationModal data={data} refreshReports={refreshReports} />);
 

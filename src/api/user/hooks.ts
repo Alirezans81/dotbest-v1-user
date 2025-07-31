@@ -3,6 +3,7 @@ import {
   createOrder,
   createOrderComment,
   getBarberSerivce,
+  getOrderUserComments,
   getReports,
   likeComment,
   updateAvatar,
@@ -260,9 +261,46 @@ export const useGetBarberService = () => {
   return fetch;
 };
 
+export const useGetOrderUserComments = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+  const user = useUserState();
+
+  const fetch = async ({
+    order_slug,
+    customFunction,
+    setOrderUserComments,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    setOrderUserComments: (value: Comment[]) => void;
+    customFunction?: (data: Comment[]) => void;
+    onError?: (error: any, order_slug: string, username: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await getOrderUserComments(token.access, order_slug, user.username)
+      .then((res: any) => {
+        setOrderUserComments(res.data.results);
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug, user.username);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
 export const useCreateOrderComment = () => {
   const openToast = useOpenToast();
   const token = useTokenState();
+  const user = useUserState();
 
   const fetch = async ({
     data,
@@ -275,7 +313,7 @@ export const useCreateOrderComment = () => {
     onError?: (error: any, data: OrderComment) => void;
     onFinally?: () => void;
   }) => {
-    await createOrderComment(token.access, data)
+    await createOrderComment(token.access, { ...data, user: user.url })
       .then((res: any) => {
         customFunction && customFunction(res.data.results);
       })
