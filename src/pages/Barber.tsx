@@ -237,12 +237,20 @@ export default function BarberPage() {
           </div>
           {category_slug ? (
             barber ? (
-              <Button
-                label="رزرو"
-                type="button"
-                onClick={openReserveModal}
-                className="w-full !border-primary text-primary hover:bg-primary hover:text-white"
-              />
+              <div className="w-full flex gap-[3dvw]">
+                <Button
+                  label="خدمات"
+                  type="button"
+                  onClick={openBarberPageSelectCategoryModal}
+                  className="flex-1"
+                />
+                <Button
+                  label="رزرو"
+                  type="button"
+                  onClick={openReserveModal}
+                  className="flex-1 !border-primary text-primary hover:bg-primary hover:text-white"
+                />
+              </div>
             ) : (
               <Skeleton className="w-full h-[12.3dvw]" />
             )

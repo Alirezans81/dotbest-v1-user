@@ -326,13 +326,28 @@ export default function ReserveModal({
           <span className="text-gray_002 block">
             شما می‌بایست باقی مبلغ را در آرایشگاه پرداخت کنید.
           </span>
-        </div> */}
-        {/* <Button
+        </div>
+        <Button
           type="button"
           disabled={loading}
           label={loading ? "در حال بارگذاری..." : "تایید و پرداخت"}
           onClick={handleSubmit}
         /> */}
+
+        <div className="w-full">
+          <img
+            alt="توجه"
+            className="w-[5dvw] h-[5dvw] inline ml-[1dvw] -mt-[0.5dvw]"
+            src={Note}
+          />
+          <span className="text-gray_002 inline">
+            این مبلغ فقط به ازای خدمات پایه می‌باشد و مبلغ نهایی بعد از{" "}
+            <span className="text-primary">اتمام کار</span> مشخص میشود.
+          </span>
+          <span className="block">
+            شما می‌بایست به طور حداقلی، این مبلغ را در سالن پرداخت کنید.
+          </span>
+        </div>
         <Button
           type="button"
           className="!border-primary text-primary hover:bg-primary hover:text-white"
