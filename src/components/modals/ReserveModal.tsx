@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Calendar, CalendarProvider } from "zaman";
-import BarberCard from "../BarberCard";
 import Button from "../Button";
 import { useEffect, useRef, useState } from "react";
 import { Barber, BarberService, ReservedOrder } from "../../lib/barber";
