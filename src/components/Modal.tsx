@@ -46,7 +46,7 @@ export default function Modal() {
             </div>
           )}
           <div
-            className="w-full transition-all duration-500 overflow-y-auto px-[1dvw] max-h-[90dvh]"
+            className="w-full transition-all duration-500 overflow-y-auto px-[1dvw] max-h-[80dvh]"
           >
             {children}
           </div>

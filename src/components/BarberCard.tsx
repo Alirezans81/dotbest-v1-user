@@ -90,7 +90,7 @@ export default function BarberCard({
               className={`w-full flex justify-between items-center px-[1.5dvw]`}
             >
               <div className="flex gap-[0.75dvw] items-center">
-                <span className="text-gray_002">{data.rate}</span>
+                <span className="text-gray_002">{(+data.rate).toFixed(2)}</span>
                 <img
                   alt="ستاره"
                   className="w-[4dvw] h-[4dvw] -mt-[1dvw]"

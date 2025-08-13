@@ -16,10 +16,16 @@ export const updatePersonlInfo = (user_url: string, params: User) => {
   return axios.patch(user_url, formData);
 };
 
-export const getReports = (token: string, username: string) => {
+export const getReports = (
+  token: string,
+  username: string,
+  filtersObject?: any
+) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["order"],
-    query: { is_deleted: false, user: username },
+    query: filtersObject
+      ? { is_deleted: false, customer: username, ...filtersObject }
+      : { is_deleted: false, customer: username },
   });
 
   const headers = {

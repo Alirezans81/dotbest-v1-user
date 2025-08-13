@@ -126,7 +126,8 @@ export default function Step1({
               sendCode({
                 phone: values.phone,
                 customFunction: (data) => {
-                  setTempCode(data.code);
+                  process.env.REACT_APP_MODE === "DEVELOPMENT" &&
+                    setTempCode(data.code);
                   if (data.new_user) {
                     setNewUser(true);
                   } else {

@@ -20,9 +20,9 @@ export default function Home() {
   const [bestBarbers, setBestBarbers] = useState<Barber[]>([]);
   const getBestBarbers = useGetBestBarbers();
 
-  const getUserLocation = async () => {
-    navigator.geolocation.getCurrentPosition((position) => {});
-  };
+  // const getUserLocation = async () => {
+  //   navigator.geolocation.getCurrentPosition((position) => {});
+  // };
 
   useEffect(() => {
     setLoading(true);
@@ -33,7 +33,7 @@ export default function Home() {
       },
     });
 
-    getUserLocation();
+    // getUserLocation();
   }, []);
 
   return (

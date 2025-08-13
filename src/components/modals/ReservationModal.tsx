@@ -5,12 +5,20 @@ import Skeleton from "../Skeleton";
 import Button from "../Button";
 import { useOpenModal } from "../../hooks/popups";
 import SubmitCancelOrderModal from "./SubmitCancelOrderModal";
+import { Barber } from "../../lib/barber";
 
 interface Props {
   data: Order;
+  barber: Barber;
   refreshReports: () => void;
+  hasPassed?: boolean;
 }
-export default function ReservationModal({ data, refreshReports }: Props) {
+export default function ReservationModal({
+  data,
+  barber,
+  refreshReports,
+  hasPassed = false,
+}: Props) {
   const convertToPersianDateTime = useConvertToPersianDateTime();
 
   const [imgLoading, setImgLoading] = useState(true);
@@ -25,7 +33,7 @@ export default function ReservationModal({ data, refreshReports }: Props) {
     <div className="w-full flex flex-col gap-[8dvw]">
       <div className="w-full flex items-center justify-between">
         <span className="text-white text-[7.5dvw] text-center z-[1]">
-          {data.customer_full_name}
+          {barber.user_detail.full_name}
         </span>
         <span className="text-[5.5dvw] text-primary -mb-[0.5dvw]">
           {data.service_title}
@@ -68,20 +76,21 @@ export default function ReservationModal({ data, refreshReports }: Props) {
       <div className="w-full grid grid-cols-2 gap-[4dvw]">
         <div className="col-span-2">
           <div className="w-full flex items-center justify-between">
-            <span className="text-[5.5dvw] text-gray_002">مبلغ دریافتی:</span>
+            <span className="text-[5.5dvw] text-gray_002">مبلغ پرداختی:</span>
             <span className="text-[5.5dvw] -mb-[0.5dvw]">
               {(+data.final_price).toLocaleString()} تومن
             </span>
           </div>
         </div>
-        {data.status !== "cancel" && data.status !== "done" && (
-          <Button
-            type="button"
-            className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error"
-            onClick={openSubmitCancelOrder}
-            label="لفو رزرو"
-          />
-        )}
+        {(data.status === "request" || data.status === "reserved") &&
+          !hasPassed && (
+            <Button
+              type="button"
+              className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error"
+              onClick={openSubmitCancelOrder}
+              label="لفو رزرو"
+            />
+          )}
         <div className="col-span-2 flex justify-center">
           <span className="text-gray_002">
             {convertToPersianDateTime(data.date, data.time)}

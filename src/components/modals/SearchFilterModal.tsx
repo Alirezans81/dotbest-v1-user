@@ -15,7 +15,7 @@ export default function SearchFilterModal() {
         .map((category, i) => (
           <div
             key={category.title}
-            className="col-span-1 flex justify-center items-center"
+            className="col-span-1 flex justify-center"
           >
             <CategoryComponent
               onClick={() => {

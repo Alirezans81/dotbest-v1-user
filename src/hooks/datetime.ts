@@ -9,9 +9,10 @@ function validateJalaliDay(
   day: number,
   year: number
 ): boolean {
-  const startYear = 1300;
+  const startYear: number = 1300;
+  const endYear: number = dayjs().calendar("jalali").year() - 18;
 
-  if (year < startYear) {
+  if (year < startYear || year > endYear) {
     return false;
   }
 

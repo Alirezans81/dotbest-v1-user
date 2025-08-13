@@ -131,11 +131,16 @@ export default function Step2({
             </div>
             <div className="flex flex-col gap-y-[3dvw]">
               <Button
+                className="!bg-primary"
+                label="تایید"
+                type="submit"
+                onClick={handleSubmit}
+              />
+              <Button
                 label="ورود دوباره شماره موبایل"
                 type="button"
                 onClick={prevStep}
               />
-              <Button label="تایید" type="submit" onClick={handleSubmit} />
             </div>
           </>
         )}

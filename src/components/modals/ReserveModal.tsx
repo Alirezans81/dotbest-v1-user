@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Barber, BarberService, ReservedOrder } from "../../lib/barber";
 import dayjs from "dayjs";
 import { useGetBarberServiceByCategory } from "../../api/barber/hooks";
-import { useCreateOrder } from "../../api/user/hooks";
+import { useCreateOrder, useGetReports } from "../../api/user/hooks";
 import { defaultOrder, Order } from "../../lib/common";
 import { useUserState } from "../../providers/UserProvider";
 import { useModalDataClose } from "../../providers/ModalProvider";
@@ -64,6 +64,16 @@ export default function ReserveModal({
   const navigate = useNavigate();
   const navigateToReports = () => navigate("/reports");
 
+  const [error, setError] = useState("");
+
+  const [reports, setReports] = useState<Order[]>([]);
+  const getReports = useGetReports();
+  useEffect(() => {
+    getReports({
+      setReports,
+    });
+  }, []);
+
   const [selectedTimeSlotIndex, setSelectedTimeSlotIndex] =
     useState<number>(-1);
 
@@ -113,25 +123,29 @@ export default function ReserveModal({
         })
       : [];
 
-    const isOverlappingWithReserved = (
-      slotStart: dayjs.Dayjs,
-      slotEnd: dayjs.Dayjs
-    ) => {
-      return reservedRanges.some(
-        ({ start, end }) => slotStart.isBefore(end) && slotEnd.isAfter(start)
-      );
-    };
-
     while (
       current.add(totalMinutes, "minute").isSame(end) ||
       current.add(totalMinutes, "minute").isBefore(end)
     ) {
       const next = current.add(totalMinutes, "minute");
 
-      if (
-        (!isToday || current.isAfter(now)) &&
-        !isOverlappingWithReserved(current, next)
-      ) {
+      const overlapping = reservedRanges.find(
+        // eslint-disable-next-line no-loop-func
+        ({ start, end }) => current.isBefore(end) && next.isAfter(start)
+      );
+
+      if (overlapping) {
+        // If overlapping, move `current` to end of the overlapping reservation only if it's later
+        if (overlapping.end.isAfter(current)) {
+          current = overlapping.end;
+          continue; // check again with the new current
+        } else {
+          current = next; // fallback to next to avoid infinite loop
+          continue;
+        }
+      }
+
+      if (!isToday || current.isAfter(now)) {
         slots.push({
           start: current.format("HH:mm"),
           end: next.format("HH:mm"),
@@ -177,28 +191,38 @@ export default function ReserveModal({
   const createOrder = useCreateOrder();
   const handleSubmit = () => {
     if (service && slots[selectedTimeSlotIndex]) {
-      let data: Order = defaultOrder;
-      data.customer = user.url;
-      data.service = service.url;
-      data.image = img;
-      data.date = dayjs(selectedDate).format("YYYY-MM-DD");
-      data.datetime_request = dayjs(selectedDate).format("YYYY-MM-DD");
-      data.time = slots[selectedTimeSlotIndex].start + ":00";
-      data.description = description;
-      data.status = "request";
+      if (
+        !reports.find(
+          (e) =>
+            e.customer === user.url &&
+            e.service === service.url &&
+            e.date === dayjs(selectedDate).format("YYYY-MM-DD") &&
+            e.time === slots[selectedTimeSlotIndex].start + ":00"
+        )
+      ) {
+        let data: Order = defaultOrder;
+        data.customer = user.url;
+        data.service = service.url;
+        data.image = img;
+        data.date = dayjs(selectedDate).format("YYYY-MM-DD");
+        data.datetime_request = dayjs(selectedDate).format("YYYY-MM-DD");
+        data.time = slots[selectedTimeSlotIndex].start + ":00";
+        data.description = description;
+        data.status = "request";
 
-      setLoading(true);
-      createOrder({
-        data,
-        customFunction() {
-          closeModal();
-          navigateToReports();
-        },
-        onFinally() {
-          setLoading(false);
-        },
-      });
-    }
+        setLoading(true);
+        createOrder({
+          data,
+          customFunction() {
+            closeModal();
+            navigateToReports();
+          },
+          onFinally() {
+            setLoading(false);
+          },
+        });
+      } else setError("شما قبلا این ساعت را رزرو کردید!");
+    } else setError("ساعت رزرو خود را انتخاب کنید!");
   };
 
   return (
@@ -347,6 +371,7 @@ export default function ReserveModal({
             شما می‌بایست به طور حداقلی، این مبلغ را در سالن پرداخت کنید.
           </span>
         </div>
+        <span className="text-error text-[5dvw]">{error}</span>
         <Button
           type="button"
           className="!border-primary text-primary hover:bg-primary hover:text-white"

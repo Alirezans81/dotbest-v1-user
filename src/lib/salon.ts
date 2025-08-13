@@ -282,38 +282,48 @@ export const defaultSalonSocialMedia: SalonSocialMedia = {
 };
 
 export type Comment = {
-  url: string;
-  order_detail: string;
-  user: string;
-  datetime_update: string;
-  datetime_delete: string;
-  is_deleted: boolean;
-  description: string;
-  slug: string;
+  barber: {
+    nickname: string;
+    rate: number;
+    order_comment_quantity: number;
+    slug: string;
+  };
   datetime_create: string;
+  datetime_delete: string;
+  datetime_update: string;
+  description: string;
   is_active: boolean;
-  show_order: number;
-  rate: number;
-  like: number;
-  dislike: number;
+  is_deleted: boolean;
+  is_pin: boolean;
   message: string;
-  is_anonymous_user: boolean;
+  order: string;
+  rate: number;
+  show_order: number;
+  slug: string;
+  url: string;
+  user: string;
+  user_fullname: string;
 };
 export const defaultComment: Comment = {
-  url: "",
-  order_detail: "",
-  user: "",
-  datetime_update: "",
-  datetime_delete: "",
-  is_deleted: false,
-  description: "",
-  slug: "",
+  barber: {
+    nickname: "",
+    rate: 0,
+    order_comment_quantity: 0,
+    slug: "",
+  },
   datetime_create: "",
+  datetime_delete: "",
+  datetime_update: "",
+  description: "",
   is_active: false,
-  show_order: 0,
-  rate: 0,
-  like: 0,
-  dislike: 0,
+  is_deleted: false,
+  is_pin: false,
   message: "",
-  is_anonymous_user: false,
+  order: "",
+  rate: 0,
+  show_order: 0,
+  slug: "",
+  url: "",
+  user: "",
+  user_fullname: "",
 };

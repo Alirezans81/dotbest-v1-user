@@ -52,19 +52,22 @@ export const useGetReports = () => {
 
   const fetch = async ({
     setReports,
+    filtersObject,
     customFunction,
     onError,
     onFinnally,
   }: {
     setReports: (value: Order[]) => void;
-    customFunction?: (data: Order[]) => void;
+    filtersObject?: any;
+    customFunction?: (data: Order[], meta_data: { count: number }) => void;
     onError?: (error: any) => void;
     onFinnally?: () => void;
   }) => {
-    getReports(token.access, user.username)
+    getReports(token.access, user.username, filtersObject)
       .then((res: any) => {
         setReports(res.data.results);
-        customFunction && customFunction(res.data.results);
+        customFunction &&
+          customFunction(res.data.results, { count: res.data.count });
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);

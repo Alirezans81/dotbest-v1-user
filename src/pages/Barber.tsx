@@ -36,8 +36,8 @@ export default function BarberPage() {
   const navigateToComments = () => navigate("comments");
 
   const [posterLoading, setPosterLoading] = useState(true);
-  const [galleryLoading, setGalleryLoading] = useState(false);
-  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [galleryLoading, setGalleryLoading] = useState(true);
+  const [commentsLoading, setCommentsLoading] = useState(true);
 
   const openModal = useOpenModal();
   const openReserveModal = () => {
@@ -76,7 +76,7 @@ export default function BarberPage() {
         setCommentsLoading(true);
         getBarberComments({
           barber_slug,
-          filters: { limit: 1 },
+          filters: { limit: 4 },
           setComments,
           onError(error) {
             openToast(error.message);
@@ -213,7 +213,9 @@ export default function BarberPage() {
             >
               <div className="flex gap-[1dvw] items-center">
                 {barber ? (
-                  <span className="text-gray_002">{barber.rate}</span>
+                  <span className="text-gray_002">
+                    {(+barber.rate).toFixed(2)}
+                  </span>
                 ) : (
                   <Skeleton className="w-[10dvw] h-[5dvw]" />
                 )}
@@ -342,7 +344,7 @@ export default function BarberPage() {
                 </div>
               </>
             )}
-            {gallery && gallery.length ? (
+            {!galleryLoading && gallery.length > 8 ? (
               <button
                 onClick={() => setActivePhotoIndex(0)}
                 className="col-span-1 flex justify-center items-center gap-[1.5dvw]"
@@ -361,12 +363,16 @@ export default function BarberPage() {
             {!commentsLoading ? (
               comments.length ? (
                 <>
-                  <CommentComponent data={comments[0]} />
-                  <Button
-                    label="بیشتر"
-                    type="button"
-                    onClick={navigateToComments}
-                  />
+                  {comments.slice(0, 3).map((comment) => (
+                    <CommentComponent key={comment.slug} data={comment} />
+                  ))}
+                  {comments.length > 3 && (
+                    <Button
+                      label="بیشتر"
+                      type="button"
+                      onClick={navigateToComments}
+                    />
+                  )}
                 </>
               ) : (
                 <span className="text-gray_002 -mt-[2dvw]">
@@ -375,8 +381,9 @@ export default function BarberPage() {
               )
             ) : (
               <>
-                <Skeleton className="w-full h-[98dvw]" />
-                <Skeleton className="w-full h-[14dvw] !rounded-full" />
+                <Skeleton className="w-full h-[26.8dvw]" />
+                <Skeleton className="w-full h-[26.8dvw]" />
+                <Skeleton className="w-full h-[26.8dvw]" />
               </>
             )}
           </div>

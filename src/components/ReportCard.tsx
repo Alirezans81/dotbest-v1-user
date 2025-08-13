@@ -18,13 +18,31 @@ import { useGetStatus } from "../hooks/order";
 interface Props {
   data: Order;
   refreshReports: () => void;
+  hasPassed?: boolean;
 }
-export default function ReportCard({ data, refreshReports }: Props) {
+export default function ReportCard({
+  data,
+  refreshReports,
+  hasPassed = false,
+}: Props) {
   const openModal = useOpenModal();
   const openCommnetModal = () =>
-    openModal(<CommentModal barber_data={barber} order_url={data.url} order_slug={data.slug} />);
+    openModal(
+      <CommentModal
+        barber_data={barber}
+        order_url={data.url}
+        order_slug={data.slug}
+      />
+    );
   const openReservationModal = () =>
-    openModal(<ReservationModal data={data} refreshReports={refreshReports} />);
+    openModal(
+      <ReservationModal
+        data={data}
+        barber={barber}
+        refreshReports={refreshReports}
+        hasPassed={hasPassed}
+      />
+    );
 
   const convertToPersianDateTime = useConvertToPersianDateTime();
 
@@ -74,7 +92,11 @@ export default function ReportCard({ data, refreshReports }: Props) {
             </span>
           </div>
           <span className="text-primary">
-            {"(" + getStatus(data.status) + ")"}
+            {"(" +
+              (data.status === "request" && hasPassed
+                ? getStatus("reserved")
+                : getStatus(data.status)) +
+              ")"}
           </span>
         </div>
         <div className="w-full flex justify-between items-center">

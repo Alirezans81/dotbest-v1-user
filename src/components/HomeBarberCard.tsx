@@ -40,7 +40,7 @@ export default function HomeBarberCard({ data, className }: Props) {
           </span>
           <div className="h-[4dvw] w-[0.5dvw] bg-gray_001 dark:bg-gray_004" />
           <div className="flex gap-[1dvw] items-center">
-            <span className="-mb-[1dvw]">{data.rate}</span>
+            <span className="-mb-[1dvw]">{(+data.rate).toFixed(2)}</span>
             <img alt="ستاره" className="w-[4dvw] h-[4dvw]" src={Star} />
           </div>
         </div>
