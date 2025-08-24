@@ -294,12 +294,34 @@ export const defaultOrder: Order = {
   admin_description: "",
 };
 
+export type OrderCommentCategoryDetail = {
+  url: string;
+  parent_detail: OrderCommentCategoryDetail | null;
+  title: string;
+  image_url: string;
+};
 export type OrderComment = {
   url: string;
   order: string;
-  user: string;
-  user_fullname: string;
-  barber: string;
+  customer: string;
+  customer_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  barber_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  category_detail: OrderCommentCategoryDetail;
+  image_url: string;
   datetime_update: string;
   datetime_delete: string;
   is_deleted: boolean;
@@ -309,15 +331,37 @@ export type OrderComment = {
   is_active: boolean;
   show_order: number;
   rate: number;
+  alt_image: string;
   message: string;
   is_pin: boolean;
 };
 export const defaultOrderComment: OrderComment = {
   url: "",
   order: "",
-  user: "",
-  user_fullname: "",
-  barber: "",
+  customer: "",
+  customer_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  barber_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  category_detail: {
+    image_url: "",
+    parent_detail: null,
+    title: "",
+    url: "",
+  },
+  image_url: "",
   datetime_update: "",
   datetime_delete: "",
   is_deleted: false,
@@ -327,6 +371,7 @@ export const defaultOrderComment: OrderComment = {
   is_active: false,
   show_order: 0,
   rate: 0,
+  alt_image: "",
   message: "",
   is_pin: false,
 };

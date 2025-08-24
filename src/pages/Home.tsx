@@ -9,7 +9,7 @@ import { useGetBestBarbers } from "../api/salon/hooks";
 import HomeBarberCard from "../components/HomeBarberCard";
 import { useNavigate } from "react-router-dom";
 
-import Banner from "../images/Home/banner.png";
+import Banner from "../images/Home/banner.webp";
 
 export default function Home() {
   const categories = useCategoriesState();

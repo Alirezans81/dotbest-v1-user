@@ -7,6 +7,11 @@ import { useSendCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
 import { useOpenToast } from "../../hooks/popups";
 import { useValidateJalaliDay } from "../../hooks/datetime";
+import {
+  useValidateMelliCodePattern,
+  useValidatePersonalInfo,
+} from "../../hooks/auth";
+import { monthes } from "../../lib/datetime";
 
 interface Props {
   nextStep: () => void;
@@ -24,6 +29,8 @@ export default function Step1({
   const [newUser, setNewUser] = useState(false);
 
   const validateJalaliDay = useValidateJalaliDay();
+  const validateMelliCodePattern = useValidateMelliCodePattern();
+  const validatePersonalInfo = useValidatePersonalInfo();
 
   const validatePhone = (value: string, setError: (value: string) => void) => {
     if (!value) {
@@ -60,6 +67,10 @@ export default function Step1({
       setError("کد ملی خود را وارد کنید!");
       return false;
     }
+    if (!validateMelliCodePattern(value)) {
+      setError("کد ملی صحیح نمی‌باشد!");
+      return false;
+    }
     return true;
   };
   const validateBirthday = (
@@ -83,21 +94,6 @@ export default function Step1({
     }
     return true;
   };
-
-  const monthes = [
-    "فروردین",
-    "اردیبهشت",
-    "خرداد",
-    "تیر",
-    "مرداد",
-    "شهریور",
-    "مهر",
-    "آبان",
-    "آذر",
-    "دی",
-    "بهمن",
-    "اسفند",
-  ];
 
   const openToast = useOpenToast();
 
@@ -164,7 +160,8 @@ export default function Step1({
               )
             ) {
               setPhone(values.phone);
-              setUserInitParams({
+
+              const temp: UserInitParams = {
                 phone: values.phone,
                 first_name: values.first_name,
                 last_name: values.last_name,
@@ -173,8 +170,13 @@ export default function Step1({
                 birthday_month: values.birthday_month,
                 birthday_day: values.birthday_day,
                 account_type: "customer",
-              });
-              nextStep();
+              };
+              if (validatePersonalInfo(temp)) {
+                setUserInitParams(temp);
+                nextStep();
+              } else {
+                openToast("اطلاعات شما صحیح نمی‌باشد!");
+              }
             }
           }
         }}

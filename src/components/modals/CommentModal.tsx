@@ -44,7 +44,6 @@ export default function CommentModal({
   const handleSubmit = (values: { comment: string }) => {
     let data: OrderComment = defaultOrderComment;
 
-    data.barber = barber_data.url;
     data.order = order_url;
     data.message = values.comment;
     data.rate = starCount;

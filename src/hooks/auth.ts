@@ -1,5 +1,6 @@
-import { useRefreshAccessToken } from "../api/auth/hooks";
+import { useGetPersonalInfo, useRefreshAccessToken } from "../api/auth/hooks";
 import { User, defaultUser } from "../lib/common";
+import { UserInitParams } from "../lib/user";
 import { useLoggedInSetState } from "../providers/LoggedInProvider";
 import {
   TokenType,
@@ -141,5 +142,86 @@ const customSetUser = (_user: User, _setUser: (value: User) => void) => {
 export const useCustomSetUser = () => {
   const setUser = useUserSetState();
   return (_user: User) => customSetUser(_user, setUser);
+};
+
+function validateMelliCodePattern(val: string): boolean {
+  const allDigitEqual: string[] = [
+    "0000000000",
+    "1111111111",
+    "2222222222",
+    "3333333333",
+    "4444444444",
+    "5555555555",
+    "6666666666",
+    "7777777777",
+    "8888888888",
+    "9999999999",
+  ];
+
+  const codeMelliPattern: RegExp = /^[0-9]{10}$/;
+
+  if (allDigitEqual.includes(val) || !codeMelliPattern.test(val)) {
+    return false;
+  }
+
+  const chArray: string[] = Array.from(val);
+
+  const sum =
+    parseInt(chArray[0]) * 10 +
+    parseInt(chArray[1]) * 9 +
+    parseInt(chArray[2]) * 8 +
+    parseInt(chArray[3]) * 7 +
+    parseInt(chArray[4]) * 6 +
+    parseInt(chArray[5]) * 5 +
+    parseInt(chArray[6]) * 4 +
+    parseInt(chArray[7]) * 3 +
+    parseInt(chArray[8]) * 2;
+
+  const checkDigit: number = parseInt(chArray[9]);
+  const remainder: number = sum % 11;
+
+  return (
+    (remainder < 2 && checkDigit === remainder) ||
+    (remainder >= 2 && checkDigit === 11 - remainder)
+  );
+}
+export const useValidateMelliCodePattern = () => {
+  return validateMelliCodePattern;
+};
+
+export const useValidatePersonalInfo = (): ((
+  value: UserInitParams
+) => boolean) => {
+  const enabled = process.env.REACT_APP_MODE === "PRODUCTION";
+
+  const getPersonalInfo = useGetPersonalInfo();
+
+  return (value: UserInitParams) => {
+    let result = true;
+
+    if (enabled) {
+      getPersonalInfo({
+        data: value,
+        customFunction(res) {
+          const data = res.response_body.data;
+          if (
+            +res.result === 1 &&
+            (data.matched as boolean) &&
+            (data.alive as boolean) &&
+            +data.gender === 2
+          ) {
+            result = true;
+          } else {
+            result = false;
+          }
+        },
+        onError() {
+          result = false;
+        },
+      });
+    }
+
+    return result;
+  };
 };
 //-----------------------------------

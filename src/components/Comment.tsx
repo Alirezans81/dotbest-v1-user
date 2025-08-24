@@ -16,10 +16,10 @@ export default function CommentComponent({ className, data }: Props) {
             <div className="w-full flex justify-between items-center">
               <div className="flex items-center gap-[2dvw]">
                 <span className="text-white text-[7.5dvw] text-center z-[1]">
-                  {data.user_fullname}
+                  {data.barber_detail.full_name}
                 </span>
                 <span className="text-[5dvw] text-primary -mb-[0.5dvw]">
-                  {"(کوتاهی مو)"}
+                  {data.category_detail.title}
                 </span>
               </div>
               <div className="flex gap-[0.75dvw] items-center">

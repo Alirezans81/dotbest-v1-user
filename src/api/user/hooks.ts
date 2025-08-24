@@ -316,7 +316,7 @@ export const useCreateOrderComment = () => {
     onError?: (error: any, data: OrderComment) => void;
     onFinally?: () => void;
   }) => {
-    await createOrderComment(token.access, { ...data, user: user.url })
+    await createOrderComment(token.access, { ...data, customer: user.url })
       .then((res: any) => {
         customFunction && customFunction(res.data.results);
       })

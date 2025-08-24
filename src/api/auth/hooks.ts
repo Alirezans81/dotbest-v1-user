@@ -3,7 +3,13 @@ import { useOpenToast } from "../../hooks/popups";
 import { User, defaultUser } from "../../lib/common";
 import { UserInitParams } from "../../lib/user";
 import { TokenType, useTokenState } from "../../providers/TokenProvider";
-import { getUserData, refreshAccessToken, sendCode, verifyCode } from "./apis";
+import {
+  getPersonalInfo,
+  getUserData,
+  refreshAccessToken,
+  sendCode,
+  verifyCode,
+} from "./apis";
 import * as jalaali from "jalaali-js";
 
 export const useSendCode = () => {
@@ -179,6 +185,37 @@ export const useGetUserData = () => {
     await getUserData(received_access_token || token.access)
       .then((res: any) => {
         setUser(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useGetPersonalInfo = () => {
+  const openToast = useOpenToast();
+
+  const fetch = async ({
+    data,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    data: UserInitParams;
+    customFunction?: (data: any) => void;
+    onError?: (error: any) => void;
+    onFinally?: () => void;
+  }) => {
+    await getPersonalInfo(data)
+      .then((res: any) => {
         customFunction && customFunction(res.data);
       })
       .catch((error: any) => {

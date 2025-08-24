@@ -281,49 +281,84 @@ export const defaultSalonSocialMedia: SalonSocialMedia = {
   username: "",
 };
 
-export type Comment = {
-  barber: {
-    nickname: string;
-    rate: number;
-    order_comment_quantity: number;
-    slug: string;
-  };
-  datetime_create: string;
-  datetime_delete: string;
-  datetime_update: string;
-  description: string;
-  is_active: boolean;
-  is_deleted: boolean;
-  is_pin: boolean;
-  message: string;
-  order: string;
-  rate: number;
-  show_order: number;
-  slug: string;
+export type CommentCategoryDetail = {
   url: string;
-  user: string;
-  user_fullname: string;
+  parent_detail: CommentCategoryDetail | null;
+  title: string;
+  image_url: string;
 };
-export const defaultComment: Comment = {
-  barber: {
-    nickname: "",
-    rate: 0,
-    order_comment_quantity: 0,
-    slug: "",
-  },
-  datetime_create: "",
-  datetime_delete: "",
-  datetime_update: "",
-  description: "",
-  is_active: false,
-  is_deleted: false,
-  is_pin: false,
-  message: "",
-  order: "",
-  rate: 0,
-  show_order: 0,
-  slug: "",
+export type Comment = {
+  url: string;
+  order: string;
+  customer: string;
+  customer_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  barber_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  category_detail: CommentCategoryDetail;
+  image_url: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  show_order: number;
+  rate: number;
+  alt_image: string;
+  message: string;
+  is_pin: boolean;
+};
+export const defaultOrderComment: Comment = {
   url: "",
-  user: "",
-  user_fullname: "",
+  order: "",
+  customer: "",
+  customer_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  barber_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  category_detail: {
+    image_url: "",
+    parent_detail: null,
+    title: "",
+    url: "",
+  },
+  image_url: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  show_order: 0,
+  rate: 0,
+  alt_image: "",
+  message: "",
+  is_pin: false,
 };

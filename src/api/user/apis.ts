@@ -117,7 +117,7 @@ export const getOrderUserComments = (
 export const createOrderComment = (token: string, data: OrderComment) => {
   const formData = new FormData();
 
-  formData.append("user", data.user);
+  formData.append("customer", data.customer);
   formData.append("order", data.order);
   formData.append("message", data.message);
   formData.append("rate", data.rate + "");
