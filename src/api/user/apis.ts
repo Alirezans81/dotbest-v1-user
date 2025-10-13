@@ -1,9 +1,9 @@
 import axios from "axios";
+import { Order, OrderComment, User } from "../../lib/common";
+import queryString from "query-string";
 
 import dev from "../api-dev";
 import prod from "../api-prod";
-import { Order, OrderComment, User } from "../../lib/common";
-import queryString from "query-string";
 
 const api = process.env.REACT_APP_MODE === "DEVELOPMENT" ? dev() : prod();
 
@@ -76,19 +76,15 @@ export const createOrder = (token: string, order: Order) => {
   return axios.post(api["order"], formData, { headers });
 };
 
-export const changeOrderStatus = (
-  token: string,
-  order_slug: string,
-  status: Order["status"]
-) => {
+export const cancelUserOrder = (token: string, order_slug: string) => {
   const formData = new FormData();
 
-  formData.append("status", status);
+  formData.append("slug", order_slug);
 
   const headers = {
     Authorization: `Bearer ${token}`,
   };
-  return axios.patch(api["order"] + order_slug + "/", formData, { headers });
+  return axios.post(api["cancel-order"], formData, { headers });
 };
 
 export const getBarberSerivce = (token: string, service_url: string) => {
@@ -126,4 +122,33 @@ export const createOrderComment = (token: string, data: OrderComment) => {
     Authorization: `Bearer ${token}`,
   };
   return axios.post(api["comment"], formData, { headers });
+};
+
+export const payOrder = (token: string, order_slug: string) => {
+  const formData = new FormData();
+
+  formData.append("slug", order_slug);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["payment-order"], formData, { headers });
+};
+
+export const reserveOrder = (
+  token: string,
+  order_slug: string,
+  Status: string,
+  Authority: string
+) => {
+  const formData = new FormData();
+
+  formData.append("slug", order_slug);
+  formData.append("status", Status);
+  formData.append("authority", Authority);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["reserve-order"], formData, { headers });
 };

@@ -19,7 +19,7 @@ export default function SalonPage() {
   const { pathname } = useLocation();
 
   const [salon, setSalon] = useState<Salon | null>(null);
-  const [salonCategories, setSalonCategories] = useState<Category[]>([]);
+  const [salonCategories, _setSalonCategories] = useState<Category[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const openToast = useOpenToast();

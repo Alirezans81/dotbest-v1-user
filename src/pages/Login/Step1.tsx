@@ -3,7 +3,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
 import Dropdown from "../../components/Dropdown";
-import { useSendCode } from "../../api/auth/hooks";
+import { useRegister, useSendCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
 import { useOpenToast } from "../../hooks/popups";
 import { useValidateJalaliDay } from "../../hooks/datetime";
@@ -37,6 +37,13 @@ export default function Step1({
       setError("شماره موبایل خود را وارد کنید!");
       return false;
     }
+
+    const regex = /^09[0-9]{9}$/;
+    if (!regex.test(value)) {
+      setError("شماره موبایل معتبر نمی‌باشد!");
+      return false;
+    }
+
     return true;
   };
   const validateFirstName = (
@@ -99,6 +106,8 @@ export default function Step1({
 
   const sendCode = useSendCode();
 
+  const register = useRegister();
+
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
       <Formik
@@ -120,7 +129,7 @@ export default function Step1({
             ) {
               setLoading(true);
               sendCode({
-                phone: values.phone,
+                phone: values.phone.slice(1),
                 customFunction: (data) => {
                   process.env.REACT_APP_MODE === "DEVELOPMENT" &&
                     setTempCode(data.code);
@@ -173,7 +182,20 @@ export default function Step1({
               };
               if (validatePersonalInfo(temp)) {
                 setUserInitParams(temp);
-                nextStep();
+
+                setLoading(true);
+                register({
+                  phone: values.phone.slice(1),
+                  userParams: temp,
+                  customFunction(data) {
+                    process.env.REACT_APP_MODE === "DEVELOPMENT" &&
+                      setTempCode(data.code);
+                    nextStep();
+                  },
+                  onFinally() {
+                    setLoading(false);
+                  },
+                });
               } else {
                 openToast("اطلاعات شما صحیح نمی‌باشد!");
               }

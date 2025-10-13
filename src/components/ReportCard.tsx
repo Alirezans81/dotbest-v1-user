@@ -14,6 +14,8 @@ import Comment from "../images/Reports/comment.svg";
 import Button from "./Button";
 import ReservationModal from "./modals/ReservationModal";
 import { useGetStatus } from "../hooks/order";
+import PaymentModal from "./modals/PaymentModal";
+import SubmitCancelOrderModal from "./modals/SubmitCancelOrderModal";
 
 interface Props {
   data: Order;
@@ -43,6 +45,14 @@ export default function ReportCard({
         hasPassed={hasPassed}
       />
     );
+  const openPaymentModal = () => {
+    openModal(<PaymentModal data={data} barber={barber} />);
+  };
+  const openCancelModal = () => {
+    openModal(
+      <SubmitCancelOrderModal order_slug={data.slug} onClose={refreshReports} />
+    );
+  };
 
   const convertToPersianDateTime = useConvertToPersianDateTime();
 
@@ -93,8 +103,13 @@ export default function ReportCard({
           </div>
           <span className="text-primary">
             {"(" +
-              (data.status === "request" && hasPassed
-                ? getStatus("reserved")
+              (data.status === "completed" ||
+              data.status === "admin_canceled" ||
+              data.status === "barber_canceled" ||
+              data.status === "customer_canceled"
+                ? getStatus(data.status)
+                : hasPassed
+                ? "به پایان رسیده"
                 : getStatus(data.status)) +
               ")"}
           </span>
@@ -104,15 +119,7 @@ export default function ReportCard({
             {convertToPersianDateTime(data.date, data.time)}
           </span>
 
-          {data.status === "done" ? (
-            <button
-              onClick={openCommnetModal}
-              className="flex items-center gap-[1.5dvw] text-primary"
-            >
-              <img alt="نظر دادن" className="w-[5dvw] h-[5dvw]" src={Comment} />
-              <span>نظر دادن</span>
-            </button>
-          ) : (
+          {data.status === "request" && (
             <Button
               type="button"
               className="px-[5dvw] !py-[1dvw]"
@@ -120,6 +127,71 @@ export default function ReportCard({
             >
               جزئیات
             </Button>
+          )}
+          {data.status === "rejected" && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {data.status === "awaiting_payment" &&
+            (!hasPassed ? (
+              <div className="flex gap-[2dvw]">
+                <Button
+                  type="button"
+                  className="px-[5dvw] !py-[1dvw] !bg-error/10 hover:!border-error"
+                  onClick={openCancelModal}
+                >
+                  لغو
+                </Button>
+                <Button
+                  type="button"
+                  className="px-[5dvw] !py-[1dvw] !bg-success/10 hover:!border-success"
+                  onClick={openPaymentModal}
+                >
+                  پرداخت
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                className="px-[5dvw] !py-[1dvw]"
+                onClick={openReservationModal}
+              >
+                جزئیات
+              </Button>
+            ))}
+          {data.status === "reserved" && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {(data.status === "admin_canceled" ||
+            data.status === "barber_canceled" ||
+            data.status === "customer_canceled") && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {data.status === "completed" && (
+            <button
+              onClick={openCommnetModal}
+              className="flex items-center gap-[1.5dvw] text-primary"
+            >
+              <img alt="نظر دادن" className="w-[5dvw] h-[5dvw]" src={Comment} />
+              <span>نظر دادن</span>
+            </button>
           )}
         </div>
       </div>

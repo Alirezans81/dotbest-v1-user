@@ -255,11 +255,13 @@ export type Order = {
   discount: number;
   status:
     | "request"
-    | "reserved"
+    | "rejected"
     | "awaiting_payment"
-    | "is_paid"
-    | "cancel"
-    | "done";
+    | "reserved"
+    | "admin_canceled"
+    | "barber_canceled"
+    | "customer_canceled"
+    | "completed";
   final_price: string;
   datetime_request: string;
   datetime_update: string;
@@ -525,4 +527,40 @@ export const defaultWallet: Wallet = {
   balance: "",
   pending: "",
   locked: "",
+};
+
+export type PaymentRequest = {
+  merchant_id: string;
+  amount: number;
+  currency: "IRR" | "IRT";
+  description: string;
+  callback_url: string;
+  metadata?: {
+    mobile?: string;
+    email?: string;
+    order_id?: string;
+  };
+};
+export const defaultPaymentRequest: PaymentRequest = {
+  merchant_id: "",
+  amount: 0,
+  currency: "IRT",
+  description: "",
+  callback_url: "",
+  metadata: {
+    mobile: "",
+    email: "",
+    order_id: "",
+  },
+};
+
+export type PaymentVerify = {
+  merchant_id: string;
+  amount: number;
+  authority: string;
+};
+export const defaultPaymentVerify: PaymentVerify = {
+  merchant_id: "",
+  amount: 0,
+  authority: "",
 };

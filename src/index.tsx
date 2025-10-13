@@ -11,6 +11,7 @@ import { ShowSplashScreenProvider } from "./providers/ShowSplashScreen";
 import { LoadingProvider } from "./providers/LoadingProvider";
 import { GalleryViewProvider } from "./providers/GalleryViewData";
 import { TokenProvider } from "./providers/TokenProvider";
+import { WalletProvider } from "./providers/WalletProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -25,7 +26,9 @@ root.render(
               <TokenProvider>
                 <UserProvider>
                   <CategoriesProvider>
-                    <App />
+                    <WalletProvider>
+                      <App />
+                    </WalletProvider>
                   </CategoriesProvider>
                 </UserProvider>
               </TokenProvider>

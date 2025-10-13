@@ -61,9 +61,8 @@ export default function Step2({
     if (tempCode) {
       setShowSplashScreen(true);
       verifyCode({
-        phone: phone,
+        phone: phone.slice(1),
         code: tempCode,
-        userParams: userInitParams,
         customFunction(data) {
           initApp(data);
         },
@@ -88,7 +87,6 @@ export default function Step2({
             verifyCode({
               phone: phone,
               code: values.code,
-              userParams: userInitParams,
               customFunction(data) {
                 initApp(data);
               },

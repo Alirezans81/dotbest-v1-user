@@ -29,9 +29,12 @@ import GalleryView from "./components/GalleryView";
 import Comments from "./pages/Comments";
 import { TokenType, useTokenSetState } from "./providers/TokenProvider";
 import { useGetUserData } from "./api/auth/hooks";
-import { useGetCategories } from "./api/common/hooks";
+import { useGetCategories, useGetWallet } from "./api/common/hooks";
 import Category from "./pages/Category";
 import BarberCategory from "./pages/BarberCategory";
+import Transaction from "./pages/Transaction";
+import { useWalletSetState } from "./providers/WalletProvider";
+import WalletPage from "./pages/Wallet";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -41,11 +44,13 @@ function App() {
   const showSplashSceen = useShowSplashScreenState();
   const setShowSplashScreen = useShowSplashScreenSetState();
   const setToken = useTokenSetState();
+  const setWallet = useWalletSetState();
 
   const [appLoaded, setAppLoaded] = useState(false);
 
   const getUserData = useGetUserData();
   const getCategories = useGetCategories();
+  const getWallet = useGetWallet();
 
   const initApp = (token: TokenType) => {
     getUserData({
@@ -56,6 +61,11 @@ function App() {
           customFunction() {
             setToken(token);
             setLoggedIn(true);
+
+            getWallet({
+              received_access_token: token.access,
+              setWallet,
+            });
           },
           onFinally() {
             setAppLoaded(true);
@@ -118,6 +128,7 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                 </Route>
                 <Route path="/" element={<NoNavbarLayout />}>
+                  <Route path="/wallet" element={<WalletPage />} />
                   <Route path="/map" element={<Map />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/barber">
@@ -146,6 +157,7 @@ function App() {
                     <Route path="*" element={<BarberCategory backlink="/" />} />
                   </Route>
                 </Route>
+                <Route path="/transaction" element={<Transaction />} />
                 <Route path="*" element={<NoPage />} />
               </Routes>
             </BrowserRouter>

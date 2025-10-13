@@ -154,17 +154,19 @@ export const useGetWallet = () => {
   const openToast = useOpenToast();
 
   const fetch = async ({
+    received_access_token,
     setWallet,
     customFunction,
     onError,
     onFinally,
   }: {
+    received_access_token?: string;
     setWallet: (value: Wallet) => void;
     customFunction?: (data: Wallet) => void;
     onError?: (error: any) => void;
     onFinally?: () => void;
   }) => {
-    getWallet(token.access)
+    getWallet(received_access_token || token.access)
       .then((res: any) => {
         setWallet(res.data.results[0] || defaultWallet);
         customFunction && customFunction(res.data.results[0] || defaultWallet);

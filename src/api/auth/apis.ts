@@ -15,19 +15,24 @@ export const sendCode = (phone: string) => {
   return axios.post(api["send-code"], formData);
 };
 
-export const verifyCode = (phone: string, code: string, userParams?: User) => {
+export const register = (phone: string, userParams: User) => {
+  const formData = new FormData();
+
+  formData.append("phone", phone);
+  formData.append("account_type", userParams.account_type);
+  formData.append("first_name", userParams.first_name);
+  formData.append("last_name", userParams.last_name);
+  formData.append("birthday", userParams.birth_date);
+  formData.append("national_code", userParams.national_code);
+
+  return axios.post(api["register"], formData);
+};
+
+export const verifyCode = (phone: string, code: string) => {
   const formData = new FormData();
 
   formData.append("phone", phone);
   formData.append("code", code);
-
-  if (userParams) {
-    formData.append("account_type", userParams.account_type);
-    formData.append("first_name", userParams.first_name);
-    formData.append("last_name", userParams.last_name);
-    formData.append("birthday", userParams.birth_date);
-    formData.append("national_code", userParams.national_code);
-  }
 
   return axios.post(api["verify-code"], formData);
 };

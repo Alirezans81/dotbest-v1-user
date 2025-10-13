@@ -331,8 +331,8 @@ export default function ReserveModal({
       </div>
       <div className="w-full flex flex-col gap-[2dvw]">
         <div className="w-full flex justify-between items-center">
-          <span className="text-[5dvw]">مبلغ پرداختی:</span>
-          <span className="text-[5dvw]">
+          <span className="text-[6dvw]">مبلغ خدمت:</span>
+          <span className="text-[6dvw]">
             {(+(service?.price || "")).toLocaleString()} تومان
           </span>
         </div>
@@ -366,9 +366,6 @@ export default function ReserveModal({
           <span className="text-gray_002 inline">
             این مبلغ فقط به ازای خدمات پایه می‌باشد و مبلغ نهایی بعد از{" "}
             <span className="text-primary">اتمام کار</span> مشخص میشود.
-          </span>
-          <span className="block">
-            شما می‌بایست به طور حداقلی، این مبلغ را در سالن پرداخت کنید.
           </span>
         </div>
         <span className="text-error text-[5dvw]">{error}</span>

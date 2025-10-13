@@ -1,13 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import FakeAvatar from "../images/common/fake-avatar.svg";
-
-import Button from "../components/Button";
-
-import Edit from "../images/Profile/edit.svg";
-import BackLight from "../images/common/back-light.svg";
-import BackDark from "../images/common/back-dark.svg";
 import { useOpenModal, useOpenToast } from "../hooks/popups";
-import EditInfoModal from "../components/modals/EditInfoModal";
 import SupportModal from "../components/modals/SupportModal";
 import { useNavigate } from "react-router-dom";
 import LogoutModal from "../components/modals/LogoutModal";
@@ -15,12 +7,17 @@ import { useUserState } from "../providers/UserProvider";
 import { useEffect, useRef, useState } from "react";
 import { useUpdateAvatar } from "../api/user/hooks";
 import { useLoadingSetState } from "../providers/LoadingProvider";
+import Button from "../components/Button";
+
+import FakeAvatar from "../images/common/fake-avatar.svg";
+import Edit from "../images/Profile/edit.svg";
+import BackLight from "../images/common/back-light.svg";
+import BackDark from "../images/common/back-dark.svg";
 
 export default function Profile() {
   const user = useUserState();
   const setLoading = useLoadingSetState();
   const openModal = useOpenModal();
-  const openEditInfoModal = () => openModal(<EditInfoModal />);
   const openSupportModal = () => openModal(<SupportModal />);
   const openLogoutModal = () => openModal(<LogoutModal />);
 
@@ -36,6 +33,7 @@ export default function Profile() {
 
   const navigate = useNavigate();
   const navigateToAbout = () => navigate("/about");
+  const navigateToWallet = () => navigate("/wallet");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -83,7 +81,7 @@ export default function Profile() {
             <span className="text-[7dvw] leading-8">
               {user.first_name + " " + user.last_name}
             </span>
-            <span className="text-gray_002">{user.phone}</span>
+            <span className="text-gray_002">{"0" + user.phone}</span>
           </div>
         </div>
       </div>
@@ -107,6 +105,25 @@ export default function Profile() {
             />
           </div>
         </Button> */}
+        <Button
+          type="button"
+          onClick={navigateToWallet}
+          className="text-start pr-[6dvw] pl-[4dvw] py-[3dvw] text-[5dvw]"
+        >
+          <div className="w-full h-full flex justify-between items-center">
+            <span>کیف پول</span>
+            <img
+              alt="فلش"
+              className="w-[5dvw] h-[5dvw] block dark:hidden"
+              src={BackDark}
+            />
+            <img
+              alt="فلش"
+              className="w-[5dvw] h-[5dvw] hidden dark:block"
+              src={BackLight}
+            />
+          </div>
+        </Button>
         <Button
           type="button"
           onClick={openSupportModal}

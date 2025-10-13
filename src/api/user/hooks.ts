@@ -1,11 +1,13 @@
 import {
-  changeOrderStatus,
+  cancelUserOrder,
   createOrder,
   createOrderComment,
   getBarberSerivce,
   getOrderUserComments,
   getReports,
   likeComment,
+  payOrder,
+  reserveOrder,
   updateAvatar,
   updatePersonlInfo,
 } from "./apis";
@@ -180,7 +182,7 @@ export const useCreateOrder = () => {
   }) => {
     await createOrder(token.access, data)
       .then((res: any) => {
-        customFunction && customFunction(res.data.results);
+        customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
@@ -195,24 +197,22 @@ export const useCreateOrder = () => {
   return fetch;
 };
 
-export const useChangeOrderStatus = () => {
+export const useCancelUserOrder = () => {
   const token = useTokenState();
   const openToast = useOpenToast();
 
   const fetch = async ({
     order_slug,
-    status,
     customFunction,
     onError,
     onFinally,
   }: {
     order_slug: string;
-    status: Order["status"];
     customFunction?: (data: Order) => void;
     onError?: (error: any, order_slug: string) => void;
     onFinally?: () => void;
   }) => {
-    await changeOrderStatus(token.access, order_slug, status)
+    await cancelUserOrder(token.access, order_slug)
       .then((res: any) => {
         customFunction && customFunction(res.data);
       })
@@ -324,6 +324,74 @@ export const useCreateOrderComment = () => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
         openToast(error.message);
         onError && onError(error, data);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const usePayOrder = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    order_slug,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    customFunction?: (payment_url: string) => void;
+    onError?: (error: any, order_slug: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await payOrder(token.access, order_slug)
+      .then((res: any) => {
+        customFunction && customFunction(res.data.payment_url);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useReserveOrder = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    order_slug,
+    Status,
+    Authority,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    Status: string;
+    Authority: string;
+    customFunction?: (payment_url: string) => void;
+    onError?: (error: any, order_slug: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await reserveOrder(token.access, order_slug, Status, Authority)
+      .then((res: any) => {
+        customFunction && customFunction(res.data.payment_url);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug);
       })
       .finally(() => {
         onFinally && onFinally();

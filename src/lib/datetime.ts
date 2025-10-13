@@ -27,3 +27,7 @@ export const monthes = [
   "بهمن",
   "اسفند",
 ];
+
+export const getMonthNumber = (value: string) => {
+  return monthes.findIndex((e) => e === value) + 1;
+};

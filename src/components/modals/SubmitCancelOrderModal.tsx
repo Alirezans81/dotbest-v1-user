@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useOpenToast } from "../../hooks/popups";
 import { useModalDataClose } from "../../providers/ModalProvider";
 import Button from "../Button";
-import { useChangeOrderStatus } from "../../api/user/hooks";
+import { useCancelUserOrder } from "../../api/user/hooks";
 
 interface Props {
   order_slug: string;
@@ -14,12 +14,11 @@ export default function SubmitCancelOrderModal({ order_slug, onClose }: Props) {
 
   const [loading, setLoading] = useState(false);
 
-  const changeOrderStatus = useChangeOrderStatus();
+  const cancelUserOrder = useCancelUserOrder();
   const handleCancelOrder = () => {
     setLoading(true);
-    changeOrderStatus({
+    cancelUserOrder({
       order_slug,
-      status: "cancel",
       customFunction() {
         openToast("رزور با موفقیت لغو شد");
         closeModal();
