@@ -144,8 +144,8 @@ export const reserveOrder = (
   const formData = new FormData();
 
   formData.append("slug", order_slug);
-  formData.append("status", Status);
-  formData.append("authority", Authority);
+  formData.append("Status", Status);
+  formData.append("Authority", Authority);
 
   const headers = {
     Authorization: `Bearer ${token}`,

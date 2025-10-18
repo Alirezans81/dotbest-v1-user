@@ -529,38 +529,33 @@ export const defaultWallet: Wallet = {
   locked: "",
 };
 
-export type PaymentRequest = {
-  merchant_id: string;
-  amount: number;
-  currency: "IRR" | "IRT";
+export type Withdrawal = {
+  url: string;
+  wallet: string;
+  wallet_card: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
   description: string;
-  callback_url: string;
-  metadata?: {
-    mobile?: string;
-    email?: string;
-    order_id?: string;
-  };
+  slug: string;
+  datetime_create: string;
+  amount: string;
+  status: string;
+  datetime_payment: string;
+  order: string;
 };
-export const defaultPaymentRequest: PaymentRequest = {
-  merchant_id: "",
-  amount: 0,
-  currency: "IRT",
+export const defaultWithdrawal: Withdrawal = {
+  url: "",
+  wallet: "",
+  wallet_card: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
   description: "",
-  callback_url: "",
-  metadata: {
-    mobile: "",
-    email: "",
-    order_id: "",
-  },
-};
-
-export type PaymentVerify = {
-  merchant_id: string;
-  amount: number;
-  authority: string;
-};
-export const defaultPaymentVerify: PaymentVerify = {
-  merchant_id: "",
-  amount: 0,
-  authority: "",
+  slug: "",
+  datetime_create: "",
+  amount: "",
+  status: "",
+  datetime_payment: "",
+  order: "",
 };

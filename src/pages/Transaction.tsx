@@ -18,6 +18,7 @@ export default function Transaction() {
 
   const navigate = useNavigate();
   const navigateToReports = () => {
+    window.localStorage.removeItem("payment_order_slug");
     navigate("/reports");
   };
   const navigateToHome = () => {
