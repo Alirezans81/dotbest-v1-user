@@ -3,7 +3,7 @@ import axios from "axios";
 import dev from "../api-dev";
 import prod from "../api-prod";
 import queryString from "query-string";
-import { Ticket } from "../../lib/common";
+import { Ticket, WalletCard, Withdrawal } from "../../lib/common";
 
 const api = process.env.REACT_APP_MODE === "DEVELOPMENT" ? dev() : prod();
 
@@ -67,4 +67,54 @@ export const getWallet = (token: string) => {
     Authorization: `Bearer ${token}`,
   };
   return axios.get(urlWithQueries, { headers });
+};
+
+export const getWalletCards = (token: string, search?: string) => {
+  const urlWithQueries = queryString.stringifyUrl({
+    url: api["wallet-card"],
+    query: { is_active: true, is_deleted: false, search },
+  });
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(urlWithQueries, { headers });
+};
+
+export const createWalletCard = (token: string, data: WalletCard) => {
+  const formData = new FormData();
+
+  formData.append("card_number", data.card_number);
+  formData.append("shaba_number", data.shaba_number);
+  formData.append("is_main", data.is_main + "");
+  formData.append("bank_name", data.bank_name);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["add-wallet-card"], formData, { headers });
+};
+
+export const getWithdrawals = (token: string) => {
+  const urlWithQueries = queryString.stringifyUrl({
+    url: api["withdrawal"],
+    query: { is_active: true, is_deleted: false },
+  });
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(urlWithQueries, { headers });
+};
+
+export const createWithdrawal = (token: string, data: Withdrawal) => {
+  const formData = new FormData();
+
+  formData.append("wallet_card", data.wallet_card);
+  formData.append("amount", data.amount + "");
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["withdrawal"], formData, { headers });
 };

@@ -28,5 +28,8 @@ export default function api() {
     "barber-category-gallery": `${url}api/barber-category-gallery/`,
     comment: `${url}api/order-comment/`,
     wallet: `${url}api/wallet/`,
+    "wallet-card": `${url}api/wallet-card/`,
+    "add-wallet-card": `${url}api/wallet-card-action/add/`,
+    withdrawal: `${url}api/withdrawal/`,
   };
 }

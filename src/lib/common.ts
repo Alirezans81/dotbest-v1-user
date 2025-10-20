@@ -529,9 +529,39 @@ export const defaultWallet: Wallet = {
   locked: "",
 };
 
-export type Withdrawal = {
+export type WalletCard = {
   url: string;
   wallet: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  card_number: string;
+  shaba_number: string;
+  is_main: boolean;
+  bank_name: string;
+};
+export const defaultWalletCard: WalletCard = {
+  url: "",
+  wallet: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  card_number: "",
+  shaba_number: "",
+  is_main: false,
+  bank_name: "",
+};
+
+export type Withdrawal = {
+  url: string;
   wallet_card: string;
   datetime_update: string;
   datetime_delete: string;
@@ -540,13 +570,18 @@ export type Withdrawal = {
   slug: string;
   datetime_create: string;
   amount: string;
-  status: string;
+  status:
+    | "request"
+    | "rejected"
+    | "in_payment_queue"
+    | "user_canceled"
+    | "completed"
+    | "payment_error";
   datetime_payment: string;
   order: string;
 };
 export const defaultWithdrawal: Withdrawal = {
   url: "",
-  wallet: "",
   wallet_card: "",
   datetime_update: "",
   datetime_delete: "",
@@ -555,7 +590,7 @@ export const defaultWithdrawal: Withdrawal = {
   slug: "",
   datetime_create: "",
   amount: "",
-  status: "",
+  status: "request",
   datetime_payment: "",
   order: "",
 };

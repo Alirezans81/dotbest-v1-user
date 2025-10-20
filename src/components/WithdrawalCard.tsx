@@ -1,24 +1,35 @@
-import Temp from "../images/temp.png";
+import { Withdrawal } from "../lib/common";
 
-export default function WithdrawalCard() {
+export default function WithdrawalCard({ data }: { data: Withdrawal }) {
+  const getStatus = (status: Withdrawal["status"]) => {
+    switch (status) {
+      case "request":
+        return "در حال بررسی";
+      case "in_payment_queue":
+        return "در صف پرداخت";
+      case "completed":
+        return "پرداخت شده";
+      case "payment_error":
+        return "خطا در پرداخت";
+      case "user_canceled":
+        return "لغو شده توسط کاربر";
+      default:
+        return "وضعیت نامشخص";
+    }
+  };
+
   return (
-    <div className="w-full flex flex-col gap-[3.5dvw] border border-gray_001 dark:border-gray_004 rounded-[5dvw] px-[5dvw] pt-[4dvw] pb-[5dvw]">
-      <div className="w-full flex justify-between items-center">
+    <div className="w-full flex justify-between border border-gray_001 dark:border-gray_004 rounded-[5dvw] px-[5dvw] pt-[3dvw] pb-[4dvw]">
+      <div className="flex flex-col">
         <span className="text-error text-[5dvw]">
-          <span dir="ltr">-500,000</span> تومان
+          <span dir="ltr">-{(+data.amount).toLocaleString()}</span> تومان
         </span>
-        <span className="text-gray_002">1400/01/01</span>
+        <span className="text-[6dvw]">{getStatus(data.status)}</span>
       </div>
-      <div className="w-full h-[40dvw] relative rounded-[5dvw] overflow-hidden">
-        <img alt="رسید" className="w-full h-full object-cover" src={Temp} />
-        <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center bg-black/50">
-          <div className="flex flex-col gap-y-[1dvw] items-center px-[5dvw] py-[4dvw] bg-black rounded-[5dvw] drop-shadow-lg">
-            <span className="text-[7dvw]">تایید شد</span>
-            <button className="border border-gray_001 rounded-[4dvw] px-[5dvw] pt-[1.5dvw] pb-[1dvw] transition-all duration-150 hover:bg-primary hover:text-white hover:border-primary">
-              مشاهده
-            </button>
-          </div>
-        </div>
+      <div className="text-gray_002">
+        <span>
+          {new Date(data.datetime_create).toLocaleDateString("fa-IR")}
+        </span>
       </div>
     </div>
   );

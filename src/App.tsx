@@ -180,7 +180,7 @@ function App() {
               dir="ltr"
               className="font-sans text-[3rem] text-primary font-bold"
             >
-              .Best
+              .best
             </span>
             <div className="w-[1.5px] rounded-full h-[4rem] bg-gray_001 dark:bg-gray_004 -mt-[.75rem]" />
             <span className="text-[3rem]">بهترین زیبایی ها</span>

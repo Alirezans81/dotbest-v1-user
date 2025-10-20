@@ -1,4 +1,3 @@
-import React from "react";
 import { useLoadingState } from "../providers/LoadingProvider";
 
 export default function Loading() {
@@ -12,7 +11,7 @@ export default function Loading() {
     >
       <div dir="ltr" className="flex items-center gap-[1dvw] text-primary">
         <span className="text-[25dvw] animate-bounce">.</span>
-        <span className="text-[14dvw]">Best</span>
+        <span className="text-[14dvw]">best</span>
       </div>
     </div>
   );

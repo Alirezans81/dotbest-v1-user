@@ -7,6 +7,7 @@ import { Barber } from "../../lib/barber";
 
 import Note from "../../images/common/note.svg";
 import { usePayOrder } from "../../api/user/hooks";
+import { useWalletState } from "../../providers/WalletProvider";
 
 interface Props {
   data: Order;
@@ -14,6 +15,8 @@ interface Props {
 }
 export default function ReservationModal({ data, barber }: Props) {
   const convertToPersianDateTime = useConvertToPersianDateTime();
+
+  const wallet = useWalletState();
 
   const [imgLoading, setImgLoading] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -25,6 +28,7 @@ export default function ReservationModal({ data, barber }: Props) {
     setLoading(true);
     payOrder({
       order_slug: data.slug,
+      use_balance: walletEnabled,
       customFunction(payment_url) {
         window.localStorage.setItem("payment_order_slug", data.slug);
         window.location.href = payment_url;
@@ -107,7 +111,7 @@ export default function ReservationModal({ data, barber }: Props) {
           <div className="w-full flex justify-between items-center text-gray_002">
             <span className="text-[5dvw]">هزینه‌ی رزرو:</span>
             <span className="text-[5dvw]">
-              {(+"19000").toLocaleString()} تومان
+              {(+"29000").toLocaleString()} تومان
             </span>
           </div>
           <div className="w-full h-[0.5dvw] bg-gray_001 dark:bg-gray_004 mt-[2dvw]" />
@@ -115,7 +119,7 @@ export default function ReservationModal({ data, barber }: Props) {
           <div className="w-full flex justify-between items-center mt-[2dvw] mb-[1dvw]">
             <span className="text-[6dvw]">مجموع پرداختی:</span>
             <span className="text-[6dvw] text-primary">
-              {(+"219000").toLocaleString()} تومان
+              {(+"229000").toLocaleString()} تومان
             </span>
           </div>
           <div className="w-full flex flex-col border border-gray_001 dark:border-gray_004 rounded-[4.5dvw] px-[5dvw] py-[4dvw] mb-[0.5dvw] mt-[1dvw]">
@@ -139,7 +143,7 @@ export default function ReservationModal({ data, barber }: Props) {
             <div className="w-full flex items-center gap-[2dvw] text-gray_002">
               <span className="text-[5dvw]">موجودی:</span>
               <span className="text-[5dvw]">
-                {(+"0").toLocaleString()} تومان
+                {(+wallet.balance).toLocaleString()} تومان
               </span>
             </div>
           </div>

@@ -124,10 +124,15 @@ export const createOrderComment = (token: string, data: OrderComment) => {
   return axios.post(api["comment"], formData, { headers });
 };
 
-export const payOrder = (token: string, order_slug: string) => {
+export const payOrder = (
+  token: string,
+  order_slug: string,
+  use_balance: boolean
+) => {
   const formData = new FormData();
 
   formData.append("slug", order_slug);
+  formData.append("use_balance", use_balance + "");
 
   const headers = {
     Authorization: `Bearer ${token}`,

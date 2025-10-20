@@ -2,8 +2,8 @@
 import Input from "../components/Input";
 import FilterLight from "../images/common/filter-light.svg";
 import FilterDark from "../images/common/filter-dark.svg";
-import MapLight from "../images/common/map-light.svg";
-import MapDark from "../images/common/map-dark.svg";
+// import MapLight from "../images/common/map-light.svg";
+// import MapDark from "../images/common/map-dark.svg";
 import SearchIcon from "../images/common/search.svg";
 import SearchBarberCard from "../components/SearchBarberCard";
 import SearchFilterModal from "../components/modals/SearchFilterModal";
@@ -21,8 +21,8 @@ export default function Search() {
   const openModal = useOpenModal();
   const openSearchFilterModal = () => openModal(<SearchFilterModal />);
 
-  const navigate = useNavigate();
-  const navigateToMap = () => navigate("/map");
+  // const navigate = useNavigate();
+  // const navigateToMap = () => navigate("/map");
 
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +65,7 @@ export default function Search() {
   return (
     <div className="w-full max-h-full overflow-y-auto flex flex-col gap-[2dvh] px-[5dvw] py-[4dvw]">
       <div className="flex items-center gap-[4dvw]">
-        <button onClick={navigateToMap}>
+        {/* <button onClick={navigateToMap}>
           <img
             alt="نقشه"
             className="w-[7dvw] h-[7dvw] block dark:hidden"
@@ -76,7 +76,7 @@ export default function Search() {
             className="w-[7dvw] h-[7dvw] hidden dark:block"
             src={MapLight}
           />
-        </button>
+        </button> */}
         <div className="flex-1 relative">
           <Input
             className="w-full"

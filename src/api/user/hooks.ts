@@ -339,16 +339,18 @@ export const usePayOrder = () => {
 
   const fetch = async ({
     order_slug,
+    use_balance = false,
     customFunction,
     onError,
     onFinally,
   }: {
     order_slug: string;
+    use_balance?: boolean;
     customFunction?: (payment_url: string) => void;
     onError?: (error: any, order_slug: string) => void;
     onFinally?: () => void;
   }) => {
-    await payOrder(token.access, order_slug)
+    await payOrder(token.access, order_slug, use_balance)
       .then((res: any) => {
         customFunction && customFunction(res.data.payment_url);
       })

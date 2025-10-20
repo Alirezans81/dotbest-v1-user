@@ -1,21 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useShowSplashScreenSetState } from "../providers/ShowSplashScreen";
 import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { useReserveOrder } from "../api/user/hooks";
 
 import Check from "../images/Transaction/check.svg";
 import Cross from "../images/Transaction/cross.svg";
+import Loading from "../components/Loading";
 
 export default function Transaction() {
-  const setShowSplashScreen = useShowSplashScreenSetState();
-
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setShowSplashScreen(loading);
-  }, [loading]);
-
   const navigate = useNavigate();
   const navigateToReports = () => {
     window.localStorage.removeItem("payment_order_slug");
@@ -30,32 +23,38 @@ export default function Transaction() {
   const Authority = searchParams.get("Authority");
   const Status = searchParams.get("Status");
 
-  const [success, setSuccess] = useState(false);
+  const [state, setState] = useState<"success" | "error" | "loading">(
+    "loading"
+  );
   const reserveOrder = useReserveOrder();
   useEffect(() => {
-    if (Status && Authority && order_slug) {
+    if (Status && Authority && order_slug && state === "loading") {
       if (Status === "OK") {
-        setLoading(true);
         reserveOrder({
           order_slug,
           Authority,
           Status,
           customFunction() {
             window.localStorage.removeItem("payment_order_slug");
-            setSuccess(true);
+            setState("success");
+          },
+          onError() {
+            setState("error");
           },
         });
-      }
-      if (Status === "NOK") {
-        setLoading(false);
+      } else if (Status === "NOK") {
+        setState("error");
+      } else {
+        setState("error");
       }
     }
-  }, [Status, Authority]);
+  }, [Status, Authority, state]);
 
   return (
     <div className="w-[100dvw] h-[100dvh] flex justify-center items-center">
       <div className="flex flex-col gap-[4dvw] items-center">
-        {success ? (
+        {state === "loading" && <Loading />}
+        {state === "success" && (
           <>
             <div className="bg-gray_001/50 dark:bg-gray_004/50 rounded-full">
               <img alt="" className="w-[40dvw]" src={Check} />
@@ -78,7 +77,8 @@ export default function Transaction() {
               />
             </div>
           </>
-        ) : (
+        )}
+        {state === "error" && (
           <>
             <div className="bg-gray_001/50 dark:bg-gray_004/50 rounded-full">
               <img alt="" className="w-[40dvw]" src={Cross} />
