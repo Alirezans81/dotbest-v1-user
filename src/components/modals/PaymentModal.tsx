@@ -4,17 +4,20 @@ import { useState } from "react";
 import Skeleton from "../Skeleton";
 import Button from "../Button";
 import { Barber } from "../../lib/barber";
-
-import Note from "../../images/common/note.svg";
 import { usePayOrder } from "../../api/user/hooks";
 import { useWalletState } from "../../providers/WalletProvider";
+import { useModalDataClose } from "../../providers/ModalProvider";
+
+import Note from "../../images/common/note.svg";
 
 interface Props {
   data: Order;
   barber: Barber;
+  onSuccess?: () => void;
 }
-export default function ReservationModal({ data, barber }: Props) {
+export default function ReservationModal({ data, barber, onSuccess }: Props) {
   const convertToPersianDateTime = useConvertToPersianDateTime();
+  const closeModal = useModalDataClose();
 
   const wallet = useWalletState();
 
@@ -30,8 +33,13 @@ export default function ReservationModal({ data, barber }: Props) {
       order_slug: data.slug,
       use_balance: walletEnabled,
       customFunction(payment_url) {
-        window.localStorage.setItem("payment_order_slug", data.slug);
-        window.location.href = payment_url;
+        if (payment_url) {
+          window.localStorage.setItem("payment_order_slug", data.slug);
+          window.location.href = payment_url;
+        } else {
+          onSuccess?.();
+          closeModal();
+        }
       },
       onFinally() {
         setLoading(false);

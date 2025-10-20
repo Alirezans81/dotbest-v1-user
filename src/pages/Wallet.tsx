@@ -89,8 +89,11 @@ export default function WalletPage() {
           <>
             <Skeleton className="w-full h-[46dvw]" />
 
-            <Skeleton className="w-full h-[61dvw]" />
-            <Skeleton className="w-full h-[61dvw]" />
+            <Skeleton className="w-full h-[11.43dvw]" />
+            <Skeleton className="w-full h-[11.43dvw]" />
+            <Skeleton className="w-full h-[11.43dvw]" />
+            <Skeleton className="w-full h-[11.43dvw]" />
+            <Skeleton className="w-full h-[11.43dvw]" />
           </>
         )}
       </div>

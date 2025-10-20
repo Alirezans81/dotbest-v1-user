@@ -46,7 +46,9 @@ export default function ReportCard({
       />
     );
   const openPaymentModal = () => {
-    openModal(<PaymentModal data={data} barber={barber} />);
+    openModal(
+      <PaymentModal data={data} barber={barber} onSuccess={refreshReports} />
+    );
   };
   const openCancelModal = () => {
     openModal(
