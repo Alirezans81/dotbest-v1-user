@@ -1,9 +1,17 @@
 import { useCustomSetToken, useCustomSetUser } from "../../hooks/auth";
 import { useOpenToast } from "../../hooks/popups";
 import { User, defaultUser } from "../../lib/common";
+import { getMonthNumber } from "../../lib/datetime";
 import { UserInitParams } from "../../lib/user";
 import { TokenType, useTokenState } from "../../providers/TokenProvider";
-import { getUserData, refreshAccessToken, sendCode, verifyCode } from "./apis";
+import {
+  getPersonalInfo,
+  getUserData,
+  refreshAccessToken,
+  register,
+  sendCode,
+  verifyCode,
+} from "./apis";
 import * as jalaali from "jalaali-js";
 
 export const useSendCode = () => {
@@ -37,30 +45,54 @@ export const useSendCode = () => {
   return fetch;
 };
 
-const monthes = [
-  "فروردین",
-  "اردیبهشت",
-  "خرداد",
-  "تیر",
-  "مرداد",
-  "شهریور",
-  "مهر",
-  "آبان",
-  "آذر",
-  "دی",
-  "بهمن",
-  "اسفند",
-];
-const getMonthNumber = (value: string) => {
-  return monthes.findIndex((e) => e === value) + 1;
+export const useRegister = () => {
+  const setToken = useCustomSetToken();
+
+  const fetch = async ({
+    phone,
+    userParams,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    phone: string;
+    userParams: UserInitParams;
+    customFunction?: (data: any) => void;
+    onError?: (error: any, data: UserInitParams) => void;
+    onFinally?: () => void;
+  }) => {
+    let params: User = defaultUser;
+
+    const a = jalaali.toGregorian(
+      parseInt(userParams.birthday_year, 10),
+      getMonthNumber(userParams.birthday_month),
+      parseInt(userParams.birthday_day, 10)
+    );
+    const birthday = new Date(a.gy + "/" + a.gm + "/" + a.gd);
+
+    params.first_name = userParams.first_name;
+    params.last_name = userParams.last_name;
+    params.national_code = userParams.melli_code;
+    params.birth_date = birthday.toISOString();
+    params.account_type = userParams.account_type;
+
+    await register(phone, params)
+      .then((res: any) => {
+        setToken(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        onError && onError(error, userParams);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
 };
-export type VerifyCodeUserParams = {
-  phone: string;
-  name: string;
-  melli_code: string;
-  birthday: string;
-  account_type: User["account_type"];
-};
+
 export const useVerifyCode = () => {
   const setToken = useCustomSetToken();
   const openToast = useOpenToast();
@@ -68,42 +100,26 @@ export const useVerifyCode = () => {
   const fetch = async ({
     phone,
     code,
-    userParams,
     customFunction,
     onError,
     onFinally,
   }: {
     phone: string;
     code: string;
-    userParams: UserInitParams | null;
     customFunction?: (token: TokenType) => void;
     onError?: (error: any, data: string) => void;
     onFinally?: () => void;
   }) => {
-    let params: User = defaultUser;
-    if (userParams) {
-      const a = jalaali.toGregorian(
-        parseInt(userParams.birthday_year, 10),
-        getMonthNumber(userParams.birthday_month),
-        parseInt(userParams.birthday_day, 10)
-      );
-      const birthday = new Date(a.gy + "/" + a.gm + "/" + a.gd);
-
-      params.first_name = userParams.name.split(" ")[0];
-      params.last_name = userParams.name.split(" ")[1];
-      params.national_code = userParams.melli_code;
-      params.birth_date = birthday.toISOString();
-      params.account_type = userParams.account_type;
-    }
-
-    await verifyCode(phone, code, params)
+    await verifyCode(phone, code)
       .then((res: any) => {
         setToken(res.data);
         customFunction && customFunction(res.data);
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
-        openToast(error.message);
+        error.message === "Request failed with status code 406"
+          ? openToast("کد وارد شده صحیح نمی‌باشد")
+          : openToast(error.message);
         onError && onError(error, code);
       })
       .finally(() => {
@@ -177,6 +193,37 @@ export const useGetUserData = () => {
     await getUserData(received_access_token || token.access)
       .then((res: any) => {
         setUser(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useGetPersonalInfo = () => {
+  const openToast = useOpenToast();
+
+  const fetch = async ({
+    data,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    data: UserInitParams;
+    customFunction?: (data: any) => void;
+    onError?: (error: any) => void;
+    onFinally?: () => void;
+  }) => {
+    await getPersonalInfo(data)
+      .then((res: any) => {
         customFunction && customFunction(res.data);
       })
       .catch((error: any) => {

@@ -40,7 +40,7 @@ export default function GalleryView() {
               <img alt="بستن" className="w-[8dvw] h-[8dvw]" src={Close} />
             </button>
             <div className="flex justify-center text-[7dvw]">
-              <span>{data[selectedPhotoIndex]?.alt_name}</span>
+              <span>{data[selectedPhotoIndex]?.alt_image_name}</span>
             </div>
             <div className="w-[10dvw] h-[10dvw]"></div>
           </div>
@@ -51,24 +51,28 @@ export default function GalleryView() {
               onClick={prev}
               className="absolute top-0 right-[2dvw] h-full"
             >
-              <img
-                alt=""
-                className="w-[7dvw] h-[7dvw] rotate-180"
-                src={Arrow}
-              />
+              <div className="bg-black rounded-full p-[1.5dvw]">
+                <img
+                  alt=""
+                  className="w-[5dvw] h-[5dvw] rotate-180"
+                  src={Arrow}
+                />
+              </div>
             </button>
           )}
           <img
-            alt={data[selectedPhotoIndex]?.alt_name}
+            alt={data[selectedPhotoIndex]?.alt_image_name}
             className="w-full max-h-full object-cover"
-            src={data[selectedPhotoIndex]?.image}
+            src={data[selectedPhotoIndex]?.image_url}
           />
           {selectedPhotoIndex !== data.length - 1 && (
             <button
               onClick={next}
               className="absolute top-0 left-[2dvw] h-full"
             >
-              <img alt="" className="w-[7dvw] h-[7dvw]" src={Arrow} />
+              <div className="bg-black rounded-full p-[1.5dvw]">
+                <img alt="" className="w-[5dvw] h-[5dvw]" src={Arrow} />
+              </div>
             </button>
           )}
         </div>

@@ -15,7 +15,7 @@ const CategoryComponent = ({ data, onClick, selected = false }: Props) => {
       >
         <img alt="عکس" className="w-[10dvw] h-[10dvw]" src={data.image_url} />
       </div>
-      <span className="text-[5.5dvw]">{data.title}</span>
+      <span className="text-[5.5dvw] leading-[7dvw]">{data.title}</span>
     </button>
   );
 };

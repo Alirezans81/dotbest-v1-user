@@ -1,5 +1,5 @@
 {
-  "name": ".best-v1-user",
+  "name": "dotbest-v1-user",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -12,8 +12,10 @@
     "@types/react-dom": "^18.3.1",
     "axios": "^1.7.9",
     "browser-image-compression": "^2.0.2",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "jalaali-js": "^1.2.8",
+    "jalaliday": "^2.3.0",
     "motion": "^11.11.17",
     "query-string": "^9.1.1",
     "react": "^18.3.1",

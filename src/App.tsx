@@ -12,7 +12,7 @@ import Search from "./pages/Search";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import { useEffect, useState } from "react";
-import SplashScreen from "./pages/SplashScreen";
+import SplashScreen from "./components/SplashScreen";
 import Salon from "./pages/Salon";
 import Barbers from "./pages/Barbers";
 import Barber from "./pages/Barber";
@@ -29,8 +29,12 @@ import GalleryView from "./components/GalleryView";
 import Comments from "./pages/Comments";
 import { TokenType, useTokenSetState } from "./providers/TokenProvider";
 import { useGetUserData } from "./api/auth/hooks";
-import { useGetCategories } from "./api/common/hooks";
-import Services from "./pages/Services";
+import { useGetCategories, useGetWallet } from "./api/common/hooks";
+import Category from "./pages/Category";
+import BarberCategory from "./pages/BarberCategory";
+import Transaction from "./pages/Transaction";
+import { useWalletSetState } from "./providers/WalletProvider";
+import WalletPage from "./pages/Wallet";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -40,11 +44,13 @@ function App() {
   const showSplashSceen = useShowSplashScreenState();
   const setShowSplashScreen = useShowSplashScreenSetState();
   const setToken = useTokenSetState();
+  const setWallet = useWalletSetState();
 
   const [appLoaded, setAppLoaded] = useState(false);
 
   const getUserData = useGetUserData();
   const getCategories = useGetCategories();
+  const getWallet = useGetWallet();
 
   const initApp = (token: TokenType) => {
     getUserData({
@@ -55,6 +61,11 @@ function App() {
           customFunction() {
             setToken(token);
             setLoggedIn(true);
+
+            getWallet({
+              received_access_token: token.access,
+              setWallet,
+            });
           },
           onFinally() {
             setAppLoaded(true);
@@ -99,7 +110,7 @@ function App() {
     }
   }
 
-  if (detectDeviceIsPhone() || true) {
+  if (detectDeviceIsPhone() || process.env.REACT_APP_MODE === "DEVELOPMENT") {
     if (showSplashSceen || loggedIn === null) {
       return <SplashScreen />;
     } else {
@@ -117,6 +128,7 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                 </Route>
                 <Route path="/" element={<NoNavbarLayout />}>
+                  <Route path="/wallet" element={<WalletPage />} />
                   <Route path="/map" element={<Map />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/barber">
@@ -138,10 +150,14 @@ function App() {
                     <Route path=":salon_slug/barbers" element={<Barbers />} />
                     <Route path="*" element={<NoPage />} />
                   </Route>
-                  <Route path="/services">
-                    <Route path="*" element={<Services backlink="/" />} />
+                  <Route path="/category">
+                    <Route path="*" element={<Category backlink="/" />} />
+                  </Route>
+                  <Route path="/barber-category">
+                    <Route path="*" element={<BarberCategory backlink="/" />} />
                   </Route>
                 </Route>
+                <Route path="/transaction" element={<Transaction />} />
                 <Route path="*" element={<NoPage />} />
               </Routes>
             </BrowserRouter>
@@ -164,7 +180,7 @@ function App() {
               dir="ltr"
               className="font-sans text-[3rem] text-primary font-bold"
             >
-              .Best
+              .best
             </span>
             <div className="w-[1.5px] rounded-full h-[4rem] bg-gray_001 dark:bg-gray_004 -mt-[.75rem]" />
             <span className="text-[3rem]">بهترین زیبایی ها</span>

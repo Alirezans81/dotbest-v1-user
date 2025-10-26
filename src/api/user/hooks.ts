@@ -1,17 +1,25 @@
 import {
+  cancelUserOrder,
+  createOrder,
+  createOrderComment,
+  getBarberSerivce,
+  getOrderUserComments,
   getReports,
   likeComment,
+  payOrder,
+  reserveOrder,
   updateAvatar,
   updatePersonlInfo,
 } from "./apis";
-import { User, Order } from "../../lib/common";
+import { User, Order, OrderComment } from "../../lib/common";
 import { useUserSetState, useUserState } from "../../providers/UserProvider";
 import { useState } from "react";
 import { Comment } from "../../lib/salon";
 import { useTokenState } from "../../providers/TokenProvider";
 import { useOpenToast } from "../../hooks/popups";
+import { BarberService } from "../../lib/barber";
 
-const useUpdatePersonalInfo = () => {
+export const useUpdatePersonalInfo = () => {
   const fetch = async ({
     user_url,
     params,
@@ -39,26 +47,29 @@ const useUpdatePersonalInfo = () => {
   return fetch;
 };
 
-const useGetReports = () => {
+export const useGetReports = () => {
   const token = useTokenState();
   const user = useUserState();
   const openToast = useOpenToast();
 
   const fetch = async ({
     setReports,
+    filtersObject,
     customFunction,
     onError,
     onFinnally,
   }: {
     setReports: (value: Order[]) => void;
-    customFunction?: (data: Order[]) => void;
+    filtersObject?: any;
+    customFunction?: (data: Order[], meta_data: { count: number }) => void;
     onError?: (error: any) => void;
     onFinnally?: () => void;
   }) => {
-    getReports(token.access, user.username)
+    getReports(token.access, user.username, filtersObject)
       .then((res: any) => {
         setReports(res.data.results);
-        customFunction && customFunction(res.data.results);
+        customFunction &&
+          customFunction(res.data.results, { count: res.data.count });
       })
       .catch((error: any) => {
         process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
@@ -73,7 +84,7 @@ const useGetReports = () => {
   return fetch;
 };
 
-const useUpdateAvatar = () => {
+export const useUpdateAvatar = () => {
   const user = useUserState();
   const setUser = useUserSetState();
 
@@ -104,7 +115,7 @@ const useUpdateAvatar = () => {
   return { updateAvatar: fetch, loading };
 };
 
-const useLikeComment = () => {
+export const useLikeComment = () => {
   const fetch = async ({
     comment_url,
     like_count,
@@ -129,7 +140,7 @@ const useLikeComment = () => {
   return fetch;
 };
 
-const useDisikeComment = () => {
+export const useDisikeComment = () => {
   const fetch = async ({
     comment_url,
     dislike_count,
@@ -154,10 +165,240 @@ const useDisikeComment = () => {
   return fetch;
 };
 
-export {
-  useUpdatePersonalInfo,
-  useGetReports,
-  useUpdateAvatar,
-  useLikeComment,
-  useDisikeComment,
+export const useCreateOrder = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    data,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    data: Order;
+    customFunction?: (data: Comment) => void;
+    onError?: (error: any, data: Order) => void;
+    onFinally?: () => void;
+  }) => {
+    await createOrder(token.access, data)
+      .then((res: any) => {
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, data);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useCancelUserOrder = () => {
+  const token = useTokenState();
+  const openToast = useOpenToast();
+
+  const fetch = async ({
+    order_slug,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    customFunction?: (data: Order) => void;
+    onError?: (error: any, order_slug: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await cancelUserOrder(token.access, order_slug)
+      .then((res: any) => {
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useGetBarberService = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    service_url,
+    customFunction,
+    setBarberService,
+    onError,
+    onFinally,
+  }: {
+    service_url: string;
+    setBarberService: (value: BarberService) => void;
+    customFunction?: (data: BarberService) => void;
+    onError?: (error: any, service_url: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await getBarberSerivce(token.access, service_url)
+      .then((res: any) => {
+        setBarberService(res.data);
+        customFunction && customFunction(res.data);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, service_url);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useGetOrderUserComments = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+  const user = useUserState();
+
+  const fetch = async ({
+    order_slug,
+    customFunction,
+    setOrderUserComments,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    setOrderUserComments: (value: Comment[]) => void;
+    customFunction?: (data: Comment[]) => void;
+    onError?: (error: any, order_slug: string, username: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await getOrderUserComments(token.access, order_slug, user.username)
+      .then((res: any) => {
+        setOrderUserComments(res.data.results);
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug, user.username);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useCreateOrderComment = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+  const user = useUserState();
+
+  const fetch = async ({
+    data,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    data: OrderComment;
+    customFunction?: (data: OrderComment[]) => void;
+    onError?: (error: any, data: OrderComment) => void;
+    onFinally?: () => void;
+  }) => {
+    await createOrderComment(token.access, { ...data, customer: user.url })
+      .then((res: any) => {
+        customFunction && customFunction(res.data.results);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, data);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const usePayOrder = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    order_slug,
+    use_balance = false,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    use_balance?: boolean;
+    customFunction?: (payment_url: string) => void;
+    onError?: (error: any, order_slug: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await payOrder(token.access, order_slug, use_balance)
+      .then((res: any) => {
+        customFunction && customFunction(res.data.payment_url);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
+};
+
+export const useReserveOrder = () => {
+  const openToast = useOpenToast();
+  const token = useTokenState();
+
+  const fetch = async ({
+    order_slug,
+    Status,
+    Authority,
+    customFunction,
+    onError,
+    onFinally,
+  }: {
+    order_slug: string;
+    Status: string;
+    Authority: string;
+    customFunction?: (payment_url: string) => void;
+    onError?: (error: any, order_slug: string) => void;
+    onFinally?: () => void;
+  }) => {
+    await reserveOrder(token.access, order_slug, Status, Authority)
+      .then((res: any) => {
+        customFunction && customFunction(res.data.payment_url);
+      })
+      .catch((error: any) => {
+        process.env.REACT_APP_MODE === "DEVELOPMENT" && console.log(error);
+        openToast(error.message);
+        onError && onError(error, order_slug);
+      })
+      .finally(() => {
+        onFinally && onFinally();
+      });
+  };
+
+  return fetch;
 };

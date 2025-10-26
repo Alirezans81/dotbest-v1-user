@@ -1,31 +1,88 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Formik } from "formik";
 import Button from "../Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Barber } from "../../lib/barber";
 
 import Star from "../../images/common/star.svg";
 import StarOutline from "../../images/common/star-outline.svg";
-import BarberCard from "../BarberCard";
-import { defaultBarber } from "../../lib/salon";
+import {
+  useCreateOrderComment,
+  useGetOrderUserComments,
+} from "../../api/user/hooks";
+import { defaultOrderComment, OrderComment } from "../../lib/common";
+import { useModalDataClose } from "../../providers/ModalProvider";
+import { useOpenToast } from "../../hooks/popups";
+import CommentComponent from "../Comment";
+import { Comment } from "../../lib/salon";
 
-export default function CommentModal() {
-  const [starCount, setStarCount] = useState<number>(0);
+interface Props {
+  barber_data: Barber;
+  order_url: string;
+  order_slug: string;
+}
+export default function CommentModal({
+  barber_data,
+  order_url,
+  order_slug,
+}: Props) {
+  const openToast = useOpenToast();
+  const closeModal = useModalDataClose();
+
+  const [orderUserComments, setOrderUserComments] = useState<Comment[]>([]);
+  const getOrderUserComments = useGetOrderUserComments();
+  useEffect(() => {
+    getOrderUserComments({
+      order_slug,
+      setOrderUserComments,
+    });
+  }, [order_url]);
+
+  const [starCount, setStarCount] = useState<number>(-1);
+
+  const createOrderComment = useCreateOrderComment();
+  const handleSubmit = (values: { comment: string }) => {
+    let data: OrderComment = defaultOrderComment;
+
+    data.order = order_url;
+    data.message = values.comment;
+    data.rate = starCount;
+
+    createOrderComment({
+      data,
+      customFunction() {
+        closeModal();
+        openToast("نظر شما با موفقیت ثبت شد");
+      },
+    });
+  };
 
   return (
     <div className="w-full flex flex-col gap-[4dvw]">
-      <Formik initialValues={{ commnet: "" }} onSubmit={() => {}}>
+      <Formik
+        initialValues={{ comment: "" }}
+        onSubmit={(values) => handleSubmit(values)}
+      >
         {({ handleBlur, handleChange, values, handleSubmit }) => (
           <>
             <div className="flex flex-col gap-[2dvw]">
               <span className="text-[5.5dvw]">نظر خود را ینویسید</span>
+              {orderUserComments.map((comment) => (
+                <CommentComponent key={comment.slug} data={comment} />
+              ))}
               <div className="w-full flex flex-col gap-[3.5dvw] relative">
                 <div className="w-full flex flex-col">
-                  <BarberCard
-                    data={defaultBarber}
+                  {/* <BarberCard
+                    data={barber_data}
                     orientation="row"
                     type="comment"
-                  />
+                  /> */}
                   <textarea
-                    className="w-full bg-transparent min-h-[30dvh] transition-all duration-100 border-x border-b rounded-b-[5dvw] rounded-t-none border-gray_001 px-[5dvw] dark:border-gray_003 py-[2.5dvw] focus:outline-black"
+                    name="comment"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.comment}
+                    className="w-full bg-transparent min-h-[30dvh] transition-all duration-100 border rounded-[5dvw] border-gray_001 px-[5dvw] dark:border-gray_003 py-[2.5dvw] focus:outline-black"
                     placeholder="بنویسید..."
                   />
                 </div>

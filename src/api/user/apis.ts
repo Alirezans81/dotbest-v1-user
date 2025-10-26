@@ -1,13 +1,13 @@
 import axios from "axios";
+import { Order, OrderComment, User } from "../../lib/common";
+import queryString from "query-string";
 
 import dev from "../api-dev";
 import prod from "../api-prod";
-import { User } from "../../lib/common";
-import queryString from "query-string";
 
 const api = process.env.REACT_APP_MODE === "DEVELOPMENT" ? dev() : prod();
 
-const updatePersonlInfo = (user_url: string, params: User) => {
+export const updatePersonlInfo = (user_url: string, params: User) => {
   const formData = new FormData();
 
   formData.append("first_name", params.first_name);
@@ -16,10 +16,16 @@ const updatePersonlInfo = (user_url: string, params: User) => {
   return axios.patch(user_url, formData);
 };
 
-const getReports = (token: string, username: string) => {
+export const getReports = (
+  token: string,
+  username: string,
+  filtersObject?: any
+) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["order"],
-    query: { is_deleted: false, user: username },
+    query: filtersObject
+      ? { is_deleted: false, customer: username, ...filtersObject }
+      : { is_deleted: false, customer: username },
   });
 
   const headers = {
@@ -28,7 +34,7 @@ const getReports = (token: string, username: string) => {
   return axios.get(urlWithQueries, { headers });
 };
 
-const updateAvatar = (user_url: string, file: File) => {
+export const updateAvatar = (user_url: string, file: File) => {
   const formData = new FormData();
 
   formData.append("avatar", file);
@@ -36,7 +42,7 @@ const updateAvatar = (user_url: string, file: File) => {
   return axios.patch(user_url, formData);
 };
 
-const likeComment = (comment_url: string, like_count: number) => {
+export const likeComment = (comment_url: string, like_count: number) => {
   const formData = new FormData();
 
   formData.append("like", like_count + "");
@@ -44,7 +50,7 @@ const likeComment = (comment_url: string, like_count: number) => {
   return axios.patch(comment_url, formData);
 };
 
-const dislikeComment = (comment_url: string, dislike_count: number) => {
+export const dislikeComment = (comment_url: string, dislike_count: number) => {
   const formData = new FormData();
 
   formData.append("dislike", dislike_count + "");
@@ -52,10 +58,102 @@ const dislikeComment = (comment_url: string, dislike_count: number) => {
   return axios.patch(comment_url, formData);
 };
 
-export {
-  updatePersonlInfo,
-  getReports,
-  updateAvatar,
-  likeComment,
-  dislikeComment,
+export const createOrder = (token: string, order: Order) => {
+  const formData = new FormData();
+
+  formData.append("customer", order.customer);
+  formData.append("service", order.service);
+  order.image && formData.append("image", order.image);
+  formData.append("datetime_request", order.datetime_request);
+  formData.append("date", order.date);
+  formData.append("time", order.time);
+  formData.append("description", order.description);
+  formData.append("status", order.status);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["order"], formData, { headers });
+};
+
+export const cancelUserOrder = (token: string, order_slug: string) => {
+  const formData = new FormData();
+
+  formData.append("slug", order_slug);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["cancel-order"], formData, { headers });
+};
+
+export const getBarberSerivce = (token: string, service_url: string) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(service_url, { headers });
+};
+
+export const getOrderUserComments = (
+  token: string,
+  order_slug: string,
+  username: string
+) => {
+  const urlWithQueries = queryString.stringifyUrl({
+    url: api["comment"],
+    query: { is_deleted: false, user: username, order: order_slug },
+  });
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.get(urlWithQueries, { headers });
+};
+
+export const createOrderComment = (token: string, data: OrderComment) => {
+  const formData = new FormData();
+
+  formData.append("customer", data.customer);
+  formData.append("order", data.order);
+  formData.append("message", data.message);
+  formData.append("rate", data.rate + "");
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["comment"], formData, { headers });
+};
+
+export const payOrder = (
+  token: string,
+  order_slug: string,
+  use_balance: boolean
+) => {
+  const formData = new FormData();
+
+  formData.append("slug", order_slug);
+  formData.append("use_balance", use_balance + "");
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["payment-order"], formData, { headers });
+};
+
+export const reserveOrder = (
+  token: string,
+  order_slug: string,
+  Status: string,
+  Authority: string
+) => {
+  const formData = new FormData();
+
+  formData.append("slug", order_slug);
+  formData.append("Status", Status);
+  formData.append("Authority", Authority);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axios.post(api["reserve-order"], formData, { headers });
 };

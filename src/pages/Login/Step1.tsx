@@ -3,9 +3,15 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
 import Dropdown from "../../components/Dropdown";
-import { useSendCode } from "../../api/auth/hooks";
+import { useRegister, useSendCode } from "../../api/auth/hooks";
 import { UserInitParams } from "../../lib/user";
 import { useOpenToast } from "../../hooks/popups";
+import { useValidateJalaliDay } from "../../hooks/datetime";
+import {
+  useValidateMelliCodePattern,
+  useValidatePersonalInfo,
+} from "../../hooks/auth";
+import { monthes } from "../../lib/datetime";
 
 interface Props {
   nextStep: () => void;
@@ -19,18 +25,43 @@ export default function Step1({
   setTempCode,
   setUserInitParams,
 }: Props) {
+  const [loading, setLoading] = useState(false);
   const [newUser, setNewUser] = useState(false);
+
+  const validateJalaliDay = useValidateJalaliDay();
+  const validateMelliCodePattern = useValidateMelliCodePattern();
+  const validatePersonalInfo = useValidatePersonalInfo();
 
   const validatePhone = (value: string, setError: (value: string) => void) => {
     if (!value) {
       setError("شماره موبایل خود را وارد کنید!");
       return false;
     }
+
+    const regex = /^09[0-9]{9}$/;
+    if (!regex.test(value)) {
+      setError("شماره موبایل معتبر نمی‌باشد!");
+      return false;
+    }
+
     return true;
   };
-  const validateName = (value: string, setError: (value: string) => void) => {
+  const validateFirstName = (
+    value: string,
+    setError: (value: string) => void
+  ) => {
     if (!value) {
-      setError("نام و نام خانوادگی خود را وارد کنید!");
+      setError("نام خود را وارد کنید!");
+      return false;
+    }
+    return true;
+  };
+  const validateLastName = (
+    value: string,
+    setError: (value: string) => void
+  ) => {
+    if (!value) {
+      setError("نام خانوادگی خود را وارد کنید!");
       return false;
     }
     return true;
@@ -43,60 +74,12 @@ export default function Step1({
       setError("کد ملی خود را وارد کنید!");
       return false;
     }
+    if (!validateMelliCodePattern(value)) {
+      setError("کد ملی صحیح نمی‌باشد!");
+      return false;
+    }
     return true;
   };
-  function isJalaliLeapYear(year: number): boolean {
-    return year % 4 === 0;
-  }
-  function validateJalaliDay(
-    monthName: string,
-    day: number,
-    year: number
-  ): boolean {
-    const monthNames: { [key: string]: number } = {
-      فروردین: 1,
-      اردیبهشت: 2,
-      خرداد: 3,
-      تیر: 4,
-      مرداد: 5,
-      شهریور: 6,
-      مهر: 7,
-      آبان: 8,
-      آذر: 9,
-      دی: 10,
-      بهمن: 11,
-      اسفند: 12,
-    };
-
-    const month = monthNames[monthName];
-
-    if (!month) {
-      return false;
-    }
-
-    const daysInMonth: number[] = [
-      0,
-      31,
-      31,
-      31,
-      31,
-      31,
-      31,
-      30,
-      30,
-      30,
-      30,
-      30,
-      30,
-      isJalaliLeapYear(year) ? 30 : 29,
-    ];
-
-    if (day < 1 || day > daysInMonth[month]) {
-      return false;
-    } else {
-      return true;
-    }
-  }
   const validateBirthday = (
     {
       year,
@@ -119,31 +102,19 @@ export default function Step1({
     return true;
   };
 
-  const monthes = [
-    "فروردین",
-    "اردیبهشت",
-    "خرداد",
-    "تیر",
-    "مرداد",
-    "شهریور",
-    "مهر",
-    "آبان",
-    "آذر",
-    "دی",
-    "بهمن",
-    "اسفند",
-  ];
-
   const openToast = useOpenToast();
 
   const sendCode = useSendCode();
+
+  const register = useRegister();
 
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
       <Formik
         initialValues={{
           phone: "",
-          name: "",
+          first_name: "",
+          last_name: "",
           melli_code: "",
           birthday_year: "",
           birthday_month: "",
@@ -156,8 +127,9 @@ export default function Step1({
                 setFieldError("phone", value)
               )
             ) {
+              setLoading(true);
               sendCode({
-                phone: values.phone,
+                phone: values.phone.slice(1),
                 customFunction: (data) => {
                   process.env.REACT_APP_MODE === "DEVELOPMENT" &&
                     setTempCode(data.code);
@@ -171,12 +143,18 @@ export default function Step1({
                 onError(error) {
                   openToast(error.message);
                 },
+                onFinally() {
+                  setLoading(false);
+                },
               });
             }
           } else {
             if (
-              validateName(values.name, (value) =>
-                setFieldError("name", value)
+              validateFirstName(values.first_name, (value) =>
+                setFieldError("first_name", value)
+              ) &&
+              validateLastName(values.last_name, (value) =>
+                setFieldError("last_name", value)
               ) &&
               validateMelliCode(values.melli_code, (value) =>
                 setFieldError("melli_code", value)
@@ -191,16 +169,36 @@ export default function Step1({
               )
             ) {
               setPhone(values.phone);
-              setUserInitParams({
+
+              const temp: UserInitParams = {
                 phone: values.phone,
-                name: values.name,
+                first_name: values.first_name,
+                last_name: values.last_name,
                 melli_code: values.melli_code,
                 birthday_year: values.birthday_year,
                 birthday_month: values.birthday_month,
                 birthday_day: values.birthday_day,
                 account_type: "customer",
-              });
-              nextStep();
+              };
+              if (validatePersonalInfo(temp)) {
+                setUserInitParams(temp);
+
+                setLoading(true);
+                register({
+                  phone: values.phone.slice(1),
+                  userParams: temp,
+                  customFunction(data) {
+                    process.env.REACT_APP_MODE === "DEVELOPMENT" &&
+                      setTempCode(data.code);
+                    nextStep();
+                  },
+                  onFinally() {
+                    setLoading(false);
+                  },
+                });
+              } else {
+                openToast("اطلاعات شما صحیح نمی‌باشد!");
+              }
             }
           }
         }}
@@ -239,27 +237,48 @@ export default function Step1({
                   {errors.phone}
                 </span>
 
-                <Input
-                  attributes={{
-                    style: {
-                      opacity: newUser ? 100 : 0,
-                      zIndex: newUser ? 0 : -10,
-                      width: "100%",
-                    },
-                    name: "name",
-                    onBlur: handleBlur,
-                    onChange: handleChange,
-                    value: values.name,
-                    placeholder: "نام و نام خانوادگی",
+                <div
+                  style={{
+                    opacity: newUser ? 100 : 0,
+                    zIndex: newUser ? 0 : -10,
+                    width: "100%",
                   }}
-                />
-                <span
-                  className={`text-error transition-all duration-100 ${
-                    errors.name ? "opacity-100 z-[-10]" : "opacity-0 z-0"
-                  }`}
+                  className="w-full grid grid-cols-2 gap-[2dvw]"
                 >
-                  {errors.name}
-                </span>
+                  <div className="col-span-1">
+                    <Input
+                      className="w-full"
+                      attributes={{
+                        name: "first_name",
+                        onBlur: handleBlur,
+                        onChange: handleChange,
+                        value: values.first_name,
+                        placeholder: "نام",
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <Input
+                      className="w-full"
+                      attributes={{
+                        name: "last_name",
+                        onBlur: handleBlur,
+                        onChange: handleChange,
+                        value: values.last_name,
+                        placeholder: "نام خانوادگی",
+                      }}
+                    />
+                  </div>
+                  <span
+                    className={`text-error col-span-2 transition-all duration-100 ${
+                      errors.first_name || errors.last_name
+                        ? "opacity-100 z-[-10]"
+                        : "opacity-0 z-0"
+                    }`}
+                  >
+                    {errors.first_name || errors.last_name}
+                  </span>
+                </div>
 
                 <Input
                   attributes={{
@@ -291,28 +310,7 @@ export default function Step1({
                   }`}
                 >
                   <span className="text-[5dvw]">تاریخ تولد</span>
-                  <div className="flex items-center gap-x-[3dvw]">
-                    <Input
-                      className="!flex-1"
-                      attributes={{
-                        name: "birthday_year",
-                        onBlur: handleBlur,
-                        onChange: handleChange,
-                        value: values.birthday_year,
-                        inputMode: "decimal",
-                        placeholder: "سال",
-                        style: {
-                          flex: "1 1 0%",
-                        },
-                        maxLength: 4,
-                      }}
-                    />
-                    <Dropdown
-                      options={monthes}
-                      onChange={(e) => setFieldValue("birthday_month", e.value)}
-                      placeholder="ماه"
-                      className="w-[32dvw]"
-                    />
+                  <div className="flex items-start gap-x-[3dvw]">
                     <Input
                       className="!flex-1"
                       attributes={{
@@ -328,6 +326,30 @@ export default function Step1({
                         maxLength: 2,
                       }}
                     />
+                    <Dropdown
+                      options={monthes}
+                      onChange={(e) => setFieldValue("birthday_month", e.value)}
+                      placeholder="ماه"
+                      className="w-[32dvw] h-[12.5dvw]"
+                    />
+                    <div className="!flex-1 flex flex-col gap-[2dvw]">
+                      <Input
+                        className="!flex-1"
+                        attributes={{
+                          name: "birthday_year",
+                          onBlur: handleBlur,
+                          onChange: handleChange,
+                          value: values.birthday_year,
+                          inputMode: "decimal",
+                          placeholder: "سال",
+                          style: {
+                            flex: "1 1 0%",
+                          },
+                          maxLength: 4,
+                        }}
+                      />
+                      <span className="text-gray_002">مثال: 1385</span>
+                    </div>
                   </div>
                 </div>
                 <span
@@ -341,7 +363,12 @@ export default function Step1({
                 </span>
               </div>
             </div>
-            <Button label="تایید" type="submit" onClick={handleSubmit} />
+            <Button
+              disabled={loading}
+              label={loading ? "در حال تایید..." : "تایید"}
+              type="submit"
+              onClick={handleSubmit}
+            />
           </>
         )}
       </Formik>

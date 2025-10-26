@@ -6,6 +6,15 @@
   font-family: Yekan;
   src: url("../public/font/Yekan.ttf");
 }
+@font-face {
+  font-family: Yaro;
+  src: url("../public/font/Yaro.ttf");
+}
+
+.font-eng {
+  font-family: Yaro !important;
+  letter-spacing: 0.5dvw;
+}
 
 * {
   font-family: Yekan !important;

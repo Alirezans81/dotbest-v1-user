@@ -241,21 +241,27 @@ export const defaultNewsDetail: NewsDetail = {
 
 export type Order = {
   url: string;
-  user: string;
-  skill_detail: string;
-  user_username: string;
-  user_full_name: string;
-  skill_detail_title: string;
+  customer: string;
+  service: string;
+  customer_username: string;
+  customer_full_name: string;
+  service_title: string;
+  image: File | null;
+  image_url: string;
   slug: string;
+  date: string;
+  time: string;
   duration: string;
   discount: number;
   status:
     | "request"
-    | "accept"
+    | "rejected"
     | "awaiting_payment"
-    | "is_paid"
-    | "cancel"
-    | "done";
+    | "reserved"
+    | "admin_canceled"
+    | "barber_canceled"
+    | "customer_canceled"
+    | "completed";
   final_price: string;
   datetime_request: string;
   datetime_update: string;
@@ -267,12 +273,16 @@ export type Order = {
 };
 export const defaultOrder: Order = {
   url: "",
-  user: "",
-  skill_detail: "",
-  user_username: "",
-  user_full_name: "",
-  skill_detail_title: "",
+  customer: "",
+  service: "",
+  customer_username: "",
+  customer_full_name: "",
+  service_title: "",
+  image: null,
+  image_url: "",
   slug: "",
+  date: "",
+  time: "",
   duration: "",
   discount: 0,
   status: "request",
@@ -286,12 +296,34 @@ export const defaultOrder: Order = {
   admin_description: "",
 };
 
+export type OrderCommentCategoryDetail = {
+  url: string;
+  parent_detail: OrderCommentCategoryDetail | null;
+  title: string;
+  image_url: string;
+};
 export type OrderComment = {
   url: string;
   order: string;
-  user: string;
-  user_fullname: string;
-  barber: string;
+  customer: string;
+  customer_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  barber_detail: {
+    url: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    full_name: string;
+    avatar_url: string;
+  };
+  category_detail: OrderCommentCategoryDetail;
+  image_url: string;
   datetime_update: string;
   datetime_delete: string;
   is_deleted: boolean;
@@ -301,15 +333,37 @@ export type OrderComment = {
   is_active: boolean;
   show_order: number;
   rate: number;
+  alt_image: string;
   message: string;
   is_pin: boolean;
 };
 export const defaultOrderComment: OrderComment = {
   url: "",
   order: "",
-  user: "",
-  user_fullname: "",
-  barber: "",
+  customer: "",
+  customer_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  barber_detail: {
+    url: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    full_name: "",
+    avatar_url: "",
+  },
+  category_detail: {
+    image_url: "",
+    parent_detail: null,
+    title: "",
+    url: "",
+  },
+  image_url: "",
   datetime_update: "",
   datetime_delete: "",
   is_deleted: false,
@@ -319,6 +373,7 @@ export const defaultOrderComment: OrderComment = {
   is_active: false,
   show_order: 0,
   rate: 0,
+  alt_image: "",
   message: "",
   is_pin: false,
 };
@@ -472,4 +527,70 @@ export const defaultWallet: Wallet = {
   balance: "",
   pending: "",
   locked: "",
+};
+
+export type WalletCard = {
+  url: string;
+  wallet: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  is_active: boolean;
+  card_number: string;
+  shaba_number: string;
+  is_main: boolean;
+  bank_name: string;
+};
+export const defaultWalletCard: WalletCard = {
+  url: "",
+  wallet: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  is_active: false,
+  card_number: "",
+  shaba_number: "",
+  is_main: false,
+  bank_name: "",
+};
+
+export type Withdrawal = {
+  url: string;
+  wallet_card: string;
+  datetime_update: string;
+  datetime_delete: string;
+  is_deleted: boolean;
+  description: string;
+  slug: string;
+  datetime_create: string;
+  amount: string;
+  status:
+    | "request"
+    | "rejected"
+    | "in_payment_queue"
+    | "user_canceled"
+    | "completed"
+    | "payment_error";
+  datetime_payment: string;
+  order: string;
+};
+export const defaultWithdrawal: Withdrawal = {
+  url: "",
+  wallet_card: "",
+  datetime_update: "",
+  datetime_delete: "",
+  is_deleted: false,
+  description: "",
+  slug: "",
+  datetime_create: "",
+  amount: "",
+  status: "request",
+  datetime_payment: "",
+  order: "",
 };

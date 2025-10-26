@@ -4,7 +4,7 @@ import BarberCard from "./BarberCard";
 import Pin from "../images/common/pin.svg";
 import Arrow from "../images/common/arrow.svg";
 import { useNavigate } from "react-router-dom";
-import { defaultBarber } from "../lib/salon";
+import { defaultBarber } from "../lib/barber";
 
 export default function SearchSalonCard() {
   const navigate = useNavigate();

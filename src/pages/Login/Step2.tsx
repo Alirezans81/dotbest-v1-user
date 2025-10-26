@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Formik } from "formik";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
@@ -7,6 +8,7 @@ import { UserInitParams } from "../../lib/user";
 import { TokenType } from "../../providers/TokenProvider";
 import { useGetCategories } from "../../api/common/hooks";
 import { useShowSplashScreenSetState } from "../../providers/ShowSplashScreen";
+import { useEffect } from "react";
 
 interface Props {
   prevStep: () => void;
@@ -55,7 +57,21 @@ export default function Step2({
     });
   };
 
-  console.log("userInitParams", userInitParams);
+  useEffect(() => {
+    if (tempCode) {
+      setShowSplashScreen(true);
+      verifyCode({
+        phone: phone.slice(1),
+        code: tempCode,
+        customFunction(data) {
+          initApp(data);
+        },
+        onError() {
+          setShowSplashScreen(false);
+        },
+      });
+    }
+  }, [tempCode]);
 
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
@@ -71,7 +87,6 @@ export default function Step2({
             verifyCode({
               phone: phone,
               code: values.code,
-              userParams: userInitParams,
               customFunction(data) {
                 initApp(data);
               },
@@ -114,11 +129,16 @@ export default function Step2({
             </div>
             <div className="flex flex-col gap-y-[3dvw]">
               <Button
+                className="!bg-primary"
+                label="تایید"
+                type="submit"
+                onClick={handleSubmit}
+              />
+              <Button
                 label="ورود دوباره شماره موبایل"
                 type="button"
                 onClick={prevStep}
               />
-              <Button label="تایید" type="submit" onClick={handleSubmit} />
             </div>
           </>
         )}

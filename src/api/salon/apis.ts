@@ -6,10 +6,12 @@ import queryString from "query-string";
 
 const api = process.env.REACT_APP_MODE === "DEVELOPMENT" ? dev() : prod();
 
-const getBarbers = (token: string) => {
+export const getBarbers = (token: string, filtersObject?: any) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["barber"],
-    query: { is_active: true, is_deleted: false },
+    query: filtersObject
+      ? { is_active: true, is_deleted: false, ...filtersObject }
+      : { is_active: true, is_deleted: false },
   });
 
   const headers = {
@@ -18,7 +20,7 @@ const getBarbers = (token: string) => {
   return axios.get(urlWithQueries, { headers });
 };
 
-const getBestBarbers = (token: string) => {
+export const getBestBarbers = (token: string) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["best-barbers"],
     query: { is_active: true, is_deleted: false },
@@ -30,7 +32,7 @@ const getBestBarbers = (token: string) => {
   return axios.get(urlWithQueries, { headers });
 };
 
-const getSalons = (token: string) => {
+export const getSalons = (token: string) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["salon"],
     query: { is_active: true, is_deleted: false },
@@ -42,7 +44,7 @@ const getSalons = (token: string) => {
   return axios.get(urlWithQueries, { headers });
 };
 
-const getBestSalons = (token: string) => {
+export const getBestSalons = (token: string) => {
   const urlWithQueries = queryString.stringifyUrl({
     url: api["best-salons"],
     query: { is_active: true, is_deleted: false },
@@ -54,11 +56,11 @@ const getBestSalons = (token: string) => {
   return axios.get(urlWithQueries, { headers });
 };
 
-const getSalonData = (salon_slug: string) => {
+export const getSalonData = (salon_slug: string) => {
   return axios.get(api["salon"] + salon_slug + "/");
 };
 
-const getSalonBarbersByCategory = (
+export const getSalonBarbersByCategory = (
   salon_slug: string,
   category_slug: string
 ) => {
@@ -75,27 +77,14 @@ const getSalonBarbersByCategory = (
   return axios.get(urlWithQueries);
 };
 
-const getBarberData = (token: string, barber_slug: string) => {
+export const getBarberData = (token: string, barber_slug: string) => {
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   return axios.get(api["barber"] + barber_slug + "/", { headers });
 };
 
-const getBarberGallery = (barber_slug: string) => {
-  const urlWithQueries = queryString.stringifyUrl({
-    url: api["barber-gallery"],
-    query: {
-      is_active: true,
-      is_deleted: false,
-      barber: barber_slug,
-    },
-  });
-
-  return axios.get(urlWithQueries);
-};
-
-const getSalonComments = (salon_slug: string, filters: any) => {
+export const getSalonComments = (salon_slug: string, filters: any) => {
   if (filters) {
     let query = filters;
     query.is_active = true;
@@ -122,7 +111,11 @@ const getSalonComments = (salon_slug: string, filters: any) => {
   }
 };
 
-const getBarberComments = (barber_slug: string, filters: any) => {
+export const getBarberComments = (
+  token: string,
+  barber_slug: string,
+  filters: any
+) => {
   if (filters) {
     let query = filters;
     query.is_active = true;
@@ -134,7 +127,10 @@ const getBarberComments = (barber_slug: string, filters: any) => {
       query,
     });
 
-    return axios.get(urlWithQueries);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    return axios.get(urlWithQueries, { headers });
   } else {
     const urlWithQueries = queryString.stringifyUrl({
       url: api["comment"],
@@ -145,19 +141,9 @@ const getBarberComments = (barber_slug: string, filters: any) => {
       },
     });
 
-    return axios.get(urlWithQueries);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    return axios.get(urlWithQueries, { headers });
   }
-};
-
-export {
-  getBarbers,
-  getBestBarbers,
-  getSalons,
-  getBestSalons,
-  getSalonData,
-  getSalonBarbersByCategory,
-  getBarberData,
-  getBarberGallery,
-  getSalonComments,
-  getBarberComments,
 };

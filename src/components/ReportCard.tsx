@@ -1,33 +1,200 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import BarberCard from "./BarberCard";
-
-import Comment from "../images/Reports/comment.svg";
 import CommentModal from "./modals/CommentModal";
 import { useOpenModal } from "../hooks/popups";
-import { defaultBarber } from "../lib/salon";
+import { Barber, defaultBarber } from "../lib/barber";
+import { Order } from "../lib/common";
+import { useConvertToPersianDateTime } from "../hooks/datetime";
+import { useEffect, useState } from "react";
+import { useGetBarberService } from "../api/user/hooks";
+import { useGetBarberData } from "../api/salon/hooks";
+import Skeleton from "./Skeleton";
 
-export default function ReportCard() {
+import Comment from "../images/Reports/comment.svg";
+import Button from "./Button";
+import ReservationModal from "./modals/ReservationModal";
+import { useGetStatus } from "../hooks/order";
+import PaymentModal from "./modals/PaymentModal";
+import SubmitCancelOrderModal from "./modals/SubmitCancelOrderModal";
+
+interface Props {
+  data: Order;
+  refreshReports: () => void;
+  hasPassed?: boolean;
+}
+export default function ReportCard({
+  data,
+  refreshReports,
+  hasPassed = false,
+}: Props) {
   const openModal = useOpenModal();
-  const openCommnetModal = () => openModal(<CommentModal />);
+  const openCommnetModal = () =>
+    openModal(
+      <CommentModal
+        barber_data={barber}
+        order_url={data.url}
+        order_slug={data.slug}
+      />
+    );
+  const openReservationModal = () =>
+    openModal(
+      <ReservationModal
+        data={data}
+        barber={barber}
+        refreshReports={refreshReports}
+        hasPassed={hasPassed}
+      />
+    );
+  const openPaymentModal = () => {
+    openModal(
+      <PaymentModal data={data} barber={barber} onSuccess={refreshReports} />
+    );
+  };
+  const openCancelModal = () => {
+    openModal(
+      <SubmitCancelOrderModal order_slug={data.slug} onClose={refreshReports} />
+    );
+  };
+
+  const convertToPersianDateTime = useConvertToPersianDateTime();
+
+  const getStatus = useGetStatus();
+
+  const [loading, setLoading] = useState(false);
+  const [barber, setBarber] = useState<Barber>(defaultBarber);
+  const getBarberService = useGetBarberService();
+  const getBarberData = useGetBarberData();
+  useEffect(() => {
+    if (data.service) {
+      setLoading(true);
+      getBarberService({
+        service_url: data.service,
+        setBarberService: () => {},
+        customFunction(data) {
+          getBarberData({
+            barber_slug: data.barber.split("/").slice(-2)[0] || "",
+            setBarber,
+            onFinally() {
+              setLoading(false);
+            },
+          });
+        },
+        onError() {
+          setLoading(false);
+        },
+      });
+    }
+  }, [data]);
 
   return (
     <div className="flex flex-col">
-      <BarberCard data={defaultBarber} orientation="row" type="comment" />
+      {!loading ? (
+        <BarberCard data={barber} orientation="row" type="comment" />
+      ) : (
+        <Skeleton className="w-full h-[42.54dvw] rounded-b-none border-x border-t border-gray_001 dark:border-gray_003" />
+      )}
       <div
         className={`w-full border-x border-b border-gray_001 dark:border-gray_003 rounded-b-[6dvw] px-[5dvw] pt-[3.5dvw] pb-[4.5dvw] flex flex-col gap-[5dvw]`}
       >
-        <div className="w-full flex justify-between items-center">
-          <span className="text-[7dvw]">مو</span>
-          <span className="text-gray_002 text-[5dvw]">1,500,000 تومان</span>
+        <div className="flex flex-col">
+          <div className="w-full flex justify-between items-center">
+            <span className="text-[7dvw]">{data.service_title + " "}</span>
+            <span className="text-gray_002 text-[5dvw]">
+              {(+data.final_price).toLocaleString()} تومان
+            </span>
+          </div>
+          <span className="text-primary">
+            {"(" +
+              (data.status === "completed" ||
+              data.status === "admin_canceled" ||
+              data.status === "barber_canceled" ||
+              data.status === "customer_canceled"
+                ? getStatus(data.status)
+                : hasPassed
+                ? "به پایان رسیده"
+                : getStatus(data.status)) +
+              ")"}
+          </span>
         </div>
         <div className="w-full flex justify-between items-center">
-          <span className="text-gray_002 text-[4.5dvw]">13 اردیبهشت 1403</span>
-          <button
-            onClick={openCommnetModal}
-            className="flex items-center gap-[1.5dvw] text-primary"
-          >
-            <img alt="نظر دادن" className="w-[5dvw] h-[5dvw]" src={Comment} />
-            <span>نظر دادن</span>
-          </button>
+          <span className="text-gray_002 text-[4.5dvw]">
+            {convertToPersianDateTime(data.date, data.time)}
+          </span>
+
+          {data.status === "request" && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {data.status === "rejected" && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {data.status === "awaiting_payment" &&
+            (!hasPassed ? (
+              <div className="flex gap-[2dvw]">
+                <Button
+                  type="button"
+                  className="px-[5dvw] !py-[1dvw] !bg-error/10 hover:!border-error"
+                  onClick={openCancelModal}
+                >
+                  لغو
+                </Button>
+                <Button
+                  type="button"
+                  className="px-[5dvw] !py-[1dvw] !bg-success/10 hover:!border-success"
+                  onClick={openPaymentModal}
+                >
+                  پرداخت
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                className="px-[5dvw] !py-[1dvw]"
+                onClick={openReservationModal}
+              >
+                جزئیات
+              </Button>
+            ))}
+          {data.status === "reserved" && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {(data.status === "admin_canceled" ||
+            data.status === "barber_canceled" ||
+            data.status === "customer_canceled") && (
+            <Button
+              type="button"
+              className="px-[5dvw] !py-[1dvw]"
+              onClick={openReservationModal}
+            >
+              جزئیات
+            </Button>
+          )}
+          {data.status === "completed" && (
+            <button
+              onClick={openCommnetModal}
+              className="flex items-center gap-[1.5dvw] text-primary"
+            >
+              <img alt="نظر دادن" className="w-[5dvw] h-[5dvw]" src={Comment} />
+              <span>نظر دادن</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

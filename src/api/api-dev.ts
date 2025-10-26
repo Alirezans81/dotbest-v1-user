@@ -2,15 +2,16 @@ export default function api() {
   const url = process.env.REACT_APP_DEV_URL;
 
   return {
-    "send-code": `${url}api/user/send-code/`,
-    "verify-code": `${url}api/user/verify-code/`,
-    refresh: `${url}api/user/refresh/`,
+    register: `${url}api/auth/register/`,
+    "send-code": `${url}api/auth/send-code/`,
+    "verify-code": `${url}api/auth/verify-code/`,
+    refresh: `${url}api/auth/refresh/`,
     create: `${url}api/manager/create/`,
     salon: `${url}api/salon/`,
     "salon-barber": `${url}api/salon-barber/`,
     barber: `${url}api/barber/`,
     category: `${url}api/category/`,
-    service: `${url}api/salon-skill/`,
+    "barber-service": `${url}api/barber-service/`,
     reservation: `${url}api/order/`,
     user: `${url}api/user/`,
     "forget-pass": `${url}api/forget-pass/`,
@@ -19,10 +20,16 @@ export default function api() {
     "best-salons": `${url}api/best/salon/`,
     "best-barbers": `${url}api/best/barber/`,
     order: `${url}api/order/`,
+    "cancel-order": `${url}api/order-action/cancel/`,
+    "payment-order": `${url}api/order-action/payment/`,
+    "reserve-order": `${url}api/order-action/reserve/`,
     "ticket-category": `${url}api/ticket-category/`,
     ticket: `${url}api/ticket/`,
-    "barber-gallery": `${url}api/salon-barber-gallery/`,
+    "barber-category-gallery": `${url}api/barber-category-gallery/`,
     comment: `${url}api/order-comment/`,
     wallet: `${url}api/wallet/`,
+    "wallet-card": `${url}api/wallet-card/`,
+    "add-wallet-card": `${url}api/wallet-card-action/add/`,
+    withdrawal: `${url}api/withdrawal/`,
   };
 }

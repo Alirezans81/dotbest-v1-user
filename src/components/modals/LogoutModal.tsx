@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useLogout } from "../../hooks/auth";
 import { useModalDataClose } from "../../providers/ModalProvider";
 import Button from "../Button";
@@ -5,6 +6,8 @@ import Button from "../Button";
 export default function LogoutModal() {
   const logout = useLogout();
   const closeModal = useModalDataClose();
+  const navigate = useNavigate();
+  const goToIndex = () => navigate("/");
 
   return (
     <div className="w-full flex flex-col gap-[4dvw]">
@@ -16,6 +19,7 @@ export default function LogoutModal() {
         onClick={() => {
           closeModal();
           logout();
+          goToIndex();
         }}
       />
     </div>

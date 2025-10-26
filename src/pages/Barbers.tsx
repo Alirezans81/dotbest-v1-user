@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import NavigationLayout from "../components/NavigationLayout";
 import BarberCard from "../components/BarberCard";
-import { Barber } from "../lib/salon";
+import { Barber } from "../lib/barber";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useGetSalonBarbersByCategory } from "../api/salon/hooks";

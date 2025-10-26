@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import Close from "../images/common/close.svg";
 import {
@@ -10,8 +11,11 @@ export default function Toast() {
   const closeToast = useToastDataClose();
 
   useEffect(() => {
-    setTimeout(() => closeToast(), 5000);
-  }, []);
+    if (ToastData.isOpen) {
+      const timeout = setTimeout(() => closeToast(), 4000);
+      return () => clearTimeout(timeout);
+    }
+  }, [ToastData]);
 
   return (
     <div
