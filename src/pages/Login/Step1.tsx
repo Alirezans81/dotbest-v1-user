@@ -180,25 +180,21 @@ export default function Step1({
                 birthday_day: values.birthday_day,
                 account_type: "customer",
               };
-              if (validatePersonalInfo(temp)) {
-                setUserInitParams(temp);
+              setUserInitParams(temp);
 
-                setLoading(true);
-                register({
-                  phone: values.phone.slice(1),
-                  userParams: temp,
-                  customFunction(data) {
-                    process.env.REACT_APP_MODE === "DEVELOPMENT" &&
-                      setTempCode(data.code);
-                    nextStep();
-                  },
-                  onFinally() {
-                    setLoading(false);
-                  },
-                });
-              } else {
-                openToast("اطلاعات شما صحیح نمی‌باشد!");
-              }
+              setLoading(true);
+              register({
+                phone: values.phone.slice(1),
+                userParams: temp,
+                customFunction(data) {
+                  process.env.REACT_APP_MODE === "DEVELOPMENT" &&
+                    setTempCode(data.code);
+                  nextStep();
+                },
+                onFinally() {
+                  setLoading(false);
+                },
+              });
             }
           }
         }}
