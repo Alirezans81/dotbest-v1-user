@@ -85,7 +85,7 @@ export default function Step2({
           ) {
             setShowSplashScreen(true);
             verifyCode({
-              phone: phone,
+              phone: phone.slice(1),
               code: values.code,
               customFunction(data) {
                 initApp(data);
