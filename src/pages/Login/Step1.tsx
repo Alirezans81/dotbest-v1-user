@@ -171,7 +171,7 @@ export default function Step1({
               setPhone(values.phone);
 
               const temp: UserInitParams = {
-                phone: values.phone,
+                phone: values.phone.slice(1),
                 first_name: values.first_name,
                 last_name: values.last_name,
                 melli_code: values.melli_code,
