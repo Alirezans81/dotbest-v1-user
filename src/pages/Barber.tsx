@@ -185,13 +185,8 @@ export default function BarberPage() {
               <button onClick={goBack}>
                 <img
                   alt="برشگت"
-                  className="w-[7dvw] h-[7dvw] hidden dark:block"
+                  className="w-[7dvw] h-[7dvw]"
                   src={BackLight}
-                />
-                <img
-                  alt="برشگت"
-                  className="w-[7dvw] h-[7dvw] block dark:hidden"
-                  src={BackDark}
                 />
               </button>
             </div>

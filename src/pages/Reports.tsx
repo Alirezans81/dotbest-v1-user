@@ -108,6 +108,15 @@ export default function Reports() {
     // Check if now is after end time
     return now.isAfter(endTime);
   };
+  const isNowAfterStart = (dateString: string, timeString: string) => {
+    const now = dayjs();
+
+    // Combine given date and time to get the start time
+    const startTime = dayjs(`${dateString}T${timeString}`);
+
+    // Check if now is after end time
+    return now.isAfter(startTime);
+  };
 
   return (
     <div
@@ -164,6 +173,7 @@ export default function Reports() {
                     report.time,
                     report.duration
                   )}
+                  hasStarted={isNowAfterStart(report.date, report.time)}
                 />
               ))}
               {hasMore && <Skeleton className="w-full h-[72.75dvw]" />}

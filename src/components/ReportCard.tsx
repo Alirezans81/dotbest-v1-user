@@ -21,11 +21,13 @@ interface Props {
   data: Order;
   refreshReports: () => void;
   hasPassed?: boolean;
+  hasStarted?: boolean;
 }
 export default function ReportCard({
   data,
   refreshReports,
   hasPassed = false,
+  hasStarted = false,
 }: Props) {
   const openModal = useOpenModal();
   const openCommnetModal = () =>
@@ -43,6 +45,7 @@ export default function ReportCard({
         barber={barber}
         refreshReports={refreshReports}
         hasPassed={hasPassed}
+        hasStarted={hasStarted}
       />
     );
   const openPaymentModal = () => {

@@ -12,12 +12,14 @@ interface Props {
   barber: Barber;
   refreshReports: () => void;
   hasPassed?: boolean;
+  hasStarted?: boolean;
 }
 export default function ReservationModal({
   data,
   barber,
   refreshReports,
   hasPassed = false,
+  hasStarted = false,
 }: Props) {
   const convertToPersianDateTime = useConvertToPersianDateTime();
 
@@ -82,8 +84,8 @@ export default function ReservationModal({
             </span>
           </div>
         </div>
-        {(data.status === "request" || data.status === "reserved") &&
-          !hasPassed && (
+        {(data.status === "request" || data.status === "reserved") && 
+          !hasPassed && hasStarted && (
             <Button
               type="button"
               className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error"

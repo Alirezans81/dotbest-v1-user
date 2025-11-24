@@ -296,7 +296,7 @@ export default function ReserveModal({
               <div className="flex flex-col gap-y-[1dvw] items-center px-[5dvw] py-[4dvw] rounded-[5dvw]">
                 <button
                   onClick={() => imgRef.current?.click()}
-                  className="bg-black rounded-[4dvw] px-[5dvw] pt-[2.5dvw] pb-[2dvw] drop-shadow-lg transition-all duration-150 hover:bg-primary hover:text-white"
+                  className="bg-white dark:bg-black rounded-[4dvw] px-[5dvw] pt-[2.5dvw] pb-[2dvw] drop-shadow-lg transition-all duration-150 hover:bg-primary hover:text-white"
                 >
                   آپلود عکس/فیلم
                 </button>
