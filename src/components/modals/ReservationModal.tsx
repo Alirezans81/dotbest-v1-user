@@ -85,7 +85,7 @@ export default function ReservationModal({
           </div>
         </div>
         {(data.status === "request" || data.status === "reserved") && 
-          !hasPassed && hasStarted && (
+          !hasPassed && !hasStarted && (
             <Button
               type="button"
               className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error"
