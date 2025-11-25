@@ -99,7 +99,7 @@ export default function BarberCard({
               </div>
               <div className="w-[1.5px] rounded-full h-[5dvw] bg-gray_001 dark:bg-gray_004 mb-[1dvw]" />
               <span className="text-gray_002">
-                {data.order_comment_quantity} نظر
+                {data.order_comment_quantity} {"نظر"}
               </span>
             </div>
           </div>

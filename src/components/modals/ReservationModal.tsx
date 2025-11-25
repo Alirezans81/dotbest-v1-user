@@ -84,15 +84,22 @@ export default function ReservationModal({
             </span>
           </div>
         </div>
-        {(data.status === "request" || data.status === "reserved") && 
-          !hasPassed && !hasStarted && (
-            <Button
-              type="button"
-              className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error"
-              onClick={openSubmitCancelOrder}
-              label="لفو رزرو"
-            />
-          )}
+        {(data.status === "request" || data.status === "awaiting_payment") && (
+          <Button
+            type="button"
+            className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error hover:!text-white"
+            onClick={openSubmitCancelOrder}
+            label="لفو رزرو"
+          />
+        )}
+        {data.status === "reserved" && !hasStarted && !hasPassed && (
+          <Button
+            type="button"
+            className="col-span-2 !border-error text-error hover:!bg-error hover:!border-error hover:!text-white"
+            onClick={openSubmitCancelOrder}
+            label="لفو رزرو"
+          />
+        )}
         <div className="col-span-2 flex justify-center">
           <span className="text-gray_002">
             {convertToPersianDateTime(data.date, data.time)}

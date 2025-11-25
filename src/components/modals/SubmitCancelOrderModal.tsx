@@ -36,7 +36,7 @@ export default function SubmitCancelOrderModal({ order_slug, onClose }: Props) {
       <Button
         type="button"
         label={loading ? "در حال بارگذاری..." : "بله! لغو"}
-        className="text-error !border-error py-[3dvw]"
+        className="text-error !border-error py-[3dvw] hover:text-white"
         disabled={loading}
         onClick={handleCancelOrder}
       />
