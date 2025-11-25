@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
-import Close from "../images/common/close.svg";
+import Close from "../images/common/close-orange.svg";
 import {
   useToastDataClose,
   useToastDataState,
