@@ -21,13 +21,15 @@ export default function Profile() {
   const openSupportModal = () => openModal(<SupportModal />);
   const openLogoutModal = () => openModal(<LogoutModal />);
 
-  const share = () => {
+  const share = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: `.Best | بهترین زیبایی ها`,
-        text: ``,
-        url: document.location.href.replace("/about", ""),
-      });
+      try {
+        await navigator.share({
+          title: `.Best | بهترینی وجود نداره!`,
+          text: ``,
+          url: document.location.href.replace("/profile", ""),
+        });
+      } catch (_: any) {}
     }
   };
 
