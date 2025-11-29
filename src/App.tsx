@@ -35,6 +35,7 @@ import BarberCategory from "./pages/BarberCategory";
 import Transaction from "./pages/Transaction";
 import { useWalletSetState } from "./providers/WalletProvider";
 import WalletPage from "./pages/Wallet";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   const loggedIn = useLoggedInState();
@@ -45,6 +46,7 @@ function App() {
   const setShowSplashScreen = useShowSplashScreenSetState();
   const setToken = useTokenSetState();
   const setWallet = useWalletSetState();
+  const pathname = window.location.pathname;
 
   const [appLoaded, setAppLoaded] = useState(false);
 
@@ -164,11 +166,19 @@ function App() {
           </>
         );
       } else {
-        return (
-          <div className="w-screen h-[100dvh]">
-            <Login />
-          </div>
-        );
+        if (pathname === "/privacy-policy") {
+          return (
+            <div className="w-screen h-[100dvh]">
+              <PrivacyPolicy />
+            </div>
+          );
+        } else {
+          return (
+            <div className="w-screen h-[100dvh]">
+              <Login />
+            </div>
+          );
+        }
       }
     }
   } else {

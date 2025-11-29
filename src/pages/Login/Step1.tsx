@@ -108,6 +108,11 @@ export default function Step1({
 
   const register = useRegister();
 
+  const navigateToPrivacyPolicy = () => {
+    console.log(1);
+    window.location.href = "/privacy-policy";
+  };
+
   return (
     <div className="w-full h-[100dvh] px-[6dvw] pt-[5dvw] pb-[10dvw] flex flex-col gap-y-[4dvw] justify-between">
       <Formik
@@ -359,12 +364,25 @@ export default function Step1({
                 </span>
               </div>
             </div>
-            <Button
-              disabled={loading}
-              label={loading ? "در حال تایید..." : "تایید"}
-              type="submit"
-              onClick={handleSubmit}
-            />
+            <div className="w-full flex flex-col items-center gap-[2dvw]">
+              <span className="text-center dark:text-gray_001 text-gray_006 z-50">
+                با ثبت‌نام در این اپلیکیشن، شما{" "}
+                <button
+                  type="button"
+                  onClick={navigateToPrivacyPolicy}
+                  className="text-primary underline underline-offset-2"
+                >
+                  قوانین و مفاد سیاست حفظ حریم خصوصی
+                </button>{" "}
+                را می‌پذیرید.
+              </span>
+              <Button
+                disabled={loading}
+                label={loading ? "در حال تایید..." : "تایید"}
+                type="submit"
+                onClick={handleSubmit}
+              />
+            </div>
           </>
         )}
       </Formik>
