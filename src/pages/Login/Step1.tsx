@@ -378,6 +378,7 @@ export default function Step1({
               </span>
               <Button
                 disabled={loading}
+                className="w-full"
                 label={loading ? "در حال تایید..." : "تایید"}
                 type="submit"
                 onClick={handleSubmit}

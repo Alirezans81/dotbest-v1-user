@@ -6,8 +6,10 @@ import {
 
 import Close from "../images/common/close.svg";
 import Arrow from "../images/common/back-light.svg";
+import Skeleton from "./Skeleton";
 
 export default function GalleryView() {
+  const [loadingData, setLoadingData] = useState(false);
   const { isOpen, data, activePhotoIndex } = useGalleryViewState();
   const closeGalleryView = useGalleryViewClose();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(-1);
@@ -17,6 +19,10 @@ export default function GalleryView() {
   useEffect(() => {
     !isOpen && setSelectedPhotoIndex(-1);
   }, [isOpen]);
+
+  useEffect(() => {
+    setLoadingData(true);
+  }, [selectedPhotoIndex]);
 
   const prev = () =>
     selectedPhotoIndex > 0 && setSelectedPhotoIndex((prev) => prev - 1);
@@ -49,7 +55,7 @@ export default function GalleryView() {
           {selectedPhotoIndex !== 0 && (
             <button
               onClick={prev}
-              className="absolute top-0 right-[2dvw] h-full"
+              className="absolute top-0 right-[2dvw] h-full z-10"
             >
               <div className="bg-black rounded-full p-[1.5dvw]">
                 <img
@@ -62,13 +68,19 @@ export default function GalleryView() {
           )}
           <img
             alt={data[selectedPhotoIndex]?.alt_image_name}
-            className="w-full max-h-full object-cover"
+            className={`w-full max-h-[75dvh] object-cover ${
+              loadingData ? "hidden" : "block"
+            }`}
+            onLoad={() => setLoadingData(false)}
             src={data[selectedPhotoIndex]?.image_url}
+          />
+          <Skeleton
+            className={`w-full h-[75dvh] !rounded-none !z-0 ${loadingData ? "block" : "hidden"}`}
           />
           {selectedPhotoIndex !== data.length - 1 && (
             <button
               onClick={next}
-              className="absolute top-0 left-[2dvw] h-full"
+              className="absolute top-0 left-[2dvw] h-full z-10"
             >
               <div className="bg-black rounded-full p-[1.5dvw]">
                 <img alt="" className="w-[5dvw] h-[5dvw]" src={Arrow} />

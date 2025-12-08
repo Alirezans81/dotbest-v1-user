@@ -145,7 +145,7 @@ export default function Profile() {
             />
           </div>
         </Button>
-        <Button
+        {/* <Button
           type="button"
           onClick={share}
           className="text-start pr-[6dvw] pl-[4dvw] py-[3dvw] text-[5dvw]"
@@ -182,7 +182,7 @@ export default function Profile() {
               src={BackLight}
             />
           </div>
-        </Button>
+        </Button> */}
       </div>
       <Button
         type="button"
